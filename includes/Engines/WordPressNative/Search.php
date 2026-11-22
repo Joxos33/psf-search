@@ -58,42 +58,40 @@ class Search {
 
 	public function __construct() {
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			// Run only if index isn't completed
-			if ( DGWT_WCAS()->engine !== 'native' ) {
-				return;
-			}
-
-			// Limit the number of fields to be searched using the native engine when the index is not ready
-			add_filter(
-				'dgwt/wcas/native/search_in',
-				function () {
-					return [ 'title' ];
-				},
-				10
-			);
-
-			// Set 'placeholder' if the index is being built
-			add_filter(
-				'dgwt/wcas/search_results/output',
-				function ( $output ) {
-					$status  = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() );
-					$startTs = absint( \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'start_ts', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() ) );
-					if ( in_array(
-						$status,
-						[
-							'building',
-							'preparing',
-						]
-					) && ( time() - $startTs ) < 12 * HOUR_IN_SECONDS ) {
-						$output['engine'] = 'placeholder';
-					}
-
-					return $output;
-				},
-				99999
-			);
+		// Run only if index isn't completed
+		if ( DGWT_WCAS()->engine !== 'native' ) {
+			return;
 		}
+
+		// Limit the number of fields to be searched using the native engine when the index is not ready
+		add_filter(
+			'dgwt/wcas/native/search_in',
+			function () {
+				return [ 'title' ];
+			},
+			10
+		);
+
+		// Set 'placeholder' if the index is being built
+		add_filter(
+			'dgwt/wcas/search_results/output',
+			function ( $output ) {
+				$status  = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() );
+				$startTs = absint( \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'start_ts', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() ) );
+				if ( in_array(
+					$status,
+					[
+						'building',
+						'preparing',
+					]
+				) && ( time() - $startTs ) < 12 * HOUR_IN_SECONDS ) {
+					$output['engine'] = 'placeholder';
+				}
+
+				return $output;
+			},
+			99999
+		);
 
 		$this->searchIn = apply_filters(
 			'dgwt/wcas/native/search_in',
@@ -132,10 +130,6 @@ class Search {
 		}
 
 		// Labels
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			add_filter( 'dgwt/wcas/labels', [ $this, 'setTaxonomiesLabels' ], 5 );
-			add_filter( 'dgwt/wcas/labels', [ $this, 'fixTaxonomiesLabels' ], PHP_INT_MAX - 5 );
-		}
 
 		// Fixes if "Polylang" is active but without "Polylang for WooCommerce" or "Hyyan WooCommerce Polylang Integration"
 		if ( Multilingual::isPolylang() && ! class_exists( 'Polylang_Woocommerce' ) && ! defined( 'Hyyan_WPI_DIR' ) ) {
@@ -174,11 +168,9 @@ class Search {
 		if ( $context === 'all-results' ) {
 			$context = 'product-ids';
 		}
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( isset( $_GET['dgwt_wcas_product_ids_only'] ) && $_GET['dgwt_wcas_product_ids_only'] == '1' ) {
-				$context = 'product-ids-ff';
-			}
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['dgwt_wcas_product_ids_only'] ) && $_GET['dgwt_wcas_product_ids_only'] == '1' ) {
+			$context = 'product-ids-ff';
 		}
 
 		$start = microtime( true );

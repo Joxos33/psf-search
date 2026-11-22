@@ -12,9 +12,7 @@ class Shortcode {
 	public static function register() {
 		add_shortcode( 'wcas-search-form', [ __CLASS__, 'addBody' ] );
 		add_shortcode( 'fibosearch', [ __CLASS__, 'addBody' ] );
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			add_shortcode( 'fibosearch_posts_results', [ __CLASS__, 'fibosearchPostsResultsBody__premium_only' ] );
-		}
+		add_shortcode( 'fibosearch_posts_results', [ __CLASS__, 'fibosearchPostsResultsBody__premium_only' ] );
 	}
 
 	/**

@@ -4,7 +4,6 @@
 
 namespace DgoraWcas\Engines\TNTSearchMySQL;
 
-use DgoraWcas\Admin\Troubleshooting;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncRebuildIndex;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncVariationsUpdater;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater;
@@ -367,11 +366,7 @@ class TNTSearch {
 		}
 
 		if ( Builder::isIndexerWorkingTooLong() ) {
-			if ( Troubleshooting::hasWpCronMissedEvents() ) {
-				Builder::log( sprintf( '[Indexer] [Error code: 001] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
-			} else {
-				Builder::log( sprintf( '[Indexer] [Error code: 002] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
-			}
+			Builder::log( sprintf( '[Indexer] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
 
 			Builder::addInfo( 'status', 'error', Config::getIndexRole() );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );

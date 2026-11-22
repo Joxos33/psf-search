@@ -1,6 +1,5 @@
 <?php
 
-use DgoraWcas\Admin\Promo\Upgrade;
 
 // Exit if accessed directly
 if ( ! defined( 'DGWT_WCAS_FILE' ) ) {

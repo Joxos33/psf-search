@@ -1,6 +1,5 @@
 <?php
 
-use DgoraWcas\Admin\Promo\Upgrade;
 
 // Exit if accessed directly
 if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
@@ -24,6 +23,4 @@ $displayMethodsCount = defined( 'ELEMENTOR_PRO_VERSION' ) ? 'six' : 'five';
 		<li><?php printf( __( 'As a widget - go to the %s and choose “FiboSearch bar”', 'ajax-search-for-woocommerce' ), '<a href="' . admin_url( 'widgets.php' ) . '" target="_blank">' . __( 'Widgets Screen', 'ajax-search-for-woocommerce' ) . '</a>' ); ?>
 		<li><?php printf( __( 'Using PHP - %s', 'ajax-search-for-woocommerce' ), '<code>&lt;?php echo do_shortcode(\'[fibosearch]\'); ?&gt;</code>' ); ?></li>
 	</ol>
-<?php if ( ! dgoraAsfwFs()->is_premium() ) : ?>
-	<span class="dgwt-wcas-our-devs"><?php printf( __( 'Are there any difficulties? <b>We will do it for you!</b> We offer free of charge search bar implementation for Pro users. <a target="_blank" href="%s">Become one now!</a>', 'ajax-search-for-woocommerce' ), $utmLink ); ?></span>
-<?php endif; ?>
+<?php  ?>

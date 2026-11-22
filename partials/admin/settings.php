@@ -7,9 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $advSettings = DGWT_WCAS()->settings->canSeeAdvSettings();
 
 $classes = [];
-if ( dgoraAsfwFs()->is_premium() ) {
-	$classes[] = 'dgwt-wcas-settings-pro';
-}
+$classes[] = 'dgwt-wcas-settings-pro';
 if ( DGWT_WCAS()->themeCompatibility->isCurrentThemeSupported() ) {
 	$classes[] = 'dgwt-wcas-settings-theme-supported';
 }

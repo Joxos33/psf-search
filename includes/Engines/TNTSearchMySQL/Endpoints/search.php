@@ -225,7 +225,6 @@ $query->searchProducts();
 if ( ! $productIdsOnly ) {
 	$query->searchPosts();
 	$query->searchTaxonomy();
-	$query->searchVendors();
 }
 
 if ( $productIdsOnly ) {

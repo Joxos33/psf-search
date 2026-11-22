@@ -12,7 +12,6 @@ class Config {
 	const READABLE_INDEX     = 'dgwt_wcas_index';
 	const READABLE_TAX_INDEX = 'dgwt_wcas_tax_index';
 	const VARIATIONS_INDEX   = 'dgwt_wcas_var_index';
-	const VENDORS_INDEX      = 'dgwt_wcas_ven_index';
 
 	// Inverted index for searching purpose
 	const SEARCHABLE_INDEX_WORDLIST = 'dgwt_wcas_invindex_wordlist';

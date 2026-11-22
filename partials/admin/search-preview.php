@@ -167,18 +167,14 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 
 					<?php
 					$postTypes = [ 'post', 'page' ];
-					if ( dgoraAsfwFs()->is__premium_only() ) {
-						$postTypes = DGWT_WCAS()->tntsearchMySql->postTypes->getPostTypesSlugs();
-					}
+					$postTypes = DGWT_WCAS()->tntsearchMySql->postTypes->getPostTypesSlugs();
 					foreach ( $postTypes as $postType ) {
 						$label = '';
 						if ( $postType === 'post' || $postType === 'page' ) {
 							$label = $postType;
 						} else {
-							if ( dgoraAsfwFs()->is__premium_only() ) {
-								$details = DGWT_WCAS()->tntsearchMySql->postTypes->getPostTypeDetails( $postType );
-								$label   = empty( $details['labels']['singular_name'] ) ? $postType : strtolower( $details['labels']['singular_name'] );
-							}
+							$details = DGWT_WCAS()->tntsearchMySql->postTypes->getPostTypeDetails( $postType );
+							$label   = empty( $details['labels']['singular_name'] ) ? $postType : strtolower( $details['labels']['singular_name'] );
 						}
 						?>
 						<div

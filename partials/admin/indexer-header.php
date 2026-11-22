@@ -105,7 +105,6 @@ add_filter( 'dgwt/wcas/indexer/variations_set_items_count', function ( $count ) 
 					<li><?php printf( __( "If the indexer still doesn't work, add a constant <code>define('DGWT_WCAS_INDEXER_MODE', 'sync');</code> to your <code>wp-config.php</code> file and try to rebuild the search index again", 'ajax-search-for-woocommerce' ), 'js-ajax-build-index' ); ?></li>
 				<?php endif; ?>
 
-				<li> <?php printf( __( 'Is it still not working? Visit the <a target="_blank" href="%1$s">documentation</a> or write a <a target="_blank" href="%2$s">support request</a>', 'ajax-search-for-woocommerce' ), $linkToDocs, dgoraAsfwFs()->contact_url() ); ?></li>
 
 			</ol>
 		</div>

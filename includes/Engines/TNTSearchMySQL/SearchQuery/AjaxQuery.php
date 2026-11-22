@@ -150,23 +150,6 @@ class AjaxQuery extends MainQuery {
 			}
 		}
 
-		// Vendors
-		$hits += count( $this->foundVendors );
-		foreach ( $this->foundVendors as $suggestion ) {
-
-			$key = 'vendor';
-
-			if ( empty( $this->groups[ $key ]['full'] ) ) {
-				$limit = $this->flexibleLimits ? $this->totalLimit : $this->groups[ $key ]['limit'];
-
-				$this->groups[ $key ]['results'][] = $suggestion;
-
-				if ( count( $this->groups[ $key ]['results'] ) === $limit ) {
-					$this->groups[ $key ]['full'] = true;
-				}
-			}
-		}
-
 		// Post types.
 		foreach ( $this->foundPosts as $postType => $items ) {
 			$hits += count( $items );
@@ -533,14 +516,6 @@ class AjaxQuery extends MainQuery {
 			$groups[ $postType ] = [
 				'limit' => 5,
 				'order' => $order,
-			];
-		}
-
-		// Vendors
-		if ( $this->getOption( 'marketplace_enable_search', 'string', 'off' ) === 'on' ) {
-			$groups['vendor'] = [
-				'limit' => 5,
-				'order' => 15,
 			];
 		}
 

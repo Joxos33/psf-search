@@ -109,14 +109,12 @@ class DetailsBox {
 					];
 				}
 
-				if ( dgoraAsfwFs()->is__premium_only() ) {
-					// Get post type details
-					if ( ! empty( $postID ) && ! empty( $postType ) && $postType !== 'product' && $postType !== 'product_variation' ) {
-						$items[] = [
-							'objectID' => $objectID,
-							'html'     => $this->getPostTypeDetails__premium_only( $postID ),
-						];
-					}
+				// Get post type details
+				if ( ! empty( $postID ) && ! empty( $postType ) && $postType !== 'product' && $postType !== 'product_variation' ) {
+					$items[] = [
+						'objectID' => $objectID,
+						'html'     => $this->getPostTypeDetails__premium_only( $postID ),
+					];
 				}
 
 				// Get taxonomy details

@@ -2,7 +2,6 @@
 
 namespace DgoraWcas;
 
-use DgoraWcas\Integrations\Solver;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

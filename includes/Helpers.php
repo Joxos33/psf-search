@@ -4,8 +4,6 @@ namespace DgoraWcas;
 
 use \DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
 use \DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use \DgoraWcas\Integrations\Solver;
-use \DgoraWcas\Admin\Troubleshooting;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -952,44 +950,6 @@ class Helpers {
 		return apply_filters( 'dgwt/wcas/attribute_taxonomies', $taxonomies );
 	}
 
-	public static function canInstallPremium() {
-		// TODO
-	}
-
-	/**
-	 * Get indexer demo HTML
-	 *
-	 * @return string
-	 */
-	public static function indexerDemoHtml() {
-		$html = '';
-
-		ob_start();
-
-		include DGWT_WCAS_DIR . 'partials/admin/indexer-header-demo.php';
-
-		$html .= ob_get_clean();
-
-		return $html;
-	}
-
-	/**
-	 * Get features HTML
-	 *
-	 * @return string
-	 */
-	public static function featuresHtml() {
-		$html = '';
-
-		ob_start();
-
-		include DGWT_WCAS_DIR . 'partials/admin/features.php';
-
-		$html .= ob_get_clean();
-
-		return $html;
-	}
-
 	/**
 	 * Get searchable custom fields keys
 	 *
@@ -1087,12 +1047,10 @@ class Helpers {
 	public static function isTableExists( $tableName ) {
 		global $wpdb;
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! self::isIndexing__premium_only() ) {
-				$cache = Cache::get( 'table_exists', 'database' );
-				if ( is_array( $cache ) ) {
-					return in_array( $tableName, $cache );
-				}
+		if ( ! self::isIndexing__premium_only() ) {
+			$cache = Cache::get( 'table_exists', 'database' );
+			if ( is_array( $cache ) ) {
+				return in_array( $tableName, $cache );
 			}
 		}
 
@@ -1111,11 +1069,9 @@ class Helpers {
 			$exist = true;
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! self::isIndexing__premium_only() ) {
-				if ( is_array( $result ) && ! empty( $result ) ) {
-					Cache::set( 'table_exists', $result, 'database' );
-				}
+		if ( ! self::isIndexing__premium_only() ) {
+			if ( is_array( $result ) && ! empty( $result ) ) {
+				Cache::set( 'table_exists', $result, 'database' );
 			}
 		}
 
@@ -1152,38 +1108,36 @@ class Helpers {
 	public static function removeBatchOptions__premium_only() {
 		global $wpdb;
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
 
-			/**
-			 * Searchable and readable index batch
-			 * Samples:
-			 * - wcas_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
-			 * - wcas_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
-			 */
+		/**
+		 * Searchable and readable index batch
+		 * Samples:
+		 * - wcas_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 * - wcas_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 */
 
-			$table  = $wpdb->options;
-			$column = 'option_name';
+		$table  = $wpdb->options;
+		$column = 'option_name';
 
-			if ( is_multisite() ) {
-				$table  = $wpdb->sitemeta;
-				$column = 'meta_key';
-			}
-
-			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query(
-				"
-			DELETE
-			FROM {$table}
-			WHERE {$column} LIKE '%_index_batch_%'
-			OR {$column} LIKE '%wcas_build_readable%'
-			OR {$column} LIKE '%wcas_build_searchable%'
-			OR {$column} LIKE '%wcas_build_variation%'
-			OR {$column} LIKE '%wcas_build_taxonomy%'
-		"
-			);
-			// phpcs:enable
-
+		if ( is_multisite() ) {
+			$table  = $wpdb->sitemeta;
+			$column = 'meta_key';
 		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			"
+		DELETE
+		FROM {$table}
+		WHERE {$column} LIKE '%_index_batch_%'
+		OR {$column} LIKE '%wcas_build_readable%'
+		OR {$column} LIKE '%wcas_build_searchable%'
+		OR {$column} LIKE '%wcas_build_variation%'
+		OR {$column} LIKE '%wcas_build_taxonomy%'
+	"
+		);
+		// phpcs:enable
+
 	}
 
 	/**
@@ -1643,7 +1597,7 @@ class Helpers {
 			'preloader_url'                   => '',
 			'taxonomy_brands'                 => '',
 			'img_url'                         => DGWT_WCAS_URL . 'assets/img/',
-			'is_premium'                      => dgoraAsfwFs()->is_premium(),
+			'is_premium'                      => true,
 			'layout_breakpoint'               => $layout->layout_breakpoint,
 			'mobile_overlay_breakpoint'       => $layout->mobile_overlay_breakpoint,
 			'mobile_overlay_wrapper'          => $layout->mobile_overlay_wrapper,
@@ -1694,22 +1648,20 @@ class Helpers {
 			$localize['current_lang'] = Multilingual::getCurrentLanguage();
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
 
-			$localize['dynamic_prices'] = Solver::shouldLoadPriceDynamically__premium_only();
+		$localize['dynamic_prices'] = defined( 'DGWT_WCAS_DYNAMIC_PRICES' ) && DGWT_WCAS_DYNAMIC_PRICES && DGWT_WCAS()->settings->getOption( 'show_product_price' ) === 'on';
 
-			$localize['debounce_wait_ms'] = apply_filters( 'dgwt/wcas/scripts/debounce_wait_ms', 100 );
+		$localize['debounce_wait_ms'] = apply_filters( 'dgwt/wcas/scripts/debounce_wait_ms', 100 );
 
-			if ( DGWT_WCAS()->brands->hasBrands() && DGWT_WCAS()->settings->getOption( 'show_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ) === 'on' ) {
-				$localize['taxonomy_brands'] = DGWT_WCAS()->brands->getBrandTaxonomy();
-			}
-
-			$variationSupportModes = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'variation_support_modes' );
-			if ( is_array( $variationSupportModes ) && in_array( 'exact_match', $variationSupportModes ) && ! in_array( 'as_single_product', $variationSupportModes ) ) {
-				$localize['go_to_first_variation_on_submit'] = true;
-			}
-			$localize['go_to_first_variation_on_submit'] = apply_filters( 'dgwt/wcas/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
+		if ( DGWT_WCAS()->brands->hasBrands() && DGWT_WCAS()->settings->getOption( 'show_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ) === 'on' ) {
+			$localize['taxonomy_brands'] = DGWT_WCAS()->brands->getBrandTaxonomy();
 		}
+
+		$variationSupportModes = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'variation_support_modes' );
+		if ( is_array( $variationSupportModes ) && in_array( 'exact_match', $variationSupportModes ) && ! in_array( 'as_single_product', $variationSupportModes ) ) {
+			$localize['go_to_first_variation_on_submit'] = true;
+		}
+		$localize['go_to_first_variation_on_submit'] = apply_filters( 'dgwt/wcas/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
 
 		// Min characters
 		$min_chars = DGWT_WCAS()->settings->getOption( 'min_chars' );
@@ -1784,15 +1736,13 @@ class Helpers {
 		switch ( $type ) {
 			case 'search':
 				$url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_ACTION );
-				if ( dgoraAsfwFs()->is__premium_only() ) {
-					$url = DGWT_WCAS_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
+				$url = DGWT_WCAS_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
 
-					if (
-						( get_option( 'dgwt_wcas_alternative_endpoint_enabled' ) === '1' && defined( 'DGWT_WCAS_SEARCH_PRO_ACTION' ) ) ||
-						( defined( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT' ) && DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT )
-					) {
-						$url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_PRO_ACTION );
-					}
+				if (
+					( get_option( 'dgwt_wcas_alternative_endpoint_enabled' ) === '1' && defined( 'DGWT_WCAS_SEARCH_PRO_ACTION' ) ) ||
+					( defined( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT' ) && DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT )
+				) {
+					$url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_PRO_ACTION );
 				}
 				break;
 			case 'details':

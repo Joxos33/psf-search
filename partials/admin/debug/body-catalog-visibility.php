@@ -44,7 +44,7 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 	</form>
 
 	<?php
-	if ( dgoraAsfwFs()->is__premium_only() ) :
+	
 		?>
 	<h3>Out of stock visibility fix tool</h3>
 	<p>Automatically regenerates visibility data in the <code>term_relationships</code> table for products marked as
@@ -56,7 +56,7 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 		<button class="button" type="submit">Fix out of stock visibility</button>
 	</form>
 		<?php
-	endif;
+	
 	?>
 
 	<br/>

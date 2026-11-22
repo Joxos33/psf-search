@@ -52,7 +52,6 @@ abstract class MainQuery {
 	private $foundProductsIds = [];
 	protected $foundProducts  = [];
 	protected $foundTax       = [];
-	protected $foundVendors   = [];
 	protected $foundPosts     = [];
 	/** @var string */
 	protected $lang = '';
@@ -486,28 +485,6 @@ abstract class MainQuery {
 	}
 
 	/**
-	 * Search no-products items (vendors)
-	 *
-	 * @return bool true if something was found
-	 */
-	public function searchVendors() {
-		$found = false;
-
-		$vendorQuery = new VendorQuery();
-		$vendorQuery->init();
-
-		if ( $vendorQuery->isEnabled() ) {
-			$this->foundVendors = $vendorQuery->search( $this->getPhrase() );
-
-			if ( ! empty( $this->foundVendors ) ) {
-				$found = true;
-			}
-		}
-
-		return $found;
-	}
-
-	/**
 	 * Search in Posts
 	 *
 	 * @param array $postTypes Post types to search in.
@@ -558,7 +535,7 @@ abstract class MainQuery {
 	 * @return  bool
 	 */
 	public function hasResults() {
-		return ! empty( $this->foundProductsIds ) || ! empty( $this->foundTax ) || ! empty( $this->foundPosts ) || ! empty( $this->foundVendors );
+		return ! empty( $this->foundProductsIds ) || ! empty( $this->foundTax ) || ! empty( $this->foundPosts );
 	}
 
 	/**

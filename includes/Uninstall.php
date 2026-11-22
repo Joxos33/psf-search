@@ -126,7 +126,6 @@ class Uninstall {
 			'dgwt_wcas_index_db_version',
 			'dgwt_wcas_tax_index_db_version',
 			'dgwt_wcas_var_index_db_version',
-			'dgwt_wcas_ven_index_db_version',
 			'dgwt_wcas_settings_show_advanced',
 			'dgwt_wcas_db_json_support',
 			'dgwt_wcas_images_regenerated',

@@ -4,7 +4,6 @@ namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable;
 
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Vendor;
 use DgoraWcas\Engines\TNTSearchMySQL\Config;
 use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
 
@@ -179,18 +178,6 @@ class AsyncProcess extends WPBackgroundProcess {
 
 		Builder::addInfo( 'end_readable_ts', time() );
 		Builder::log( '[Readable index] Completed' );
-
-		// Build vendor index if necessary
-		if ( Builder::canBuildVendorsIndex() ) {
-			try {
-				Vendor\Database::create( Config::getIndexRoleSuffix() );
-				Vendor\Request::handle();
-			} catch ( \Error $e ) {
-				Logger::handleThrowableError( $e, '[Vendors index] ' );
-			} catch ( \Exception $e ) {
-				Logger::handleThrowableError( $e, '[Vendors index] ' );
-			}
-		}
 
 		Builder::maybeDispatchTaxonomyAsyncProcess();
 

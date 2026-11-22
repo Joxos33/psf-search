@@ -368,52 +368,30 @@ class UserInterface {
 			wp_send_json_error( 'empty phrase' );
 		}
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			$res = DGWT_WCAS()->nativeSearch->getSearchResults( $phrase, true, 'autocomplete' );
+		if ( \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status' ) === 'completed' ) {
+			$search = new \DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\AjaxQuery();
+			$search->setPhrase( $phrase );
 
-			if ( is_array( $res ) && isset( $res['total'] ) ) {
-				$total = absint( $res['total'] );
+			if ( Multilingual::isMultilingual() ) {
+				$lang = ! empty( $_REQUEST['lang'] ) && Multilingual::isLangCode( sanitize_key( $_REQUEST['lang'] ) ) ? sanitize_key( $_REQUEST['lang'] ) : '';
+				$search->setLang( $lang );
+			}
 
-				if ( $total > 0 ) {
-					$data['status'] = 'with-results';
-					$data['html']   = $this->getCriticalPhraseMessage( $data['status'], $total );
-				} else {
-					$data['status'] = 'without-results';
-					$data['html']   = $this->getCriticalPhraseMessage( $data['status'] );
-				}
+			$search->searchProducts();
+			$search->searchPosts();
+			$search->searchTaxonomy();
+
+			if ( $search->hasResults() ) {
+				$data['status'] = 'with-results';
 			} else {
-				$data['status'] = 'error';
-				$data['html']   = $this->getCriticalPhraseMessage( $data['status'] );
+				$data['status'] = 'without-results';
 			}
+
+			$data['html'] = $this->getCriticalPhraseMessage( $data['status'] );
+
 		} else {
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				if ( \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status' ) === 'completed' ) {
-					$search = new \DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\AjaxQuery();
-					$search->setPhrase( $phrase );
-
-					if ( Multilingual::isMultilingual() ) {
-						$lang = ! empty( $_REQUEST['lang'] ) && Multilingual::isLangCode( sanitize_key( $_REQUEST['lang'] ) ) ? sanitize_key( $_REQUEST['lang'] ) : '';
-						$search->setLang( $lang );
-					}
-
-					$search->searchProducts();
-					$search->searchPosts();
-					$search->searchTaxonomy();
-					$search->searchVendors();
-
-					if ( $search->hasResults() ) {
-						$data['status'] = 'with-results';
-					} else {
-						$data['status'] = 'without-results';
-					}
-
-					$data['html'] = $this->getCriticalPhraseMessage( $data['status'] );
-
-				} else {
-					$data['status'] = 'wrong-index';
-					$data['html']   = $this->getCriticalPhraseMessage( $data['status'] );
-				}
-			}
+			$data['status'] = 'wrong-index';
+			$data['html']   = $this->getCriticalPhraseMessage( $data['status'] );
 		}
 
 		wp_send_json_success( $data );

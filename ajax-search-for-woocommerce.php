@@ -1,56 +1,14 @@
 <?php
 /**
- * Plugin Name: FiboSearch - AJAX Search for WooCommerce (Pro)
- * Plugin URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
- * Description: The most popular WooCommerce product search. Gives your users a well-designed advanced AJAX search bar with live search suggestions.
- * Version: 1.34.3
- * Update URI: https://api.freemius.com
- * Author: FiboSearch Team
- * Author URI: https://fibosearch.com?utm_source=wp-admin&utm_medium=referral&utm_campaign=author_uri&utm_gen=utmdc
- * Text Domain: ajax-search-for-woocommerce
- * Domain Path: /languages
+ * Plugin Name: PSF Search
+ * Description: Live product search for Puget Sound Firearms. Private fork of FiboSearch Pro 1.34.3 (GPLv2), stripped and tailored for PSF's Flatsome/WooCommerce store.
+ * Version: 0.1.0
+ * Author: Puget Sound Firearms
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Requires Plugins: woocommerce
- * WC requires at least: 5.5
- * WC tested up to: 11.2
- *
- * @fs_premium_only /includes/Engines/TNTSearchMySQL/
- * @fs_premium_only /vendor-pro/
- * @fs_premium_only /composer-pro/
- * @fs_premium_only /languages/
- * @fs_premium_only /fs/placeholder.php
- * @fs_premium_only /partials/admin/indexer-header.php, /partials/admin/indexer-notices.php, /partials/admin/indexer-body.php, /partials/admin/system-status.php, /partials/admin/pro-starter.php
- * @fs_premium_only /assets/css/selectize.css, /assets/js/selectize.min.js, /assets/js/vue.js, /assets/js/vue.min.js, /assets/js/vue2-selectize.js
- * @fs_premium_only /partials/admin/debug/body-indexer.php, /partials/admin/debug/body-product.php, /partials/admin/debug/body-search.php, /partials/admin/debug/body-source-query.php
- * @fs_premium_only /partials/details-panel/page.php, /partials/details-panel/post.php
- * @fs_premium_only /partials/emails
- * @fs_premium_only /partials/search-results-page/
- * @fs_premium_only /includes/Post.php
- * @fs_premium_only /includes/Integrations/WpCliFiboSearchIndex.php
- * @fs_premium_only /includes/Integrations/Marketplace/
- * @fs_premium_only /includes/Integrations/Plugins/BoosterIO/
- * @fs_premium_only /includes/Integrations/Plugins/B2BKing/
- * @fs_premium_only /includes/Integrations/Plugins/MemberPress/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceProductsVisibility/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceWholeSalePricesIntegration/Filters.php
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceCatalogVisibilityOptions/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceProductFilters/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceProtectedCategories/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommercePrivateStore/Filters.php
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceShowSingleVariations/
- * @fs_premium_only /includes/Integrations/Plugins/TranslatePress/
- * @fs_premium_only /includes/Integrations/Plugins/WPML/
- * @fs_premium_only /includes/Integrations/Plugins/AdvancedCustomFields/
- * @fs_premium_only /includes/Integrations/Plugins/AdvancedCustomFieldsTable/
- * @fs_premium_only /includes/Integrations/Plugins/QtranslateXt/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceMemberships/
- * @fs_premium_only /includes/Integrations/Plugins/CustomProductTabsForWooCommerce/
- * @fs_premium_only /includes/Integrations/Plugins/ProductSpecifications/
- * @fs_premium_only /includes/Integrations/Plugins/Elementor/PostsWidgetsSkins
- * @fs_premium_only /includes/Integrations/Plugins/Elementor/PostsWidget.php
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceB2B/
- * @fs_premium_only /includes/Integrations/Plugins/AddifyB2B/
- * @fs_premium_only /includes/Integrations/Plugins/ProductVisibilityByUserRole/
- * @fs_premium_only /includes/Integrations/Plugins/WooCommerceSingleVariations/
+ * Requires PHP: 8.1
+ * WC requires at least: 9.0
  */
 
 // Exit if accessed directly
@@ -58,13 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs' ) ) {
-
-
-	$fspath = dirname( __FILE__ ) . '/fs/config.php';
-	if ( file_exists( $fspath ) ) {
-		require_once $fspath;
-	}
+if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) ) {
 
 	final class DGWT_WC_Ajax_Search {
 
@@ -89,10 +41,6 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 		 * @var \DgoraWcas\Integrations\Brands
 		 */
 		public $brands;
-		/**
-		 * @var \DgoraWcas\Integrations\Marketplace\Marketplace
-		 */
-		public $marketplace;
 		/**
 		 * @var \DgoraWcas\Engines\WordPressNative\Search
 		 */
@@ -140,24 +88,19 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 
 				self::$instance->multilingual = new \DgoraWcas\Multilingual();
 
-				if ( dgoraAsfwFs()->is__premium_only() ) {
-					self::$instance->tntsearchMySqlValid = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::isIndexValid();
+				self::$instance->tntsearchMySqlValid = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::isIndexValid();
 
-					self::$instance->engine = 'native';
+				self::$instance->engine = 'native';
 
-					if ( self::$instance->tntsearchMySqlValid ) {
-						self::$instance->engine = 'tntsearchMySql';
-					}
+				if ( self::$instance->tntsearchMySqlValid ) {
+					self::$instance->engine = 'tntsearchMySql';
+				}
 
-					self::$instance->tntsearchMySql = new \DgoraWcas\Engines\TNTSearchMySQL\TNTSearch();
+				self::$instance->tntsearchMySql = new \DgoraWcas\Engines\TNTSearchMySQL\TNTSearch();
 
-					self::$instance->marketplace = new \DgoraWcas\Integrations\Marketplace\Marketplace();
-					self::$instance->marketplace->init();
-
-					// WP-CLI integration.
-					if ( defined( 'WP_CLI' ) && WP_CLI ) {
-						WP_CLI::add_command( 'fibosearch index', '\DgoraWcas\Integrations\WpCliFiboSearchIndex' );
-					}
+				// WP-CLI integration.
+				if ( defined( 'WP_CLI' ) && WP_CLI ) {
+					WP_CLI::add_command( 'fibosearch index', '\DgoraWcas\Integrations\WpCliFiboSearchIndex' );
 				}
 
 				self::$instance->nativeSearch = new \DgoraWcas\Engines\WordPressNative\Search();
@@ -182,19 +125,12 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 				if ( is_admin() ) {
 					\DgoraWcas\Admin\Install::maybeInstall();
 					new \DgoraWcas\Admin\AdminMenu();
-					new \DgoraWcas\Admin\Promo\FiboSearch2Teaser();
-					new \DgoraWcas\Admin\Promo\FeedbackNotice();
-					new \DgoraWcas\Admin\Promo\FiboFiltersTeaser();
-					new \DgoraWcas\Admin\Promo\Upgrade();
-					new \DgoraWcas\Admin\Troubleshooting();
 				}
 
 				if ( is_admin() || wp_doing_cron() ) {
 					$analytics = new \DgoraWcas\Analytics\Analytics();
 					$analytics->init();
 				}
-
-				new \DgoraWcas\Integrations\Solver();
 
 				global $wp_version;
 
@@ -226,11 +162,9 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 				__FILE__,
 				function () {
 
-					if ( dgoraAsfwFs()->is__premium_only() ) {
-						\DgoraWcas\Helpers::removeBatchOptions__premium_only();
-						$maintenance = new \DgoraWcas\Analytics\Maintenance();
-						$maintenance->unschedule();
-					}
+					\DgoraWcas\Helpers::removeBatchOptions__premium_only();
+					$maintenance = new \DgoraWcas\Analytics\Maintenance();
+					$maintenance->unschedule();
 				}
 			);
 
@@ -254,7 +188,7 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 				return false;
 			}
 
-			if ( ! file_exists( DGWT_WCAS_DIR . 'vendor/autoload.php' ) ) {
+			if ( ! file_exists( DGWT_WCAS_DIR . 'autoload.php' ) ) {
 				add_action( 'admin_notices', [ $this, 'adminNoticeNoVendor' ] );
 
 				return false;
@@ -342,10 +276,8 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 
 			$v = get_file_data( __FILE__, [ 'Version' => 'Version' ], 'plugin' );
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				$this->define( 'DGWT_WCAS_NAME', 'FiboSearch Pro' );
-				$this->define( 'DGWT_WCAS_FULL_NAME', 'FiboSearch Pro - AJAX Search for WooCommerce' );
-			}
+			$this->define( 'DGWT_WCAS_NAME', 'FiboSearch Pro' );
+			$this->define( 'DGWT_WCAS_FULL_NAME', 'FiboSearch Pro - AJAX Search for WooCommerce' );
 
 			$this->define( 'DGWT_WCAS_NAME', 'FiboSearch' );
 			$this->define( 'DGWT_WCAS_FULL_NAME', 'FiboSearch - AJAX Search for WooCommerce' );
@@ -360,9 +292,7 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 			$this->define( 'DGWT_WCAS_SEARCH_ACTION', 'dgwt_wcas_ajax_search' );
 			$this->define( 'DGWT_WCAS_RESULT_DETAILS_ACTION', 'dgwt_wcas_result_details' );
 			$this->define( 'DGWT_WCAS_GET_PRICES_ACTION', 'dgwt_wcas_get_prices' );
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				$this->define( 'DGWT_WCAS_SEARCH_PRO_ACTION', 'dgwt_wcas_ajax_search_pro' );
-			}
+			$this->define( 'DGWT_WCAS_SEARCH_PRO_ACTION', 'dgwt_wcas_ajax_search_pro' );
 
 			$this->define( 'DGWT_WCAS_WC_AJAX_ENDPOINT', true );
 
@@ -388,7 +318,7 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 		 * @return void
 		 */
 		public function autoload() {
-			require_once DGWT_WCAS_DIR . 'vendor/autoload.php';
+			require_once DGWT_WCAS_DIR . 'autoload.php';
 			require_once DGWT_WCAS_DIR . 'widget.php';
 		}
 
@@ -398,13 +328,10 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 		 * @return void
 		 */
 		private function hooks() {
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Database::registerTables();
-				\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Database::registerTables();
-				\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Database::registerTables();
-				\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Vendor\Database::registerTables();
-				\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Storage::registerTables();
-			}
+			\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Database::registerTables();
+			\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Database::registerTables();
+			\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Database::registerTables();
+			\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Storage::registerTables();
 
 			add_action( 'admin_init', [ $this, 'adminScripts' ], 8 );
 		}
@@ -459,19 +386,17 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 					],
 					'postTypes'   => [ 'post', 'page' ],
 				];
-				if ( dgoraAsfwFs()->is__premium_only() ) {
-					$localize['is_premium'] = true;
-					$localize['postTypes']  = $this->tntsearchMySql->postTypes->getPostTypesSlugs();
-					//phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
-					$localize['adminLabels']['custom_fields_loading_error'] = __( 'Error loading custom fields.', 'ajax-search-for-woocommerce' ) . ' ' . '<a target="_blank" href="https://fibosearch.com/documentation/troubleshooting/unable-to-select-custom-fields-in-fibosearch-settings/">' . __( 'Learn more', 'ajax-search-for-woocommerce' ) . '.</a>';
-				}
+				$localize['is_premium'] = true;
+				$localize['postTypes']  = $this->tntsearchMySql->postTypes->getPostTypesSlugs();
+				//phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
+				$localize['adminLabels']['custom_fields_loading_error'] = __( 'Error loading custom fields.', 'ajax-search-for-woocommerce' ) . ' ' . '<a target="_blank" href="https://fibosearch.com/documentation/troubleshooting/unable-to-select-custom-fields-in-fibosearch-settings/">' . __( 'Learn more', 'ajax-search-for-woocommerce' ) . '.</a>';
 				$localize = apply_filters( 'dgwt/wcas/scripts/admin/localize', $localize );
 				wp_localize_script( 'dgwt-wcas-admin-js', 'dgwt_wcas', $localize );
 
 				// Enqueue CSS
 				wp_enqueue_style( 'dgwt-wcas-admin-style' );
 
-				if ( ! dgoraAsfwFs()->is_activation_mode() ) {
+				if ( ! false ) {
 					add_thickbox();
 					wp_enqueue_style( 'wp-color-picker' );
 					wp_enqueue_script( 'dgwt-wcas-admin-js' );
@@ -482,12 +407,10 @@ if ( ! class_exists( 'DGWT_WC_Ajax_Search' ) && ! function_exists( 'dgoraAsfwFs'
 					wp_enqueue_script( 'dgwt-wcas-admin-tooltip-js', DGWT_WCAS_URL . 'assets/js/tooltip.min.js', [ 'jquery' ], DGWT_WCAS_VERSION );
 					wp_enqueue_style( 'dgwt-wcas-style', apply_filters( 'dgwt/wcas/scripts/css_style_url', DGWT_WCAS_URL . 'assets/css/style' . $min . '.css' ), [], DGWT_WCAS_VERSION );
 
-					if ( dgoraAsfwFs()->is__premium_only() ) {
-						wp_enqueue_style( 'dgwt-wcas-admin-selectize', DGWT_WCAS_URL . 'assets/css/selectize' . $min . '.css', [], DGWT_WCAS_VERSION );
-						wp_enqueue_script( 'dgwt-wcas-admin-selectize-js', DGWT_WCAS_URL . 'assets/js/selectize.min.js', [ 'jquery' ], DGWT_WCAS_VERSION );
-						wp_enqueue_script( 'dgwt-wcas-admin-vue', DGWT_WCAS_URL . 'assets/js/vue' . $min . '.js', [], DGWT_WCAS_VERSION );
-						wp_enqueue_script( 'dgwt-wcas-admin-vue-selectize', DGWT_WCAS_URL . 'assets/js/vue2-selectize.js', [ 'dgwt-wcas-admin-selectize-js' ], DGWT_WCAS_VERSION );
-					}
+					wp_enqueue_style( 'dgwt-wcas-admin-selectize', DGWT_WCAS_URL . 'assets/css/selectize' . $min . '.css', [], DGWT_WCAS_VERSION );
+					wp_enqueue_script( 'dgwt-wcas-admin-selectize-js', DGWT_WCAS_URL . 'assets/js/selectize.min.js', [ 'jquery' ], DGWT_WCAS_VERSION );
+					wp_enqueue_script( 'dgwt-wcas-admin-vue', DGWT_WCAS_URL . 'assets/js/vue' . $min . '.js', [], DGWT_WCAS_VERSION );
+					wp_enqueue_script( 'dgwt-wcas-admin-vue-selectize', DGWT_WCAS_URL . 'assets/js/vue2-selectize.js', [ 'dgwt-wcas-admin-selectize-js' ], DGWT_WCAS_VERSION );
 					//phpcs:enable
 				}
 			}

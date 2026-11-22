@@ -255,65 +255,44 @@ class Install {
 	public static function checkVersion() {
 		if ( ! defined( 'IFRAME_REQUEST' ) ) {
 
-			// One-time removal of Freemius sticky notices that older versions may have stored with
-			// unescaped request data. The escaping filters in fs/config.php only
-			// affect notices written after the update, so previously stored ones are cleared here.
-			if ( get_option( 'dgwt_wcas_security_notices_cleaned' ) !== 'yes' ) {
-				dgoraAsfwFs()->remove_sticky( [ 'plan_purchased', 'activation_pending' ], false );
-				// The call above always targets the current site's storage (also from the network admin). On multisite
-				// the SDK keeps network-level notices in a separate storage, so clear that one explicitly as well.
-				if ( is_multisite() ) {
-					dgoraAsfwFs()->remove_sticky( [ 'plan_purchased', 'activation_pending' ], true );
-				}
-				// Autoloaded: this flag is read on every admin_init, so keep it in the preloaded
-				// options instead of querying the database on each admin page load.
-				update_option( 'dgwt_wcas_security_notices_cleaned', 'yes', true );
-			}
+			$pluginVersion = Helpers::getPluginVersion__premium_only();
 
-			if ( ! dgoraAsfwFs()->is_premium() && get_option( 'dgwt_wcas_version' ) != DGWT_WCAS_VERSION ) {
-				self::install();
-			}
+			if ( $pluginVersion != DGWT_WCAS_VERSION ) {
+				Builder::flushOptionsCache();
+				update_option( 'dgwt_wcas_version_pro', DGWT_WCAS_VERSION );
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				$pluginVersion = Helpers::getPluginVersion__premium_only();
+				/**
+				 * Temporarily removing the index rebuild action when plugin settings change to prevent it from
+				 * occurring in self::createOptions(), as the index rebuild will be triggered manually a few lines later.
+				 */
+				remove_action( 'update_option_' . DGWT_WCAS_SETTINGS_KEY, [ DGWT_WCAS()->tntsearchMySql, 'buildIndexOnchangeSettings' ], 10 );
 
-				if ( $pluginVersion != DGWT_WCAS_VERSION ) {
-					Builder::flushOptionsCache();
-					update_option( 'dgwt_wcas_version_pro', DGWT_WCAS_VERSION );
+				self::createOptions();
 
-					/**
-					 * Temporarily removing the index rebuild action when plugin settings change to prevent it from
-					 * occurring in self::createOptions(), as the index rebuild will be triggered manually a few lines later.
-					 */
-					remove_action( 'update_option_' . DGWT_WCAS_SETTINGS_KEY, [ DGWT_WCAS()->tntsearchMySql, 'buildIndexOnchangeSettings' ], 10 );
+				self::maybeUpgradeOptions( 'pro' );
 
-					self::createOptions();
+				self::checkIfDbSupportJson();
 
-					self::maybeUpgradeOptions( 'pro' );
+				self::checkIfDbSupportLocks();
 
-					self::checkIfDbSupportJson();
+				Storage::maybeCreate();
 
-					self::checkIfDbSupportLocks();
+				// Remove deprecated options for storing indexer logs.
+				delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs' );
+				delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs_tmp' );
 
-					Storage::maybeCreate();
-
-					// Remove deprecated options for storing indexer logs.
-					delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs' );
-					delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs_tmp' );
-
-					if ( self::shouldRebuildIndex__premium_only( $pluginVersion, DGWT_WCAS_VERSION ) ) {
-						// Whenever a plugin version is changed, we always remove the old index
-						// when parallel building is enabled, to avoid compatibility problems.
-						if ( Config::isParallelBuildingEnabled() ) {
-							Builder::wipeIndexTables( 'main' );
-							Builder::addInfo( 'status', 'not-exist', 'main' );
-						}
-
-						Builder::buildIndex();
+				if ( self::shouldRebuildIndex__premium_only( $pluginVersion, DGWT_WCAS_VERSION ) ) {
+					// Whenever a plugin version is changed, we always remove the old index
+					// when parallel building is enabled, to avoid compatibility problems.
+					if ( Config::isParallelBuildingEnabled() ) {
+						Builder::wipeIndexTables( 'main' );
+						Builder::addInfo( 'status', 'not-exist', 'main' );
 					}
 
-					Builder::wipeSQLiteAfterEffects();
+					Builder::buildIndex();
 				}
+
+				Builder::wipeSQLiteAfterEffects();
 			}
 		}
 	}

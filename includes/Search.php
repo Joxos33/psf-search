@@ -51,13 +51,8 @@ class Search {
 			return $args;
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			list( $results, $totalResults, $totalPages ) = $this->doSearch__premium_only( $phrase, $args );
-		}
+		list( $results, $totalResults, $totalPages ) = $this->doSearch__premium_only( $phrase, $args );
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			list( $results, $totalResults, $totalPages ) = $this->doSearch( $phrase, $args );
-		}
 
 		$response = [
 			'results'     => $results,
@@ -219,9 +214,7 @@ class Search {
 		}
 
 		$allowedPostTypes = [ 'product' ];
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			$allowedPostTypes = Helpers::getAllowedPostTypes();
-		}
+		$allowedPostTypes = Helpers::getAllowedPostTypes();
 		if ( ! in_array( $args['post_type'], $allowedPostTypes, true ) ) {
 			$error->add( 'dgwt-wcas-invalid-arg-post-type', 'Invalid argument: post_type' );
 		}
@@ -230,14 +223,12 @@ class Search {
 			$error->add( 'dgwt-wcas-invalid-arg-fields', 'Invalid argument: fields' );
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
-				$error->add( 'dgwt-wcas-invalid-arg-orderby', 'Invalid argument: orderby' );
-			}
+		if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
+			$error->add( 'dgwt-wcas-invalid-arg-orderby', 'Invalid argument: orderby' );
+		}
 
-			if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
-				$error->add( 'dgwt-wcas-invalid-arg-order', 'Invalid argument: order' );
-			}
+		if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
+			$error->add( 'dgwt-wcas-invalid-arg-order', 'Invalid argument: order' );
 		}
 
 		if ( $error->has_errors() ) {

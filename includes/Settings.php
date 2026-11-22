@@ -2,9 +2,7 @@
 
 namespace DgoraWcas;
 
-use DgoraWcas\Admin\Promo\Upgrade;
 use DgoraWcas\Admin\SettingsAPI;
-use DgoraWcas\Admin\Promo\FeedbackNotice;
 use DgoraWcas\Engines\TNTSearchMySQL\Config;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Scheduler;
@@ -79,22 +77,20 @@ class Settings {
 
 		add_action( 'wp_ajax_dgwt_wcas_adv_settings', [ $this, 'toggleAdvancedSettings' ] );
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			add_action(
-				'wp_ajax_dgwt_wcas_settings_list_custom_fields',
-				[
-					$this,
-					'listSearchableCustomFields__premium_only',
-				]
-			);
-			add_action(
-				'wp_ajax_dgwt_wcas_settings_search_terms',
-				[
-					$this,
-					'searchTermsForFilter__premium_only',
-				]
-			);
-		}
+		add_action(
+			'wp_ajax_dgwt_wcas_settings_list_custom_fields',
+			[
+				$this,
+				'listSearchableCustomFields__premium_only',
+			]
+		);
+		add_action(
+			'wp_ajax_dgwt_wcas_settings_search_terms',
+			[
+				$this,
+				'searchTermsForFilter__premium_only',
+			]
+		);
 
 		if ( Helpers::shopManagerHasAccess() ) {
 			add_filter(
@@ -150,34 +146,23 @@ class Settings {
 			],
 		];
 
-		if ( dgoraAsfwFs()->is_premium() ) {
-			$suffix = '';
-			// TODO tutaj trzeba wskazac budowany indeks
-			if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark active">!</span>';
-			} else {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark">!</span>';
-			}
-
-			if ( in_array( Builder::getInfo( 'status', Config::getIndexRole() ), [ 'preparing', 'building', 'cancellation' ] ) ) {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress active"></span>';
-			} else {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress"></span>';
-			}
-			$sections[30] = [
-				'id'    => 'dgwt_wcas_performance',
-				'title' => __( 'Indexer', 'ajax-search-for-woocommerce' ) . $suffix,
-			];
+		$suffix = '';
+		// TODO tutaj trzeba wskazac budowany indeks
+		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
+			$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark active">!</span>';
 		} else {
-			$sections[30] = [
-				'id'    => 'dgwt_wcas_performance',
-				'title' => Helpers::getSettingsProLabel(
-					__( 'Increase sales', 'ajax-search-for-woocommerce' ),
-					'header',
-					__( 'with simple tricks', 'ajax-search-for-woocommerce' )
-				),
-			];
+			$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark">!</span>';
 		}
+
+		if ( in_array( Builder::getInfo( 'status', Config::getIndexRole() ), [ 'preparing', 'building', 'cancellation' ] ) ) {
+			$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress active"></span>';
+		} else {
+			$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress"></span>';
+		}
+		$sections[30] = [
+			'id'    => 'dgwt_wcas_performance',
+			'title' => __( 'Indexer', 'ajax-search-for-woocommerce' ) . $suffix,
+		];
 
 		$sections = apply_filters( 'dgwt_wcas_settings_sections', $sections ); // deprecated since v1.2.0
 		$sections = apply_filters( 'dgwt/wcas/settings/sections', $sections );
@@ -676,15 +661,9 @@ class Settings {
 						'name'    => 'search_in_product_sku',
 						'label'   => __( 'Search in SKU', 'ajax-search-for-woocommerce' ),
 						'type'    => 'checkbox',
-						'desc'    => dgoraAsfwFs()->is_premium() ? __(
+						'desc'    => __(
 							'searching also in variable products SKU',
 							'ajax-search-for-woocommerce'
-						) : sprintf(
-							__(
-								'Searching in variable products SKU is available only in <a target="_blank" href="%s">the pro version</a>.',
-								'ajax-search-for-woocommerce'
-							),
-							Upgrade::getUpgradeUrl()
 						),
 						'default' => 'off',
 					],
@@ -692,15 +671,9 @@ class Settings {
 						'name'    => 'search_in_product_global_unique_id',
 						'label'   => __( 'Search in GUID', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_product_global_unique_id', __( 'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).', 'ajax-search-for-woocommerce' ) ),
 						'type'    => 'checkbox',
-						'desc'    => dgoraAsfwFs()->is_premium() ? __(
+						'desc'    => __(
 							'searching also in variable products GUID',
 							'ajax-search-for-woocommerce'
-						) : sprintf(
-							__(
-								'Searching in variable products GUID is available only in <a target="_blank" href="%s">the pro version</a>.',
-								'ajax-search-for-woocommerce'
-							),
-							Upgrade::getUpgradeUrl()
 						),
 						'default' => 'off',
 						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-hidden dgwt-wcas-premium-only',
@@ -807,12 +780,6 @@ class Settings {
 			'dgwt_wcas_performance'  => apply_filters(
 				'dgwt/wcas/settings/section=performance',
 				[
-					0   => [
-						'name'  => 'pro_features',
-						'label' => __( 'Pro features', 'ajax-search-for-woocommerce' ),
-						'type'  => 'desc',
-						'desc'  => Helpers::featuresHtml(),
-					],
 					10  => [
 						'name'  => 'search_engine_head',
 						'label' => __( 'Speed up search!', 'ajax-search-for-woocommerce' ),
@@ -875,160 +842,121 @@ class Settings {
 			$fuzzySearchLink
 		);
 
-		if ( dgoraAsfwFs()->is_premium() ) {
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
 
-				// Custom fields option
-				$settingsFields['dgwt_wcas_search'][300] = [
-					'name'                 => 'search_in_custom_fields',
-					'label'                => __( 'Search in custom fields', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
-					'type'                 => 'selectize',
-					'options'              => [],
-					'sanitize_callback'    => [
-						'\DgoraWcas\Admin\SettingsAPI',
-						'sanitize_selectize_custom_fields__premium_only',
-					],
-					'desc'                 => __( 'select the custom fields you want to add to the search scope', 'ajax-search-for-woocommerce' ),
-					'disabled_before_init' => true,
-				];
+		// Custom fields option
+		$settingsFields['dgwt_wcas_search'][300] = [
+			'name'                 => 'search_in_custom_fields',
+			'label'                => __( 'Search in custom fields', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
+			'type'                 => 'selectize',
+			'options'              => [],
+			'sanitize_callback'    => [
+				'\DgoraWcas\Admin\SettingsAPI',
+				'sanitize_selectize_custom_fields__premium_only',
+			],
+			'desc'                 => __( 'select the custom fields you want to add to the search scope', 'ajax-search-for-woocommerce' ),
+			'disabled_before_init' => true,
+		];
 
-				// Fuzzy search option
-				$settingsFields['dgwt_wcas_search'][450] = [
-					'name'    => 'fuzziness_enabled',
-					'label'   => __( 'Fuzzy matching', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'fuzzy_search', $fuzzinesText2 ),
-					'class'   => 'dgwt-wcas-premium-only',
-					'type'    => 'select',
-					'options' => [
-						'off'    => __( '-- Disabled', 'ajax-search-for-woocommerce' ),
-						'soft'   => __( 'Soft', 'ajax-search-for-woocommerce' ),
-						'normal' => __( 'Normal', 'ajax-search-for-woocommerce' ),
-						'hard'   => __( 'Hard', 'ajax-search-for-woocommerce' ),
-					],
-					'default' => 'normal',
-				];
+		// Fuzzy search option
+		$settingsFields['dgwt_wcas_search'][450] = [
+			'name'    => 'fuzziness_enabled',
+			'label'   => __( 'Fuzzy matching', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'fuzzy_search', $fuzzinesText2 ),
+			'class'   => 'dgwt-wcas-premium-only',
+			'type'    => 'select',
+			'options' => [
+				'off'    => __( '-- Disabled', 'ajax-search-for-woocommerce' ),
+				'soft'   => __( 'Soft', 'ajax-search-for-woocommerce' ),
+				'normal' => __( 'Normal', 'ajax-search-for-woocommerce' ),
+				'hard'   => __( 'Hard', 'ajax-search-for-woocommerce' ),
+			],
+			'default' => 'normal',
+		];
 
-				// Exclude/include products feature
-				$settingsFields['dgwt_wcas_search'][600] = [
-					'name'  => 'filter_products_head',
-					'label' => __( 'Exclude/include products', 'ajax-search-for-woocommerce' ),
-					'type'  => 'head',
-					'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
-				];
-				$settingsFields['dgwt_wcas_search'][625] = [
-					'name'    => 'filter_products_mode',
-					'label'   => __( 'Filtering mode', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
-						'filter_products_mode',
-						__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
-						'',
-						'right'
-					),
-					'class'   => 'js-dgwt-wcas-adv-settings',
-					'type'    => 'select',
-					'options' => [
-						'exclude' => __( 'Exclude', 'ajax-search-for-woocommerce' ),
-						'include' => __( 'Include', 'ajax-search-for-woocommerce' ),
-					],
-					'default' => 'exclude',
-				];
-				$settingsFields['dgwt_wcas_search'][650] = [
-					'name'              => 'filter_products_rules',
-					'label'             => __( 'Filters', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
-						'filter_products_rules',
-						__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
-						'',
-						'right'
-					),
-					'type'              => 'filters_rules__premium_only',
-					'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'sanitize_filters_rules__premium_only' ],
-					'class'             => 'js-dgwt-wcas-adv-settings',
-					'default'           => '[]',
-				];
+		// Exclude/include products feature
+		$settingsFields['dgwt_wcas_search'][600] = [
+			'name'  => 'filter_products_head',
+			'label' => __( 'Exclude/include products', 'ajax-search-for-woocommerce' ),
+			'type'  => 'head',
+			'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+		];
+		$settingsFields['dgwt_wcas_search'][625] = [
+			'name'    => 'filter_products_mode',
+			'label'   => __( 'Filtering mode', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+				'filter_products_mode',
+				__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
+				'',
+				'right'
+			),
+			'class'   => 'js-dgwt-wcas-adv-settings',
+			'type'    => 'select',
+			'options' => [
+				'exclude' => __( 'Exclude', 'ajax-search-for-woocommerce' ),
+				'include' => __( 'Include', 'ajax-search-for-woocommerce' ),
+			],
+			'default' => 'exclude',
+		];
+		$settingsFields['dgwt_wcas_search'][650] = [
+			'name'              => 'filter_products_rules',
+			'label'             => __( 'Filters', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+				'filter_products_rules',
+				__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
+				'',
+				'right'
+			),
+			'type'              => 'filters_rules__premium_only',
+			'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'sanitize_filters_rules__premium_only' ],
+			'class'             => 'js-dgwt-wcas-adv-settings',
+			'default'           => '[]',
+		];
 
-				// Search in SKU - tooltip only for Pro version.
-				$settingsFields['dgwt_wcas_search'][150]['label'] .= ' ' .
-					Helpers::createQuestionMark(
-						'search_in_product_sku',
-						sprintf(
-							'%s %s',
-							__( 'In the autocomplete results, a variation may appear when there\'s an exact SKU match.', 'ajax-search-for-woocommerce' ),
-							sprintf( $readMore, $searchBySkuLink )
-						)
-					);
+		// Search in SKU - tooltip only for Pro version.
+		$settingsFields['dgwt_wcas_search'][150]['label'] .= ' ' .
+			Helpers::createQuestionMark(
+				'search_in_product_sku',
+				sprintf(
+					'%s %s',
+					__( 'In the autocomplete results, a variation may appear when there\'s an exact SKU match.', 'ajax-search-for-woocommerce' ),
+					sprintf( $readMore, $searchBySkuLink )
+				)
+			);
 
-				// Search in GUID.
-				$settingsFields['dgwt_wcas_search'][160]['label'] =
-					__( 'Search in GUID', 'ajax-search-for-woocommerce' ) . ' ' .
-					Helpers::createQuestionMark(
-						'search_in_product_global_unique_id',
-						__(
-							'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).',
-							'ajax-search-for-woocommerce'
-						) . '<br />' .
-						__(
-							'In the autocomplete results, a variation may appear when there\'s an exact GUID match.',
-							'ajax-search-for-woocommerce'
-						) . ' ' .
-						sprintf( $readMore, $searchByGuidLink )
-					);
+		// Search in GUID.
+		$settingsFields['dgwt_wcas_search'][160]['label'] =
+			__( 'Search in GUID', 'ajax-search-for-woocommerce' ) . ' ' .
+			Helpers::createQuestionMark(
+				'search_in_product_global_unique_id',
+				__(
+					'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).',
+					'ajax-search-for-woocommerce'
+				) . '<br />' .
+				__(
+					'In the autocomplete results, a variation may appear when there\'s an exact GUID match.',
+					'ajax-search-for-woocommerce'
+				) . ' ' .
+				sprintf( $readMore, $searchByGuidLink )
+			);
 
-				// Indexer feature
-				$settingsFields['dgwt_wcas_performance'][11] = [
-					'name'  => 'search_engine_build',
-					'label' => __( 'Index status', 'ajax-search-for-woocommerce' ),
-					'type'  => 'desc',
-					'desc'  => Helpers::isSettingsPage() ? Builder::renderIndexingStatus() : '',
-					'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
-				];
+		// Indexer feature
+		$settingsFields['dgwt_wcas_performance'][11] = [
+			'name'  => 'search_engine_build',
+			'label' => __( 'Index status', 'ajax-search-for-woocommerce' ),
+			'type'  => 'desc',
+			'desc'  => Helpers::isSettingsPage() ? Builder::renderIndexingStatus() : '',
+			'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
+		];
 
-				// Show next task description
-				$settingsFields['dgwt_wcas_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
+		// Show next task description
+		$settingsFields['dgwt_wcas_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
 
-				// Remove promo box with list of Pro features
-				unset( $settingsFields['dgwt_wcas_performance'][0] );
-			}
-		} else {
-
-			// Fuzzy search feature preview
-			$settingsFields['dgwt_wcas_search'][450] = [
-				'name'    => 'fuzziness_enabled_demo',
-				'label'   => __( 'Fuzzy matching', 'ajax-search-for-woocommerce' ),
-				'desc'    => $fuzzinesText1 . ' ' . $fuzzinesText2,
-				'class'   => 'dgwt-wcas-premium-only',
-				'type'    => 'select',
-				'options' => [
-					'off'    => __( '-- Disabled', 'ajax-search-for-woocommerce' ),
-					'soft'   => __( 'Soft', 'ajax-search-for-woocommerce' ),
-					'normal' => __( 'Normal', 'ajax-search-for-woocommerce' ),
-					'hard'   => __( 'Hard', 'ajax-search-for-woocommerce' ),
-				],
-				'default' => 'off',
-			];
-
-			// Indexer feature preview
-			$settingsFields['dgwt_wcas_performance'][11] = [
-				'name'  => 'search_engine_build',
-				'label' => __( 'Index status', 'ajax-search-for-woocommerce' ),
-				'type'  => 'desc',
-				'desc'  => Helpers::indexerDemoHtml(),
-				'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
-			];
-		}
+		// Remove promo box with list of Pro features
+		unset( $settingsFields['dgwt_wcas_performance'][0] );
 
 		// Show "Search in GUID" option if there are products with these values.
 		if ( Helpers::isSettingsPage() && Helpers::productsUseGlobalUniqueId() ) {
 			$settingsFields['dgwt_wcas_search'][160]['class'] = str_replace( 'dgwt-wcas-hidden', '', $settingsFields['dgwt_wcas_search'][160]['class'] );
 		}
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			foreach ( $settingsFields as $key => $sections ) {
-				foreach ( $sections as $keyl2 => $option ) {
-					if ( self::isOptionPremium( $option ) ) {
-						$settingsFields[ $key ][ $keyl2 ]['label'] = Helpers::getSettingsProLabel( $option['label'], 'option-label' );
-					}
-				}
-			}
-		}
 
 		$settingsFields = apply_filters( 'dgwt/wcas/settings', $settingsFields );
 
@@ -1156,11 +1084,6 @@ class Settings {
 	 * @return mixed
 	 */
 	public function restoreDefaultValueForFreePlan( $value, $default, $option ) {
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			if ( self::isOptionPremium( $option ) ) {
-				$value = $default;
-			}
-		}
 
 		return $value;
 	}

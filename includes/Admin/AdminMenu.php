@@ -26,38 +26,36 @@ class AdminMenu {
 	public function addMenu() {
 
 		$menuSuffix = '';
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-				$menuSuffix = '<span class="dgwt-wcas-menu-warning-icon">!</span>';
-				add_action(
-					'admin_print_styles',
-					function () {
-						?>
-					<style>
-						.dgwt-wcas-menu-warning-icon {
-							display: inline-block;
-							vertical-align: top;
-							box-sizing: border-box;
-							margin: 1px 0 -1px 3px;
-							padding: 0 5px;
-							min-width: 18px;
-							height: 18px;
-							border-radius: 9px;
-							background-color: #d63638;
-							color: #fff;
-							font-size: 11px;
-							line-height: 1.6;
-							text-align: center;
-							z-index: 26;
-						}
-					</style>
-						<?php
+		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
+			$menuSuffix = '<span class="dgwt-wcas-menu-warning-icon">!</span>';
+			add_action(
+				'admin_print_styles',
+				function () {
+					?>
+				<style>
+					.dgwt-wcas-menu-warning-icon {
+						display: inline-block;
+						vertical-align: top;
+						box-sizing: border-box;
+						margin: 1px 0 -1px 3px;
+						padding: 0 5px;
+						min-width: 18px;
+						height: 18px;
+						border-radius: 9px;
+						background-color: #d63638;
+						color: #fff;
+						font-size: 11px;
+						line-height: 1.6;
+						text-align: center;
+						z-index: 26;
 					}
-				);
-			}
+				</style>
+					<?php
+				}
+			);
 		}
 
-		if ( dgoraAsfwFs()->is_activation_mode() ) {
+		if ( false ) {
 			add_action(
 				'admin_print_styles',
 				function () {
@@ -81,7 +79,7 @@ class AdminMenu {
 			[ $this, 'settingsPage' ]
 		);
 
-		if ( ! dgoraAsfwFs()->is_activation_mode() && Helpers::isDebugPage() ) {
+		if ( ! false && Helpers::isDebugPage() ) {
 			add_submenu_page(
 				'woocommerce',
 				'FiboSearch Debug',

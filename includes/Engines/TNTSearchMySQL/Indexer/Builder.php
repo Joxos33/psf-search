@@ -6,7 +6,6 @@ use DgoraWcas\Engines\TNTSearchMySQL\Config;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerTax;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Vendor\Indexer as IndexerVendors;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Database as DatabaseS;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Database as DatabaseR;
 use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Database as DatabaseT;
@@ -651,11 +650,6 @@ class Builder {
 			$taxIndexer = new IndexerTax();
 			$taxIndexer->wipe( $indexRoleSuffix );
 		}
-
-		if ( self::vendorsIndexExists( $indexRoleSuffix ) ) {
-			$vendorsIndexer = new IndexerVendors();
-			$vendorsIndexer->wipe( $indexRoleSuffix );
-		}
 	}
 
 	public static function getReadableProgress() {
@@ -958,17 +952,6 @@ class Builder {
 	}
 
 	/**
-	 * Check if vendors table exist
-	 *
-	 * @return bool
-	 */
-	public static function vendorsIndexExists( $indexRoleSuffix = '' ) {
-		global $wpdb;
-
-		return Helpers::isTableExists( $wpdb->dgwt_wcas_ven_index . $indexRoleSuffix );
-	}
-
-	/**
 	 * Check if searchable tables exist
 	 *
 	 * @param string $currentLang
@@ -1091,7 +1074,6 @@ class Builder {
 		$logs                  = self::getLogs( Config::getIndexRole() );
 		$isDetails             = get_transient( self::DETAILS_DISPLAY_KEY );
 		$canBuildTaxonomyIndex = self::canBuildTaxonomyIndex();
-		$canBuildVendorsIndex  = self::canBuildVendorsIndex();
 
 		ob_start();
 		include DGWT_WCAS_DIR . 'partials/admin/indexer-body.php';
@@ -1108,15 +1090,6 @@ class Builder {
 	 */
 	public static function canBuildTaxonomyIndex() {
 		return ! empty( DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' ) );
-	}
-
-	/**
-	 * Check if can index vendors
-	 *
-	 * @return bool
-	 */
-	public static function canBuildVendorsIndex() {
-		return apply_filters( 'dgwt/wcas/search/vendors', false );
 	}
 
 	/**

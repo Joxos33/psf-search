@@ -899,19 +899,8 @@ class SettingsAPI {
 			$html .= sprintf( '<a href="#%1$s" class="nav-tab" id="%1$s-tab">%2$s</a>', $tab['id'], $tab['title'] );
 		}
 
-		if ( current_user_can( 'manage_options' ) ) {
-			$html .= '<a target="_blank" href="' . dgoraAsfwFs()->contact_url() . '" class="js-nav-tab-minor nav-tab-minor nav-tab-minor-contact" >' . __( 'Contact', 'ajax-search-for-woocommerce' ) . '</a>';
-		}
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			$html .= '<a target="_blank" href="https://fibosearch.com/showcase/?utm_source=wp-admin&utm_medium=referral&utm_campaign=settings&utm_content=showcase&utm_gen=utmdc" class="js-nav-tab-minor nav-tab-minor nav-tab-minor-showcase" >' . __( 'Showcase', 'ajax-search-for-woocommerce' ) . '</a>';
-		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( current_user_can( 'manage_options' ) ) {
-				$html .= '<a target="_blank" href="' . dgoraAsfwFs()->get_account_url() . '" class="js-nav-tab-minor nav-tab-minor nav-tab-minor-account" >' . __( 'My Account', 'ajax-search-for-woocommerce' ) . '</a>';
-			}
-		}
 
 		$html .= '</h2>';
 

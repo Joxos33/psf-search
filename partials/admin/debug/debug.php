@@ -22,16 +22,16 @@ $prefix = 'fibosearch-debug_page-';
 	</h2>
 
 	<h2 class="nav-tab-wrapper fibosearch-debug_page-nav-tab-wrapper">
-		<?php if ( dgoraAsfwFs()->is__premium_only() ) { ?>
-			<a href="#dgwt_wcas_deb_search" class="nav-tab" id="dgwt_wcas_deb_search-tab">Search</a>
-			<a href="#dgwt_wcas_deb_indexer" class="nav-tab" id="dgwt_wcas_deb_indexer-tab">Indexer</a>
-			<a href="#dgwt_wcas_deb_product" class="nav-tab" id="dgwt_wcas_deb_product-tab">Product</a>
-			<a href="#dgwt_wcas_deb_term" class="nav-tab" id="dgwt_wcas_deb_term-tab">Term</a>
-			<a href="#dgwt_wcas_deb_source-query" class="nav-tab" id="dgwt_wcas_deb_source-query-tab">Source Query</a>
-			<a href="#dgwt_wcas_deb_visibility" class="nav-tab" id="dgwt_wcas_deb_visibility-tab">Products Visibility</a>
-			<a href="#dgwt_wcas_deb_missing_products" class="nav-tab" id="dgwt_wcas_deb_missing_products-tab">Missing Products</a>
-			<a href="#dgwt_wcas_deb_hooks" class="nav-tab" id="dgwt_wcas_deb_hooks-tab">Hooks</a>
-		<?php } ?>
+		<?php  ?>
+		<a href="#dgwt_wcas_deb_search" class="nav-tab" id="dgwt_wcas_deb_search-tab">Search</a>
+		<a href="#dgwt_wcas_deb_indexer" class="nav-tab" id="dgwt_wcas_deb_indexer-tab">Indexer</a>
+		<a href="#dgwt_wcas_deb_product" class="nav-tab" id="dgwt_wcas_deb_product-tab">Product</a>
+		<a href="#dgwt_wcas_deb_term" class="nav-tab" id="dgwt_wcas_deb_term-tab">Term</a>
+		<a href="#dgwt_wcas_deb_source-query" class="nav-tab" id="dgwt_wcas_deb_source-query-tab">Source Query</a>
+		<a href="#dgwt_wcas_deb_visibility" class="nav-tab" id="dgwt_wcas_deb_visibility-tab">Products Visibility</a>
+		<a href="#dgwt_wcas_deb_missing_products" class="nav-tab" id="dgwt_wcas_deb_missing_products-tab">Missing Products</a>
+		<a href="#dgwt_wcas_deb_hooks" class="nav-tab" id="dgwt_wcas_deb_hooks-tab">Hooks</a>
+	<?php  ?>
 		<a href="#dgwt_wcas_deb_anatytics" class="nav-tab" id="dgwt_wcas_deb_anatytics-tab">Analytics</a>
 		<a href="#dgwt_wcas_deb_maintenance" class="nav-tab" id="dgwt_wcas_deb_maintenance-tab">Maintenance</a>
 		<a href="#dgwt_wcas_deb_active_integrations" class="nav-tab" id="dgwt_wcas_deb_active_integrations-tab">Integrations</a>
@@ -39,45 +39,43 @@ $prefix = 'fibosearch-debug_page-';
 
 	<?php
 	$active = 'analytics';
-	if ( dgoraAsfwFs()->is__premium_only() ) {
-		$active = 'search';
-	}
+	$active = 'search';
 	?>
 
 	<div class="dgwt-wcas-settings-body js-dgwt-wcas-settings-body" data-dgwt-wcas-active="<?php echo esc_attr( $active ); ?>">
-		<?php if ( dgoraAsfwFs()->is__premium_only() ) { ?>
-			<div id="dgwt_wcas_deb_search" class="fibosearch-debug_page-group dgwt-wcas-group-active">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-search.php'; ?>
-			</div>
+		<?php  ?>
+		<div id="dgwt_wcas_deb_search" class="fibosearch-debug_page-group dgwt-wcas-group-active">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-search.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_indexer" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-indexer.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_indexer" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-indexer.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_product" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-product.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_product" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-product.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_term" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-term.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_term" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-term.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_source-query" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-source-query.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_source-query" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-source-query.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_visibility" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-catalog-visibility.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_visibility" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-catalog-visibility.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_missing_products" class="fibosearch-debug_page-group">
-				<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-missing-products.php'; ?>
-			</div>
+		<div id="dgwt_wcas_deb_missing_products" class="fibosearch-debug_page-group">
+			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-missing-products.php'; ?>
+		</div>
 
-			<div id="dgwt_wcas_deb_hooks" class="fibosearch-debug_page-group">
-				<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/hooks.php'; ?>
-			</div>
-		<?php } ?>
+		<div id="dgwt_wcas_deb_hooks" class="fibosearch-debug_page-group">
+			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/hooks.php'; ?>
+		</div>
+	<?php  ?>
 
 		<div id="dgwt_wcas_deb_anatytics" class="fibosearch-debug_page-group">
 			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/body-analytics.php'; ?>

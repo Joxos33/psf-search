@@ -151,9 +151,6 @@ class Utils {
 			case 'searchable_cache':
 				$name = $wpdb->dgwt_wcas_si_cache . $suffix;
 				break;
-			case 'vendors':
-				$name = $wpdb->dgwt_wcas_ven_index;
-				break;
 			case 'variations':
 				$name = $wpdb->dgwt_wcas_var_index;
 				break;

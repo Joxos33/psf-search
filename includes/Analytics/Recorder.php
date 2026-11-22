@@ -61,10 +61,8 @@ class Recorder {
 		$roles = apply_filters( 'dgwt/wcas/analytics/exclude_roles', [] );
 		if ( ! empty( $roles ) ) {
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				if ( defined( 'SHORTINIT' ) && SHORTINIT ) {
-					Helpers::loadUserFiles__premium_only();
-				}
+			if ( defined( 'SHORTINIT' ) && SHORTINIT ) {
+				Helpers::loadUserFiles__premium_only();
 			}
 
 			foreach ( $roles as $role ) {
