@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ class Personalization {
 		add_action( 'wp_head', [ $this, 'printStyle' ] );
 
 		if ( is_admin() ) {
-			if ( apply_filters( 'dgwt/wcas/personalization/disable_inline_styles_in_admin', false ) ) {
+			if ( apply_filters( 'psf_search/personalization/disable_inline_styles_in_admin', false ) ) {
 				return;
 			}
 
@@ -21,8 +21,8 @@ class Personalization {
 				'admin_enqueue_scripts',
 				function () {
 					// Register personalization styles used in block editor.
-					wp_register_style( 'dgwt-wcas-style-personalization', false, [], true, true );
-					wp_add_inline_style( 'dgwt-wcas-style-personalization', $this->getStyles() );
+					wp_register_style( 'psf-search-style-personalization', false, [], true, true );
+					wp_add_inline_style( 'psf-search-style-personalization', $this->getStyles() );
 				}
 			);
 		}
@@ -34,7 +34,7 @@ class Personalization {
 	 * @return void
 	 */
 	public function printStyle() {
-		if ( apply_filters( 'dgwt/wcas/personalization/disable_inline_styles', false ) ) {
+		if ( apply_filters( 'psf_search/personalization/disable_inline_styles', false ) ) {
 			return;
 		}
 		?>
@@ -53,35 +53,35 @@ class Personalization {
 	 */
 	public function getStyles( $minified = true ) {
 		// Search form
-		$show_submit             = DGWT_WCAS()->settings->getOption( 'show_submit_button' );
-		$bg_input_underlay_color = DGWT_WCAS()->settings->getOption( 'bg_input_underlay_color' ); // Pirx
-		$bg_search_input         = DGWT_WCAS()->settings->getOption( 'bg_input_color' );
-		$text_input_color        = DGWT_WCAS()->settings->getOption( 'text_input_color' );
-		$border_input_color      = DGWT_WCAS()->settings->getOption( 'border_input_color' );
-		$bg_submit_color         = DGWT_WCAS()->settings->getOption( 'bg_submit_color' );
-		$text_submit_color       = DGWT_WCAS()->settings->getOption( 'text_submit_color' );
+		$show_submit             = PSF_SEARCH()->settings->getOption( 'show_submit_button' );
+		$bg_input_underlay_color = PSF_SEARCH()->settings->getOption( 'bg_input_underlay_color' ); // Pirx
+		$bg_search_input         = PSF_SEARCH()->settings->getOption( 'bg_input_color' );
+		$text_input_color        = PSF_SEARCH()->settings->getOption( 'text_input_color' );
+		$border_input_color      = PSF_SEARCH()->settings->getOption( 'border_input_color' );
+		$bg_submit_color         = PSF_SEARCH()->settings->getOption( 'bg_submit_color' );
+		$text_submit_color       = PSF_SEARCH()->settings->getOption( 'text_submit_color' );
 
 		// Suggestions
-		$sug_hover_color     = DGWT_WCAS()->settings->getOption( 'sug_hover_color' );
-		$sug_highlight_color = DGWT_WCAS()->settings->getOption( 'sug_highlight_color' );
-		$sug_text_color      = DGWT_WCAS()->settings->getOption( 'sug_text_color' );
-		$sug_bg_color        = DGWT_WCAS()->settings->getOption( 'sug_bg_color' );
-		$sug_border_color    = DGWT_WCAS()->settings->getOption( 'sug_border_color' );
+		$sug_hover_color     = PSF_SEARCH()->settings->getOption( 'sug_hover_color' );
+		$sug_highlight_color = PSF_SEARCH()->settings->getOption( 'sug_highlight_color' );
+		$sug_text_color      = PSF_SEARCH()->settings->getOption( 'sug_text_color' );
+		$sug_bg_color        = PSF_SEARCH()->settings->getOption( 'sug_bg_color' );
+		$sug_border_color    = PSF_SEARCH()->settings->getOption( 'sug_border_color' );
 
-		$preloader_url = trim( DGWT_WCAS()->settings->getOption( 'preloader_url' ) );
+		$preloader_url = trim( PSF_SEARCH()->settings->getOption( 'preloader_url' ) );
 
-		$max_form_width = absint( DGWT_WCAS()->settings->getOption( 'max_form_width' ) );
+		$max_form_width = absint( PSF_SEARCH()->settings->getOption( 'max_form_width' ) );
 
-		$search_icon_color = DGWT_WCAS()->settings->getOption( 'search_icon_color' );
+		$search_icon_color = PSF_SEARCH()->settings->getOption( 'search_icon_color' );
 
 		ob_start();
 		?>
-		.dgwt-wcas-ico-magnifier,
-		.dgwt-wcas-ico-magnifier-handler {
+		.psf-search-ico-magnifier,
+		.psf-search-ico-magnifier-handler {
 			max-width: 20px;
 		}
 
-		.dgwt-wcas-search-wrapp {
+		.psf-search-search-wrapp {
 		<?php
 		if ( ! empty( $max_form_width ) ) :
 			?>
@@ -90,51 +90,51 @@ class Personalization {
 		}
 
 		<?php if ( ! empty( $bg_input_underlay_color ) ) : ?>
-			.dgwt-wcas-style-pirx .dgwt-wcas-sf-wrapp {background-color: <?php echo sanitize_text_field( $bg_input_underlay_color ); ?>;}
+			.psf-search-style-pirx .psf-search-sf-wrapp {background-color: <?php echo sanitize_text_field( $bg_input_underlay_color ); ?>;}
 		<?php endif; ?>
 
 		<?php if ( ! empty( $bg_search_input ) || ! empty( $text_input_color ) || ! empty( $border_input_color ) ) : ?>
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input,
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input:hover,
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input:focus {
+		.psf-search-search-wrapp .psf-search-sf-wrapp input[type="search"].psf-search-search-input,
+		.psf-search-search-wrapp .psf-search-sf-wrapp input[type="search"].psf-search-search-input:hover,
+		.psf-search-search-wrapp .psf-search-sf-wrapp input[type="search"].psf-search-search-input:focus {
 			<?php echo ! empty( $bg_search_input ) ? 'background-color:' . sanitize_text_field( $bg_search_input ) . ';' : ''; ?><?php echo ! empty( $text_input_color ) ? 'color:' . sanitize_text_field( $text_input_color ) . ';' : ''; ?><?php echo ! empty( $border_input_color ) ? 'border-color:' . sanitize_text_field( $border_input_color ) . ';' : ''; ?>
 		}
 
 			<?php if ( ! empty( $text_input_color ) ) : ?>
-		.dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input::placeholder {
+		.psf-search-sf-wrapp input[type="search"].psf-search-search-input::placeholder {
 			color: <?php echo sanitize_text_field( $text_input_color ); ?>;
 			opacity: 0.3;
 		}
 
-		.dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input::-webkit-input-placeholder {
+		.psf-search-sf-wrapp input[type="search"].psf-search-search-input::-webkit-input-placeholder {
 			color: <?php echo sanitize_text_field( $text_input_color ); ?>;
 			opacity: 0.3;
 		}
 
-		.dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input:-moz-placeholder {
+		.psf-search-sf-wrapp input[type="search"].psf-search-search-input:-moz-placeholder {
 			color: <?php echo sanitize_text_field( $text_input_color ); ?>;
 			opacity: 0.3;
 		}
 
-		.dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input::-moz-placeholder {
+		.psf-search-sf-wrapp input[type="search"].psf-search-search-input::-moz-placeholder {
 			color: <?php echo sanitize_text_field( $text_input_color ); ?>;
 			opacity: 0.3;
 		}
 
-		.dgwt-wcas-sf-wrapp input[type="search"].dgwt-wcas-search-input:-ms-input-placeholder {
+		.psf-search-sf-wrapp input[type="search"].psf-search-search-input:-ms-input-placeholder {
 			color: <?php echo sanitize_text_field( $text_input_color ); ?>;
 		}
 
-		.dgwt-wcas-no-submit.dgwt-wcas-search-wrapp .dgwt-wcas-ico-magnifier path,
-		.dgwt-wcas-search-wrapp .dgwt-wcas-close path {
+		.psf-search-no-submit.psf-search-search-wrapp .psf-search-ico-magnifier path,
+		.psf-search-search-wrapp .psf-search-close path {
 			fill: <?php echo sanitize_text_field( $text_input_color ); ?>;
 		}
 
-		.dgwt-wcas-loader-circular-path {
+		.psf-search-loader-circular-path {
 			stroke: <?php echo sanitize_text_field( $text_input_color ); ?>;
 		}
 
-		.dgwt-wcas-preloader {
+		.psf-search-preloader {
 			opacity: 0.6;
 		}
 
@@ -145,78 +145,78 @@ class Personalization {
 		// Submit button
 		if ( $show_submit === 'on' && ( ! empty( $bg_submit_color ) || ! empty( $text_submit_color ) ) ) :
 			?>
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp .dgwt-wcas-search-submit::before {
+		.psf-search-search-wrapp .psf-search-sf-wrapp .psf-search-search-submit::before {
 			<?php echo ! empty( $bg_submit_color ) ? 'border-color: transparent ' . sanitize_text_field( $bg_submit_color ) . ';' : ''; ?>
 		}
 
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp .dgwt-wcas-search-submit:hover::before,
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp .dgwt-wcas-search-submit:focus::before {
+		.psf-search-search-wrapp .psf-search-sf-wrapp .psf-search-search-submit:hover::before,
+		.psf-search-search-wrapp .psf-search-sf-wrapp .psf-search-search-submit:focus::before {
 			<?php echo ! empty( $bg_submit_color ) ? 'border-right-color: ' . sanitize_text_field( $bg_submit_color ) . ';' : ''; ?>
 		}
 
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp .dgwt-wcas-search-submit,
-		.dgwt-wcas-om-bar .dgwt-wcas-om-return {
+		.psf-search-search-wrapp .psf-search-sf-wrapp .psf-search-search-submit,
+		.psf-search-om-bar .psf-search-om-return {
 			<?php echo ! empty( $bg_submit_color ) ? 'background-color: ' . sanitize_text_field( $bg_submit_color ) . ';' : ''; ?><?php echo ! empty( $text_submit_color ) ? 'color: ' . sanitize_text_field( $text_submit_color ) . ';' : ''; ?>
 		}
 
-		.dgwt-wcas-search-wrapp .dgwt-wcas-ico-magnifier,
-		.dgwt-wcas-search-wrapp .dgwt-wcas-sf-wrapp .dgwt-wcas-search-submit svg path,
-		.dgwt-wcas-om-bar .dgwt-wcas-om-return svg path {
+		.psf-search-search-wrapp .psf-search-ico-magnifier,
+		.psf-search-search-wrapp .psf-search-sf-wrapp .psf-search-search-submit svg path,
+		.psf-search-om-bar .psf-search-om-return svg path {
 			<?php echo ! empty( $text_submit_color ) ? 'fill: ' . sanitize_text_field( $text_submit_color ) . ';' : ''; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $sug_bg_color ) ) : ?>
-		.dgwt-wcas-suggestions-wrapp,
-		.dgwt-wcas-details-wrapp {
+		.psf-search-suggestions-wrapp,
+		.psf-search-details-wrapp {
 			<?php echo ! empty( $sug_bg_color ) ? 'background-color: ' . sanitize_text_field( $sug_bg_color ) . ';' : ''; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $sug_hover_color ) ) : ?>
-		.dgwt-wcas-suggestion-selected {
+		.psf-search-suggestion-selected {
 			<?php echo ! empty( $sug_hover_color ) ? 'background-color: ' . sanitize_text_field( $sug_hover_color ) . ';' : ''; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $sug_text_color ) ) : ?>
-		.dgwt-wcas-suggestions-wrapp *,
-		.dgwt-wcas-details-wrapp *,
-		.dgwt-wcas-sd,
-		.dgwt-wcas-suggestion * {
+		.psf-search-suggestions-wrapp *,
+		.psf-search-details-wrapp *,
+		.psf-search-sd,
+		.psf-search-suggestion * {
 			<?php echo ! empty( $sug_text_color ) ? 'color: ' . sanitize_text_field( $sug_text_color ) . ';' : ''; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $sug_highlight_color ) ) : ?>
-		.dgwt-wcas-st strong,
-		.dgwt-wcas-sd strong {
+		.psf-search-st strong,
+		.psf-search-sd strong {
 			<?php echo 'color: ' . sanitize_text_field( $sug_highlight_color ) . ';'; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $sug_border_color ) ) : ?>
-		.dgwt-wcas-suggestions-wrapp,
-		.dgwt-wcas-details-wrapp,
-		.dgwt-wcas-suggestion,
-		.dgwt-wcas-datails-title,
-		.dgwt-wcas-details-more-products {
+		.psf-search-suggestions-wrapp,
+		.psf-search-details-wrapp,
+		.psf-search-suggestion,
+		.psf-search-datails-title,
+		.psf-search-details-more-products {
 			<?php echo 'border-color: ' . sanitize_text_field( $sug_border_color ) . '!important;'; ?>
 		}
 
 		<?php endif; ?>
 
 		<?php if ( ! empty( $preloader_url ) ) : ?>
-		.dgwt-wcas-inner-preloader {
+		.psf-search-inner-preloader {
 			background-image: url('<?php echo esc_url( $preloader_url ); ?>');
 		}
 
-		.dgwt-wcas-inner-preloader * {
+		.psf-search-inner-preloader * {
 			display: none;
 		}
 
@@ -224,8 +224,8 @@ class Personalization {
 
 		<?php
 		if ( ! empty( $search_icon_color ) ) {
-			echo '.dgwt-wcas-search-icon { color: ' . sanitize_text_field( $search_icon_color ) . ';}';
-			echo '.dgwt-wcas-search-icon path { fill: ' . sanitize_text_field( $search_icon_color ) . ';}';
+			echo '.psf-search-search-icon { color: ' . sanitize_text_field( $search_icon_color ) . ';}';
+			echo '.psf-search-search-icon path { fill: ' . sanitize_text_field( $search_icon_color ) . ';}';
 		}
 
 		if ( $minified ) {

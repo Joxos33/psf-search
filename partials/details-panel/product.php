@@ -2,26 +2,26 @@
 /**
  * The Template for displaying product info in Details Panel
  *
- * This template can be overridden by copying it to yourtheme/fibosearch/details-panel/product.php.
+ * This template can be overridden by copying it to yourtheme/psfsearch/details-panel/product.php.
  */
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 ?>
-<div class="dgwt-wcas-details-inner dgwt-wcas-details-inner-product">
+<div class="psf-search-details-inner psf-search-details-inner-product">
 
-	<?php do_action( 'dgwt/wcas/details_panel/product/container_before', $vars ); ?>
+	<?php do_action( 'psf_search/details_panel/product/container_before', $vars ); ?>
 
-	<div class="dgwt-wcas-product-details">
+	<div class="psf-search-product-details">
 
-		<?php do_action( 'dgwt/wcas/details_panel/product/image_before', $vars ); ?>
+		<?php do_action( 'psf_search/details_panel/product/image_before', $vars ); ?>
 		<a href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
-			<div class="dgwt-wcas-details-main-image">
+			<div class="psf-search-details-main-image">
 				<img
 					src="<?php echo esc_url( $vars->imageSrc ); ?>"
 					<?php echo ( ! empty( $vars->imageSrcset ) && ! empty( $vars->imageSizes ) ) ? 'srcset="' . esc_attr( $vars->imageSrcset ) . '"' : ''; ?>
@@ -30,38 +30,38 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 				>
 			</div>
 		</a>
-		<?php do_action( 'dgwt/wcas/details_panel/product/image_after', $vars ); ?>
+		<?php do_action( 'psf_search/details_panel/product/image_after', $vars ); ?>
 
-		<div class="dgwt-wcas-details-space">
-			<a class="dgwt-wcas-details-product-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
+		<div class="psf-search-details-space">
+			<a class="psf-search-details-product-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
 				<?php echo Helpers::secureHtmlOutput( $vars->name, 'name' ); ?>
 			</a>
 			<?php if ( ! empty( $vars->sku ) ) : ?>
-				<span class="dgwt-wcas-details-product-sku"><?php echo Helpers::secureHtmlOutput( $vars->sku, 'sku' ); ?></span>
+				<span class="psf-search-details-product-sku"><?php echo Helpers::secureHtmlOutput( $vars->sku, 'sku' ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( $vars->reviewCount > 0 ) : ?>
 
-				<div class="dgwt-wcas-pd-rating">
-					<?php echo Helpers::secureHtmlOutput( $vars->ratingHtml . ' <span class="dgwt-wcas-pd-review">(' . $vars->reviewCount . ')</span>', 'rating' ); ?>
+				<div class="psf-search-pd-rating">
+					<?php echo Helpers::secureHtmlOutput( $vars->ratingHtml . ' <span class="psf-search-pd-review">(' . $vars->reviewCount . ')</span>', 'rating' ); ?>
 				</div>
 
 			<?php endif; ?>
 
-			<?php do_action( 'dgwt/wcas/details_panel/product/price_before', $vars ); ?>
-			<div class="dgwt-wcas-pd-price">
+			<?php do_action( 'psf_search/details_panel/product/price_before', $vars ); ?>
+			<div class="psf-search-pd-price">
 				<?php echo Helpers::secureHtmlOutput( $vars->priceHtml, 'price' ); ?>
 			</div>
-			<?php do_action( 'dgwt/wcas/details_panel/product/price_after', $vars ); ?>
+			<?php do_action( 'psf_search/details_panel/product/price_after', $vars ); ?>
 
 			<?php if ( ! empty( $vars->desc ) ) : ?>
-				<div class="dgwt-wcas-details-hr"></div>
-				<div class="dgwt-wcas-details-desc">
+				<div class="psf-search-details-hr"></div>
+				<div class="psf-search-details-desc">
 					<?php echo Helpers::secureHtmlOutput( $vars->desc, 'description' ); ?>
 				</div>
 			<?php endif; ?>
 
-			<div class="dgwt-wcas-details-hr"></div>
+			<div class="psf-search-details-hr"></div>
 
 			<?php
 			if ( ! empty( $vars->stockAvailability ) ) {
@@ -69,15 +69,15 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 			};
 			?>
 
-			<?php do_action( 'dgwt/wcas/details_panel/product/add_to_cart_before', $vars ); ?>
-			<div class="dgwt-wcas-pd-addtc js-dgwt-wcas-pd-addtc">
-				<form class="dgwt-wcas-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
+			<?php do_action( 'psf_search/details_panel/product/add_to_cart_before', $vars ); ?>
+			<div class="psf-search-pd-addtc js-psf-search-pd-addtc">
+				<form class="psf-search-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
 					<?php
 
 					if ( $vars->showQuantity ) {
 						woocommerce_quantity_input(
 							[
-								'input_name' => 'js-dgwt-wcas-quantity',
+								'input_name' => 'js-psf-search-quantity',
 							],
 							$vars->wooObject,
 							true
@@ -94,12 +94,12 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 					?>
 				</form>
 			</div>
-			<?php do_action( 'dgwt/wcas/details_panel/product/add_to_cart_after', $vars ); ?>
+			<?php do_action( 'psf_search/details_panel/product/add_to_cart_after', $vars ); ?>
 
 		</div>
 
 	</div>
 
-	<?php do_action( 'dgwt/wcas/details_panel/product/container_after', $vars ); ?>
+	<?php do_action( 'psf_search/details_panel/product/container_after', $vars ); ?>
 
 </div>

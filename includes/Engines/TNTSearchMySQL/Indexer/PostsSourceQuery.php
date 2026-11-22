@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Multilingual;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,10 +35,10 @@ class PostsSourceQuery extends SourceQuery {
 		// Select post content
 		$selectDescription = false;
 		if ( in_array( $this->postType, [ 'post', 'page' ] ) ) {
-			$selectDescription = apply_filters( 'dgwt/wcas/tnt/post_source_query/description', $selectDescription );
-			$selectDescription = apply_filters( "dgwt/wcas/indexer/post_source_query/{$this->postType}/description", $selectDescription );
+			$selectDescription = apply_filters( 'psf_search/tnt/post_source_query/description', $selectDescription );
+			$selectDescription = apply_filters( "psf_search/indexer/post_source_query/{$this->postType}/description", $selectDescription );
 		} else {
-			$selectDescription = apply_filters( "dgwt/wcas/indexer/post_source_query/{$this->postType}/description", $selectDescription );
+			$selectDescription = apply_filters( "psf_search/indexer/post_source_query/{$this->postType}/description", $selectDescription );
 		}
 		if ( $selectDescription ) {
 			$select .= $this->selectDescription();
@@ -77,12 +77,12 @@ class PostsSourceQuery extends SourceQuery {
 		// Excluded ID-s
 		$where .= $this->whereExcludeIDsFromSearch();
 
-		$select = apply_filters( 'dgwt/wcas/tnt/post_source_query/select', $select, $this, $onlyIDs ); // deprecated
-		$where  = apply_filters( 'dgwt/wcas/tnt/post_source_query/where', $where, $this, $onlyIDs ); // deprecated
+		$select = apply_filters( 'psf_search/tnt/post_source_query/select', $select, $this, $onlyIDs ); // deprecated
+		$where  = apply_filters( 'psf_search/tnt/post_source_query/where', $where, $this, $onlyIDs ); // deprecated
 
-		$select = apply_filters( 'dgwt/wcas/indexer/post_source_query/select', $select, $this, $onlyIDs );
-		$join   = apply_filters( 'dgwt/wcas/indexer/post_source_query/join', '', $this, $onlyIDs );
-		$where  = apply_filters( 'dgwt/wcas/indexer/post_source_query/where', $where, $this, $onlyIDs );
+		$select = apply_filters( 'psf_search/indexer/post_source_query/select', $select, $this, $onlyIDs );
+		$join   = apply_filters( 'psf_search/indexer/post_source_query/join', '', $this, $onlyIDs );
+		$where  = apply_filters( 'psf_search/indexer/post_source_query/where', $where, $this, $onlyIDs );
 
 		// Password-protected posts are never searchable. Applied after the filters, so it cannot be removed.
 		$where .= " AND posts.post_password = '' ";
@@ -94,7 +94,7 @@ class PostsSourceQuery extends SourceQuery {
                 $where
                ";
 
-		$this->query = apply_filters( 'dgwt/wcas/indexer/post_source_query/query', $sql, $this, $onlyIDs );
+		$this->query = apply_filters( 'psf_search/indexer/post_source_query/query', $sql, $this, $onlyIDs );
 	}
 
 	/**
@@ -127,7 +127,7 @@ class PostsSourceQuery extends SourceQuery {
 			}
 		}
 
-		$excludedIds = apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/excluded_ids', $excludedIds, $this->postType );
+		$excludedIds = apply_filters( 'psf_search/indexer/' . $this->type . '/excluded_ids', $excludedIds, $this->postType );
 
 		if ( ! empty( $excludedIds ) ) {
 			$excludedIds  = array_map( 'intval', $excludedIds );
@@ -137,6 +137,6 @@ class PostsSourceQuery extends SourceQuery {
 			$where = $wpdb->prepare( " AND posts.ID NOT IN ($format)", $excludedIds );
 		}
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/exclude_ids_from_search', $where, $this->postType );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/exclude_ids_from_search', $where, $this->postType );
 	}
 }

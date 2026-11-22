@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,7 +67,7 @@ class Term {
 	 */
 	public function getThumbnailSrc( $size = '' ) {
 		$src  = '';
-		$size = empty( $size ) ? DGWT_WCAS()->setup->getThumbnailSize() : $size;
+		$size = empty( $size ) ? PSF_SEARCH()->setup->getThumbnailSize() : $size;
 
 		if ( ! $this->isValid() ) {
 			return $src;
@@ -87,6 +87,6 @@ class Term {
 			$src = wc_placeholder_img_src( $size );
 		}
 
-		return apply_filters( 'dgwt/wcas/term/thumbnail_src', $src, $this->getID(), $size, $this );
+		return apply_filters( 'psf_search/term/thumbnail_src', $src, $this->getID(), $size, $this );
 	}
 }

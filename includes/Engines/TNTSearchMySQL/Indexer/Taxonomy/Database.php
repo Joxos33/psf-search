@@ -1,13 +1,13 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDBException;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDB;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use DgoraWcas\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDBException;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDB;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Cache;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +23,8 @@ class Database {
 	public static function registerTables() {
 		global $wpdb;
 
-		$wpdb->dgwt_wcas_tax_index = $wpdb->prefix . Config::READABLE_TAX_INDEX;
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_tax_index ) ) {
+		$wpdb->psf_search_tax_index = $wpdb->prefix . Config::READABLE_TAX_INDEX;
+		if ( Helpers::isTableExists( $wpdb->psf_search_tax_index ) ) {
 			$wpdb->tables[] = Config::READABLE_TAX_INDEX;
 		}
 	}
@@ -45,7 +45,7 @@ class Database {
 		 * This happens, for example, with the TranslatePress plugin, when records of different
 		 * languages have the same 'term_id'.
 		 */
-		$tableName = $wpdb->dgwt_wcas_tax_index . $indexRoleSuffix;
+		$tableName = $wpdb->psf_search_tax_index . $indexRoleSuffix;
 		$table     = "CREATE TABLE $tableName (
 			id              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			term_id         BIGINT(20) UNSIGNED NOT NULL,
@@ -87,7 +87,7 @@ class Database {
 
 		$wpdb->hide_errors();
 
-		$tableName = $wpdb->dgwt_wcas_tax_index . $indexRoleSuffix;
+		$tableName = $wpdb->psf_search_tax_index . $indexRoleSuffix;
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "DROP TABLE IF EXISTS $tableName" );

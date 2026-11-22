@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL;
+namespace PsfSearch\Engines\TNTSearchMySQL;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,15 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Config {
 
-	const READABLE_INDEX     = 'dgwt_wcas_index';
-	const READABLE_TAX_INDEX = 'dgwt_wcas_tax_index';
-	const VARIATIONS_INDEX   = 'dgwt_wcas_var_index';
-	const VENDORS_INDEX      = 'dgwt_wcas_ven_index';
+	const READABLE_INDEX     = 'psf_search_index';
+	const READABLE_TAX_INDEX = 'psf_search_tax_index';
+	const VARIATIONS_INDEX   = 'psf_search_var_index';
 
 	// Inverted index for searching purpose
-	const SEARCHABLE_INDEX_WORDLIST = 'dgwt_wcas_invindex_wordlist';
-	const SEARCHABLE_INDEX_DOCLIST  = 'dgwt_wcas_invindex_doclist';
-	const SEARCHABLE_INDEX_CACHE    = 'dgwt_wcas_invindex_cache';
+	const SEARCHABLE_INDEX_WORDLIST = 'psf_search_invindex_wordlist';
+	const SEARCHABLE_INDEX_DOCLIST  = 'psf_search_invindex_doclist';
+	const SEARCHABLE_INDEX_CACHE    = 'psf_search_invindex_cache';
 
 	private static $indexerMode     = null;
 	private static $indexRole       = null;
@@ -43,11 +42,11 @@ class Config {
 
 		self::$indexerMode = $modes[0];
 
-		if ( defined( 'DGWT_WCAS_INDEXER_MODE' ) && in_array( DGWT_WCAS_INDEXER_MODE, $modes ) ) {
-			self::$indexerMode = DGWT_WCAS_INDEXER_MODE;
+		if ( defined( 'PSF_SEARCH_INDEXER_MODE' ) && in_array( PSF_SEARCH_INDEXER_MODE, $modes ) ) {
+			self::$indexerMode = PSF_SEARCH_INDEXER_MODE;
 		}
 
-		$filteredMode = apply_filters( 'dgwt/wcas/tnt/indexer_mode', self::$indexerMode );
+		$filteredMode = apply_filters( 'psf_search/tnt/indexer_mode', self::$indexerMode );
 		if ( in_array( $filteredMode, $modes ) ) {
 			self::$indexerMode = $filteredMode;
 		}
@@ -71,7 +70,7 @@ class Config {
 	public static function isParallelBuildingEnabled() {
 		$parallel = true;
 
-		if ( defined( 'DGWT_WCAS_PARALLEL_INDEX_BUILD' ) && ! DGWT_WCAS_PARALLEL_INDEX_BUILD ) {
+		if ( defined( 'PSF_SEARCH_PARALLEL_INDEX_BUILD' ) && ! PSF_SEARCH_PARALLEL_INDEX_BUILD ) {
 			$parallel = false;
 		}
 
@@ -149,7 +148,7 @@ class Config {
 					$filename = 'Filters.php';
 
 					$file  = $dir . '/' . $filename;
-					$class = '\\DgoraWcas\\Integrations\\Plugins\\' . $name . '\\Filters';
+					$class = '\\PsfSearch\\Integrations\\Plugins\\' . $name . '\\Filters';
 
 					if ( file_exists( $file ) && class_exists( $class ) ) {
 						$classes[] = $class;

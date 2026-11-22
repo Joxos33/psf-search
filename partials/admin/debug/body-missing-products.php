@@ -1,10 +1,10 @@
 <?php
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
@@ -16,7 +16,7 @@ if (
 	(
 		Builder::getInfo( 'status' ) === 'completed' ||
 		(
-			\DgoraWcas\Engines\TNTSearchMySQL\Config::isParallelBuildingEnabled() &&
+			\PsfSearch\Engines\TNTSearchMySQL\Config::isParallelBuildingEnabled() &&
 			Builder::getInfo( 'status', 'tmp' ) === 'completed'
 		)
 	) &&
@@ -25,11 +25,11 @@ if (
 	// If multilingual, check only default language.
 	$lang = Multilingual::isMultilingual() ? Multilingual::getDefaultLanguage() : '';
 
-	$readableTableName = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils::getTableName( 'readable', $lang );
+	$readableTableName = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils::getTableName( 'readable', $lang );
 	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	$readableIds = $wpdb->get_col( "SELECT post_id FROM {$readableTableName} WHERE type = 'product'" );
 
-	$doclistTableName = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils::getTableName( 'searchable_doclist', $lang );
+	$doclistTableName = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils::getTableName( 'searchable_doclist', $lang );
 	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	$doclistIds = $wpdb->get_col( "SELECT DISTINCT doc_id FROM {$doclistTableName}" );
 

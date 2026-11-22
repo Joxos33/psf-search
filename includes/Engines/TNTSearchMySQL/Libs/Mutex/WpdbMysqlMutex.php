@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Libs\Mutex;
+namespace PsfSearch\Engines\TNTSearchMySQL\Libs\Mutex;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,8 +33,8 @@ class WpdbMysqlMutex implements Mutex {
 
 		$this->name          = $wpdb->_real_escape( $name );
 		$this->lockTimeout   = intval( $lockTimeout );
-		$this->mutexDisabled = get_option( 'dgwt_wcas_db_locking_support', '' ) === 'no'
-								|| ( defined( 'DGWT_WCAS_DISABLE_MUTEX' ) && DGWT_WCAS_DISABLE_MUTEX );
+		$this->mutexDisabled = get_option( 'psf_search_db_locking_support', '' ) === 'no'
+								|| ( defined( 'PSF_SEARCH_DISABLE_MUTEX' ) && PSF_SEARCH_DISABLE_MUTEX );
 	}
 
 	/**

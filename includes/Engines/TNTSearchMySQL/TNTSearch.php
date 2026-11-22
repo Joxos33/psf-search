@@ -2,26 +2,25 @@
 
 // https://github.com/trilbymedia/grav-plugin-tntsearch/blob/develop/classes/GravTNTSearch.php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL;
+namespace PsfSearch\Engines\TNTSearchMySQL;
 
-use DgoraWcas\Admin\Troubleshooting;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncRebuildIndex;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncVariationsUpdater;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\PostTypes;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\IndexPusher;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Scheduler;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomies;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Updater;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\FailureReports;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\AsyncRebuildIndex;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\AsyncVariationsUpdater;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\PostTypes;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\IndexPusher;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Scheduler;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomies;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Updater;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\FailureReports;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\AsyncProcess as AsyncProcessR;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\AsyncProcess as AsyncProcessS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\AsyncProcess as AsyncProcessT;
-use DgoraWcas\Helpers;
-use DgoraWcas\Product;
-use DgoraWcas\ProductVariation;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\AsyncProcess as AsyncProcessR;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\AsyncProcess as AsyncProcessS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\AsyncProcess as AsyncProcessT;
+use PsfSearch\Helpers;
+use PsfSearch\Product;
+use PsfSearch\ProductVariation;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,49 +32,49 @@ class TNTSearch {
 	/**
 	 * Background processes for the readable index
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\AsyncProcess
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\AsyncProcess
 	 */
 	public $asynchBuildIndexR;
 
 	/**
 	 * Background processes for the searchable index
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\AsyncProcess
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\AsyncProcess
 	 */
 	public $asynchBuildIndexS;
 
 	/**
 	 * Background processes for the taxonomies index
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\AsyncProcess
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\AsyncProcess
 	 */
 	public $asynchBuildIndexT;
 
 	/**
 	 * Async rebuild whole search index
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncRebuildIndex
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\AsyncRebuildIndex
 	 */
 	public $asyncRebuildIndex;
 
 	/**
 	 * Post types
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\PostTypes
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\PostTypes
 	 */
 	public $postTypes;
 
 	/**
 	 * Taxonomies
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomies
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomies
 	 */
 	public $taxonomies;
 
 	/**
 	 * Background product updater
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater
 	 */
 	public $productUpdater;
 
@@ -83,14 +82,14 @@ class TNTSearch {
 	/**
 	 * Variations updater
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\AsyncVariationsUpdater
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\AsyncVariationsUpdater
 	 */
 	public $asyncVariationsUpdater;
 
 	/**
 	 * Failure Reports
 	 *
-	 * @var \DgoraWcas\Engines\TNTSearchMySQL\Indexer\FailureReports
+	 * @var \PsfSearch\Engines\TNTSearchMySQL\Indexer\FailureReports
 	 */
 	public $failureReports;
 
@@ -125,7 +124,7 @@ class TNTSearch {
 			'init',
 			function () {
 
-				if ( DGWT_WCAS()->engine === 'tntsearchMySql' && apply_filters( 'dgwt/wcas/override_search_results_page', true ) ) {
+				if ( PSF_SEARCH()->engine === 'tntsearchMySql' && apply_filters( 'psf_search/override_search_results_page', true ) ) {
 					$this->overrideSearchPage();
 				}
 
@@ -136,16 +135,16 @@ class TNTSearch {
 				$this->postTypes->init();
 				$this->taxonomies->init();
 
-				Helpers::maybeInjectFiboDebugFields( 'nofuzzy' );
+				Helpers::maybeInjectPsfDebugFields( 'nofuzzy' );
 			}
 		);
 
-		add_action( 'wp_ajax_dgwt_wcas_build_index', [ $this, 'ajaxBuildIndex' ] );
-		add_action( 'wp_ajax_dgwt_wcas_stop_build_index', [ $this, 'ajaxStopBuildIndex' ] );
-		add_action( 'wp_ajax_dgwt_wcas_build_index_heartbeat', [ $this, 'ajaxBuildIndexHeartbeat' ] );
-		add_action( 'wp_ajax_dgwt_wcas_index_details_toggle', [ $this, 'ajaxBuildIndexDetailsToggle' ] );
+		add_action( 'wp_ajax_psf_search_build_index', [ $this, 'ajaxBuildIndex' ] );
+		add_action( 'wp_ajax_psf_search_stop_build_index', [ $this, 'ajaxStopBuildIndex' ] );
+		add_action( 'wp_ajax_psf_search_build_index_heartbeat', [ $this, 'ajaxBuildIndexHeartbeat' ] );
+		add_action( 'wp_ajax_psf_search_index_details_toggle', [ $this, 'ajaxBuildIndexDetailsToggle' ] );
 
-		add_action( 'update_option_' . DGWT_WCAS_SETTINGS_KEY, [ $this, 'buildIndexOnchangeSettings' ], 10, 2 );
+		add_action( 'update_option_' . PSF_SEARCH_SETTINGS_KEY, [ $this, 'buildIndexOnchangeSettings' ], 10, 2 );
 
 		add_action( 'admin_init', [ $this, 'maintenanceOnInit' ], 5 );
 		add_action( 'admin_init', [ $this, 'fixIndexStatus' ] );
@@ -154,19 +153,19 @@ class TNTSearch {
 		$this->pushIndexAfterPluginUpdate();
 
 		// Load dynamic prices
-		add_action( 'wc_ajax_' . DGWT_WCAS_GET_PRICES_ACTION, [ $this, 'getDynamicPrices' ] );
+		add_action( 'wc_ajax_' . PSF_SEARCH_GET_PRICES_ACTION, [ $this, 'getDynamicPrices' ] );
 
 		// Alternative search endpoint
 		if (
-			get_option( 'dgwt_wcas_alternative_endpoint_enabled' ) === '1' ||
-			( defined( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT' ) && DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT )
+			get_option( 'psf_search_alternative_endpoint_enabled' ) === '1' ||
+			( defined( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT )
 		) {
-			add_action( 'wc_ajax_' . DGWT_WCAS_SEARCH_PRO_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wc_ajax_' . PSF_SEARCH_SEARCH_PRO_ACTION, [ $this, 'getSearchResults' ] );
 		}
 
-		add_action( 'dgwt/wcas/indexer/build', [ $this, 'buildIndex' ] );
-		add_action( 'dgwt/wcas/indexer/delete', [ $this, 'deleteSingle' ] );
-		add_action( 'dgwt/wcas/indexer/update', [ $this, 'updateSingle' ] );
+		add_action( 'psf_search/indexer/build', [ $this, 'buildIndex' ] );
+		add_action( 'psf_search/indexer/delete', [ $this, 'deleteSingle' ] );
+		add_action( 'psf_search/indexer/update', [ $this, 'updateSingle' ] );
 	}
 
 
@@ -228,7 +227,7 @@ class TNTSearch {
 	/**
 	 * Build index
 	 *
-	 * Admin ajax callback for action "dgwt_wcas_build_index"
+	 * Admin ajax callback for action "psf_search_build_index"
 	 *
 	 * @return void
 	 */
@@ -237,7 +236,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_build_index' );
+		check_ajax_referer( 'psf_search_build_index' );
 
 		Builder::buildIndex();
 
@@ -255,8 +254,8 @@ class TNTSearch {
 		if ( ! Helpers::isSettingsPage() ) {
 			return;
 		}
-		// Skip index rebuilding when plugin version changes, because that will be done in \DgoraWcas\Admin\Install::checkVersion.
-		if ( Helpers::getPluginVersion__premium_only() !== DGWT_WCAS_VERSION ) {
+		// Skip index rebuilding when plugin version changes, because that will be done in \PsfSearch\Admin\Install::checkVersion.
+		if ( Helpers::getPluginVersion__premium_only() !== PSF_SEARCH_VERSION ) {
 			return;
 		}
 
@@ -308,7 +307,7 @@ class TNTSearch {
 	/**
 	 * Stop building index
 	 *
-	 * Admin ajax callback for action "dgwt_wcas_stop_build_index"
+	 * Admin ajax callback for action "psf_search_stop_build_index"
 	 *
 	 * @return void
 	 */
@@ -317,7 +316,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_stop_build_index' );
+		check_ajax_referer( 'psf_search_stop_build_index' );
 
 		Builder::addInfo( 'status', 'cancellation', Config::getIndexRole() );
 		Builder::log( 'Stop building the index. Starting the cancellation process.' );
@@ -334,7 +333,7 @@ class TNTSearch {
 	/**
 	 * Refresh index status
 	 *
-	 * Admin ajax callback for action "dgwt_wcas_build_index_heartbeat"
+	 * Admin ajax callback for action "psf_search_build_index_heartbeat"
 	 *
 	 * @return void
 	 */
@@ -343,7 +342,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_build_index_heartbeat' );
+		check_ajax_referer( 'psf_search_build_index_heartbeat' );
 
 		$status       = Builder::getInfo( 'status', Config::getIndexRole() );
 		$loop         = false;
@@ -367,11 +366,7 @@ class TNTSearch {
 		}
 
 		if ( Builder::isIndexerWorkingTooLong() ) {
-			if ( Troubleshooting::hasWpCronMissedEvents() ) {
-				Builder::log( sprintf( '[Indexer] [Error code: 001] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
-			} else {
-				Builder::log( sprintf( '[Indexer] [Error code: 002] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
-			}
+			Builder::log( sprintf( '[Indexer] The index build was stuck for %d minutes.', floor( $diff / 60 ) ), 'emergency', 'both' );
 
 			Builder::addInfo( 'status', 'error', Config::getIndexRole() );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );
@@ -403,7 +398,7 @@ class TNTSearch {
 	/**
 	 * Show/hide indexer logs
 	 *
-	 * Admin ajax callback for action "dgwt_wcas_index_details_toggle"
+	 * Admin ajax callback for action "psf_search_index_details_toggle"
 	 *
 	 * @return void
 	 */
@@ -412,7 +407,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_index_details_toggle' );
+		check_ajax_referer( 'psf_search_index_details_toggle' );
 
 		delete_transient( Builder::DETAILS_DISPLAY_KEY );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -448,8 +443,8 @@ class TNTSearch {
 				$dest         = ! empty( $res['destination_name'] ) && is_string( $res['destination_name'] ) ? $res['destination_name'] : '';
 
 				if (
-					in_array( 'ajax-search-for-woocommerce.php', $files )
-					&& strpos( $dest, 'ajax-search-for-woocommerce' ) !== false ) {
+					in_array( 'psf-search.php', $files )
+					&& strpos( $dest, 'psf-search' ) !== false ) {
 					$properPlugin = true;
 				}
 
@@ -486,7 +481,7 @@ class TNTSearch {
 	public function buildIndexOnchangeSettings( $oldSettings, $newSettings ) {
 		wp_cache_delete( 'alloptions', 'options' );
 
-		if ( DGWT_WCAS()->engine !== 'tntsearchMySql' ) {
+		if ( PSF_SEARCH()->engine !== 'tntsearchMySql' ) {
 			return;
 		};
 
@@ -505,13 +500,13 @@ class TNTSearch {
 			'search_synonyms',
 		];
 
-		$taxonomiesSlugs = DGWT_WCAS()->tntsearchMySql->taxonomies->getTaxonomiesSlugs();
+		$taxonomiesSlugs = PSF_SEARCH()->tntsearchMySql->taxonomies->getTaxonomiesSlugs();
 		foreach ( $taxonomiesSlugs as $slug ) {
 			$listenKeys[] = 'search_in_product_tax_' . $slug;
 			$listenKeys[] = 'show_product_tax_' . $slug;
 		}
 
-		$postTypeSlugs = DGWT_WCAS()->tntsearchMySql->postTypes->getPostTypesSlugs();
+		$postTypeSlugs = PSF_SEARCH()->tntsearchMySql->postTypes->getPostTypesSlugs();
 		foreach ( $postTypeSlugs as $slug ) {
 			$listenKeys[] = 'show_post_type_' . $slug;
 		}
@@ -579,8 +574,8 @@ class TNTSearch {
 	 */
 	public function getDynamicPrices() {
 
-		if ( ! defined( 'DGWT_WCAS_AJAX' ) ) {
-			define( 'DGWT_WCAS_AJAX', true );
+		if ( ! defined( 'PSF_SEARCH_AJAX' ) ) {
+			define( 'PSF_SEARCH_AJAX', true );
 		}
 
 		$prices = [];
@@ -593,7 +588,7 @@ class TNTSearch {
 			// Hard cap request size to avoid unnecessary iteration and potential abuse.
 			$rawItems = array_slice( $rawItems, 0, $maxItems );
 
-			$totalLimitSetting = DGWT_WCAS()->settings->getOption( 'suggestions_limit', 7 );
+			$totalLimitSetting = PSF_SEARCH()->settings->getOption( 'suggestions_limit', 7 );
 			$totalLimit        = min( $totalLimitSetting, $maxItems );
 
 			$i = 1;
@@ -631,8 +626,8 @@ class TNTSearch {
 	 * Alternative search endpoint
 	 */
 	public function getSearchResults() {
-		define( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED', true );
-		require_once DGWT_WCAS_DIR . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
+		define( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED', true );
+		require_once PSF_SEARCH_DIR . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
 	}
 
 	/**
@@ -655,7 +650,7 @@ class TNTSearch {
 	 */
 	public function deleteSingle( $postID ) {
 		if ( is_null( $this->productUpdater ) ) {
-			_doing_it_wrong( __FUNCTION__, __( 'The deleting of objects in the search index should be performed at the earliest on the action "init" with priority 11.', 'ajax-search-for-woocommerce' ), '1.19' );
+			_doing_it_wrong( __FUNCTION__, __( 'The deleting of objects in the search index should be performed at the earliest on the action "init" with priority 11.', 'psf-search' ), '1.19' );
 
 			return;
 		}
@@ -672,7 +667,7 @@ class TNTSearch {
 	 */
 	public function updateSingle( $postID ) {
 		if ( is_null( $this->productUpdater ) ) {
-			_doing_it_wrong( __FUNCTION__, __( 'The updating of objects in the search index should be performed at the earliest on the action "init" with priority 11.', 'ajax-search-for-woocommerce' ), '1.19' );
+			_doing_it_wrong( __FUNCTION__, __( 'The updating of objects in the search index should be performed at the earliest on the action "init" with priority 11.', 'psf-search' ), '1.19' );
 
 			return;
 		}

@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 class WPDBSecond extends WPDB {
 	public static function get_instance() {

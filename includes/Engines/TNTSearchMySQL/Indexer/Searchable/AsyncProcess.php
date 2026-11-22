@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ class AsyncProcess extends WPBackgroundProcess {
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'wcas';
+	protected $prefix = 'psf_search';
 
 	/**
 	 * @var string
@@ -42,8 +42,8 @@ class AsyncProcess extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $itemsSet ) {
-		if ( ! defined( 'DGWT_WCAS_SEARCHABLE_INDEX_TASK' ) ) {
-			define( 'DGWT_WCAS_SEARCHABLE_INDEX_TASK', true );
+		if ( ! defined( 'PSF_SEARCH_SEARCHABLE_INDEX_TASK' ) ) {
+			define( 'PSF_SEARCH_SEARCHABLE_INDEX_TASK', true );
 		}
 
 		$status = Builder::getInfo( 'status', Config::getIndexRole() );
@@ -57,7 +57,7 @@ class AsyncProcess extends WPBackgroundProcess {
 
 		Builder::log( '[Searchable index] Starting async task. Items set count: ' . count( $itemsSet ), 'debug', 'file', 'searchable' );
 
-		do_action( 'dgwt/wcas/searchable_index/bg_processing/before_task' );
+		do_action( 'psf_search/searchable_index/bg_processing/before_task' );
 
 		register_shutdown_function(
 			function () {
@@ -177,7 +177,7 @@ class AsyncProcess extends WPBackgroundProcess {
 		Builder::log( '[Searchable index] Completed' );
 
 		if ( Config::isIndexerMode( 'sync' ) ) {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->maybe_dispatch();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->maybe_dispatch();
 		} else {
 			sleep( 1 );
 			Builder::maybeMarkAsCompleted();

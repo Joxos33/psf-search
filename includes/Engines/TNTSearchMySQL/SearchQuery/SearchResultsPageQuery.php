@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\SearchQuery;
+namespace PsfSearch\Engines\TNTSearchMySQL\SearchQuery;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

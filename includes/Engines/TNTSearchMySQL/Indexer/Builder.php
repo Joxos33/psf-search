@@ -1,20 +1,19 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerTax;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Vendor\Indexer as IndexerVendors;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Database as DatabaseS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Database as DatabaseR;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Database as DatabaseT;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Request as RequestT;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\Mutex\WpdbMysqlMutex;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerTax;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Database as DatabaseS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Database as DatabaseR;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\Database as DatabaseT;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\Request as RequestT;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\Mutex\WpdbMysqlMutex;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Cache;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,11 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Builder {
 
-	const LAST_BUILD_OPTION_KEY              = 'dgwt_wcas_indexer_last_build';
-	const DETAILS_DISPLAY_KEY                = 'dgwt_wcas_indexer_details_display';
-	const INDEXING_PREPARE_PROCESS_EXIST_KEY = 'dgwt_wcas_indexer_prepare_process_exist';
-	const INDEXER_DEBUG_TRANSIENT_KEY        = 'dgwt_wcas_indexer_debug';
-	const INDEXER_DEBUG_SCOPE_TRANSIENT_KEY  = 'dgwt_wcas_indexer_debug_scope';
+	const LAST_BUILD_OPTION_KEY              = 'psf_search_indexer_last_build';
+	const DETAILS_DISPLAY_KEY                = 'psf_search_indexer_details_display';
+	const INDEXING_PREPARE_PROCESS_EXIST_KEY = 'psf_search_indexer_prepare_process_exist';
+	const INDEXER_DEBUG_TRANSIENT_KEY        = 'psf_search_indexer_debug';
+	const INDEXER_DEBUG_SCOPE_TRANSIENT_KEY  = 'psf_search_indexer_debug_scope';
 	const SEARCHABLE_SET_ITEMS_COUNT         = 50;
 	const READABLE_SET_ITEMS_COUNT           = 25;
 	const TAXONOMY_SET_ITEMS_COUNT           = 100;
@@ -172,8 +171,8 @@ class Builder {
 	 * @return bool
 	 */
 	public static function isDebug() {
-		if ( defined( 'DGWT_WCAS_INDEXER_DEBUG' ) ) {
-			return (bool) DGWT_WCAS_INDEXER_DEBUG;
+		if ( defined( 'PSF_SEARCH_INDEXER_DEBUG' ) ) {
+			return (bool) PSF_SEARCH_INDEXER_DEBUG;
 		}
 
 		return (bool) get_transient( self::INDEXER_DEBUG_TRANSIENT_KEY );
@@ -185,8 +184,8 @@ class Builder {
 	 * @return array
 	 */
 	public static function getDebugScopes() {
-		if ( defined( 'DGWT_WCAS_INDEXER_DEBUG_SCOPE' ) ) {
-			$scope = explode( ',', DGWT_WCAS_INDEXER_DEBUG_SCOPE );
+		if ( defined( 'PSF_SEARCH_INDEXER_DEBUG_SCOPE' ) ) {
+			$scope = explode( ',', PSF_SEARCH_INDEXER_DEBUG_SCOPE );
 
 			return array_map( 'trim', $scope );
 		}
@@ -228,7 +227,7 @@ class Builder {
 	 * @return void
 	 */
 	public static function log( $message, $level = 'info', $destination = 'both', $scope = 'all', $source = '' ) {
-		if ( defined( 'DGWT_WCAS_DISABLE_INDEXER_LOGS' ) && DGWT_WCAS_DISABLE_INDEXER_LOGS ) {
+		if ( defined( 'PSF_SEARCH_DISABLE_INDEXER_LOGS' ) && PSF_SEARCH_DISABLE_INDEXER_LOGS ) {
 			return;
 		}
 
@@ -304,15 +303,15 @@ class Builder {
 		}
 
 		if ( $async ) {
-			DGWT_WCAS()->tntsearchMySql->asyncRebuildIndex->data( [ 'force' => true ] )->schedule_event()->dispatch();
+			PSF_SEARCH()->tntsearchMySql->asyncRebuildIndex->data( [ 'force' => true ] )->schedule_event()->dispatch();
 		} else {
 			self::buildIndexProcess();
 		}
 	}
 
 	public static function prepareBuildIndex() {
-		if ( ! defined( 'DGWT_WCAS_PREPARE_BUILD_INDEX' ) ) {
-			define( 'DGWT_WCAS_PREPARE_BUILD_INDEX', true );
+		if ( ! defined( 'PSF_SEARCH_PREPARE_BUILD_INDEX' ) ) {
+			define( 'PSF_SEARCH_PREPARE_BUILD_INDEX', true );
 		}
 
 		if ( Helpers::isLockLocked__premium_only( self::INDEXING_PREPARE_PROCESS_EXIST_KEY, 5 ) ) {
@@ -341,10 +340,10 @@ class Builder {
 
 		self::wipeActionScheduler();
 
-		delete_option( 'dgwt_wcas_variable_products_to_update' );
+		delete_option( 'psf_search_variable_products_to_update' );
 
-		self::log( sprintf( 'Plugin version: %s', DGWT_WCAS_VERSION ) );
-		self::addInfo( 'plugin_version', DGWT_WCAS_VERSION );
+		self::log( sprintf( 'Plugin version: %s', PSF_SEARCH_VERSION ) );
+		self::addInfo( 'plugin_version', PSF_SEARCH_VERSION );
 
 		if ( Multilingual::isMultilingual() ) {
 			self::log(
@@ -363,14 +362,14 @@ class Builder {
 		}
 
 		self::log( 'Indexer prepared for building the index' );
-		do_action( 'dgwt/wcas/indexer/prepared' );
+		do_action( 'psf_search/indexer/prepared' );
 
 		return true;
 	}
 
 	public static function buildIndexProcess() {
-		if ( ! defined( 'DGWT_WCAS_BUILD_INDEX_PROCESS' ) ) {
-			define( 'DGWT_WCAS_BUILD_INDEX_PROCESS', true );
+		if ( ! defined( 'PSF_SEARCH_BUILD_INDEX_PROCESS' ) ) {
+			define( 'PSF_SEARCH_BUILD_INDEX_PROCESS', true );
 		}
 
 		$status = self::getInfo( 'status', Config::getIndexRole() );
@@ -388,7 +387,7 @@ class Builder {
 		self::addInfo( 'status', 'building' );
 
 		self::log( 'Indexer started building the index' );
-		do_action( 'dgwt/wcas/indexer/started' );
+		do_action( 'psf_search/indexer/started' );
 
 		$variationSupportModes = Helpers::getVariationSupportModes__premium_only();
 		self::addInfo( 'variation_support_modes', $variationSupportModes );
@@ -456,11 +455,11 @@ class Builder {
 				[
 					'ids'       => true,
 					'postType'  => 'product_variation',
-					'parentIds' => apply_filters( 'dgwt/wcas/indexer/variation_parent_ids', $productsIds ),
+					'parentIds' => apply_filters( 'psf_search/indexer/variation_parent_ids', $productsIds ),
 				]
 			);
 			$variationsIds   = $variationSource->getData();
-			$variationsIds   = apply_filters( 'dgwt/wcas/indexer/variation_ids', $variationsIds );
+			$variationsIds   = apply_filters( 'psf_search/indexer/variation_ids', $variationsIds );
 
 			self::addInfo( 'total_products_for_indexing', count( $productsIds ) + count( $variationsIds ) );
 
@@ -501,9 +500,9 @@ class Builder {
 		// PROCESS (for direct mode)
 		// -------------------------------------------
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->task( $toTheQueue['readable'] );
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->task( $toTheQueue['readable'] );
 			foreach ( $toTheQueue['searchable'] as $ids ) {
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->task( $ids );
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->task( $ids );
 			}
 		} else {
 			foreach ( $toTheQueue as $indexer => $data ) {
@@ -524,39 +523,39 @@ class Builder {
 		if ( Config::isIndexerMode( 'direct' ) ) {
 			// This condition prevents the build completion from starting when an error previously occurred.
 			if ( self::getInfo( 'status', Config::getIndexRole() ) === 'building' ) {
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->complete();
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->complete();
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->complete();
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->complete();
 			}
 		} elseif ( Config::isIndexerMode( 'sync' ) ) {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->save();
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->save();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->save();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->save();
 
-			if ( DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->get_save_result() && DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->get_save_result() ) {
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->maybe_dispatch();
+			if ( PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->get_save_result() && PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->get_save_result() ) {
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->maybe_dispatch();
 			} else {
 				self::log( '[Indexer] [Error code: 006] Failed to save indexer queue to the database.', 'emergency', 'both' );
 				self::addInfo( 'status', 'error' );
 				self::log( 'Stop building the index. Starting the cancellation process.' );
 				self::cancelBuildIndex();
-				do_action( 'dgwt/wcas/indexer/status/error' );
+				do_action( 'psf_search/indexer/status/error' );
 			}
 		} else {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->save();
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->save();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->save();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->save();
 
 			if (
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->get_save_result()
-				&& DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->get_save_result()
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->get_save_result()
+				&& PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->get_save_result()
 			) {
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->maybe_dispatch();
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->maybe_dispatch();
 				sleep( 1 );
-				DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->maybe_dispatch();
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->maybe_dispatch();
 			} else {
 				self::log( '[Indexer] [Error code: 006] Failed to save indexer queue to the database.', 'emergency', 'both' );
 				self::addInfo( 'status', 'error' );
 				self::log( 'Stop building the index. Starting the cancellation process.' );
 				self::cancelBuildIndex();
-				do_action( 'dgwt/wcas/indexer/status/error' );
+				do_action( 'psf_search/indexer/status/error' );
 			}
 		}
 	}
@@ -579,12 +578,12 @@ class Builder {
 
 		switch ( $indexer ) {
 			case 'searchable':
-				$object = DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS;
-				$limit  = apply_filters( 'dgwt/wcas/indexer/searchable_set_items_count', self::SEARCHABLE_SET_ITEMS_COUNT );
+				$object = PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS;
+				$limit  = apply_filters( 'psf_search/indexer/searchable_set_items_count', self::SEARCHABLE_SET_ITEMS_COUNT );
 				break;
 			case 'readable':
-				$object = DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR;
-				$limit  = apply_filters( 'dgwt/wcas/indexer/readable_set_items_count', self::READABLE_SET_ITEMS_COUNT );
+				$object = PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR;
+				$limit  = apply_filters( 'psf_search/indexer/readable_set_items_count', self::READABLE_SET_ITEMS_COUNT );
 				break;
 		}
 
@@ -614,9 +613,9 @@ class Builder {
 	 * @return void
 	 */
 	public static function cancelBuildIndex( $clearInfo = true ) {
-		DGWT_WCAS()->tntsearchMySql->asynchBuildIndexR->cancel_process();
-		DGWT_WCAS()->tntsearchMySql->asynchBuildIndexS->cancel_process();
-		DGWT_WCAS()->tntsearchMySql->asynchBuildIndexT->cancel_process();
+		PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->cancel_process();
+		PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->cancel_process();
+		PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->cancel_process();
 
 		self::wipeIndexTables();
 
@@ -651,11 +650,6 @@ class Builder {
 			$taxIndexer = new IndexerTax();
 			$taxIndexer->wipe( $indexRoleSuffix );
 		}
-
-		if ( self::vendorsIndexExists( $indexRoleSuffix ) ) {
-			$vendorsIndexer = new IndexerVendors();
-			$vendorsIndexer->wipe( $indexRoleSuffix );
-		}
 	}
 
 	public static function getReadableProgress() {
@@ -672,7 +666,7 @@ class Builder {
 		}
 
 		if ( self::readableIndexExists( Config::getIndexRoleSuffix() ) ) {
-			$tableName = $wpdb->dgwt_wcas_index . Config::getIndexRoleSuffix();
+			$tableName = $wpdb->psf_search_index . Config::getIndexRoleSuffix();
 			//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$totalIndexed = $wpdb->get_var( 'SELECT COUNT(DISTINCT post_id) FROM ' . $tableName );
 		}
@@ -748,7 +742,7 @@ class Builder {
 			$progress = ( $percentR + $percentS ) / 2;
 		}
 
-		$progress = apply_filters( 'dgwt/wcas/indexer/process_status/progress', $progress, $percentR, $percentS, $percentT );
+		$progress = apply_filters( 'psf_search/indexer/process_status/progress', $progress, $percentR, $percentS, $percentT );
 
 		return $progress > 100 ? 99 : $progress;
 	}
@@ -758,7 +752,7 @@ class Builder {
 			self::refreshStatus();
 		}
 
-		$html  = '<div class="js-dgwt-wcas-indexing-wrapper">';
+		$html  = '<div class="js-psf-search-indexing-wrapper">';
 		$html .= self::getIndexHeader();
 		$html .= self::getProcessStatus();
 		$html .= '</div>';
@@ -810,45 +804,45 @@ class Builder {
 
 		switch ( $status ) {
 			case 'preparing':
-				$text        = __( 'Wait... Preparing indexing in progress', 'ajax-search-for-woocommerce' );
+				$text        = __( 'Wait... Preparing indexing in progress', 'psf-search' );
 				$statusText  = __(
 					'This process will continue in the background. You can leave this page!',
-					'ajax-search-for-woocommerce'
+					'psf-search'
 				);
 				$statusColor = '#e6a51d';
 				break;
 			case 'building':
-				$text        = __( 'Wait... Indexing in progress', 'ajax-search-for-woocommerce' );
+				$text        = __( 'Wait... Indexing in progress', 'psf-search' );
 				$statusText  = __(
 					'This process will continue in the background. You can leave this page!',
-					'ajax-search-for-woocommerce'
+					'psf-search'
 				);
 				$statusColor = '#e6a51d';
 				break;
 			case 'cancellation':
-				$text        = __( 'Wait... The index build process is canceling', 'ajax-search-for-woocommerce' );
-				$statusText  = __( 'Canceling...', 'ajax-search-for-woocommerce' );
+				$text        = __( 'Wait... The index build process is canceling', 'psf-search' );
+				$statusText  = __( 'Canceling...', 'psf-search' );
 				$statusColor = '#7293b0';
 				break;
 			case 'completed':
 				$lastDate = ! empty( $endTs ) ? Helpers::localDate( $endTs ) : '-';
 				if ( empty( $nonCriticalErrors ) ) {
-					$text = __( 'The search index was built successfully.', 'ajax-search-for-woocommerce' );
+					$text = __( 'The search index was built successfully.', 'psf-search' );
 				} else {
-					$text = __( 'The search index was built successfully, but some non-critical errors occurred.', 'ajax-search-for-woocommerce' );
+					$text = __( 'The search index was built successfully, but some non-critical errors occurred.', 'psf-search' );
 				}
-				$statusText  = __( 'Completed. Works.', 'ajax-search-for-woocommerce' );
+				$statusText  = __( 'Completed. Works.', 'psf-search' );
 				$statusColor = '#4caf50';
 				break;
 			case 'error':
-				$text                                     = __( 'The search index could not be built.', 'ajax-search-for-woocommerce' );
-				$statusText                               = __( 'Errors', 'ajax-search-for-woocommerce' );
+				$text                                     = __( 'The search index could not be built.', 'psf-search' );
+				$statusText                               = __( 'Errors', 'psf-search' );
 				$statusColor                              = '#d75f5f';
 				list( $lastErrorCode, $lastErrorMessage ) = Logger::getLastEmergencyLog();
 				break;
 			default:
-				$text        = __( 'The search index does not exist yet. Build it now.', 'ajax-search-for-woocommerce' );
-				$statusText  = __( 'Not exist', 'ajax-search-for-woocommerce' );
+				$text        = __( 'The search index does not exist yet. Build it now.', 'psf-search' );
+				$statusText  = __( 'Not exist', 'psf-search' );
 				$statusColor = '#aaaaaa';
 				break;
 		}
@@ -859,20 +853,20 @@ class Builder {
 		$oldIndexEndTime = Helpers::localDate( absint( self::getInfo( 'end_ts', 'main' ) ), 'Y-m-d H:i:s' );
 		$notices         = [];
 
-		$infoLimitedEngine  = '<b>' . __( 'Search engine status:', 'ajax-search-for-woocommerce' ) . '</b> ';
-		$infoLimitedEngine .= __( "Your search engine does not work optimally because the index hasn't been built yet.", 'ajax-search-for-woocommerce' );
-		$infoLimitedEngine .= ' ' . __( 'The best speed and all pro features will be available after the index has been built.', 'ajax-search-for-woocommerce' );
+		$infoLimitedEngine  = '<b>' . __( 'Search engine status:', 'psf-search' ) . '</b> ';
+		$infoLimitedEngine .= __( "Your search engine does not work optimally because the index hasn't been built yet.", 'psf-search' );
+		$infoLimitedEngine .= ' ' . __( 'The best speed and all pro features will be available after the index has been built.', 'psf-search' );
 
 		if ( Config::isParallelBuildingEnabled() && self::getInfo( 'status', 'tmp' ) !== 'completed' ) {
 			if ( self::getInfo( 'status', 'main' ) === 'completed' ) {
-				$notices['info']  = '<b>' . __( 'Search engine status:', 'ajax-search-for-woocommerce' ) . '</b> ';
-				$notices['info'] .= __( 'We have some good news!', 'ajax-search-for-woocommerce' );
+				$notices['info']  = '<b>' . __( 'Search engine status:', 'psf-search' ) . '</b> ';
+				$notices['info'] .= __( 'We have some good news!', 'psf-search' );
 				if ( in_array( self::getInfo( 'status', 'tmp' ), [ 'preparing', 'building' ] ) ) {
-					$notices['info'] .= ' ' . __( "Even though the current index is being built, it doesn't affect your search engine.", 'ajax-search-for-woocommerce' );
+					$notices['info'] .= ' ' . __( "Even though the current index is being built, it doesn't affect your search engine.", 'psf-search' );
 				} else {
-					$notices['info'] .= ' ' . __( "Even though the current index wasn't built, it doesn't affect your search engine.", 'ajax-search-for-woocommerce' );
+					$notices['info'] .= ' ' . __( "Even though the current index wasn't built, it doesn't affect your search engine.", 'psf-search' );
 				}
-				$notices['info'] .= ' ' . sprintf( __( 'It works well based on the last properly built index from %s', 'ajax-search-for-woocommerce' ), $oldIndexEndTime );
+				$notices['info'] .= ' ' . sprintf( __( 'It works well based on the last properly built index from %s', 'psf-search' ), $oldIndexEndTime );
 			} else {
 				$notices['info'] = $infoLimitedEngine;
 			}
@@ -883,8 +877,8 @@ class Builder {
 		}
 
 		ob_start();
-		include DGWT_WCAS_DIR . 'partials/admin/indexer-notices.php';
-		include DGWT_WCAS_DIR . 'partials/admin/indexer-header.php';
+		include PSF_SEARCH_DIR . 'partials/admin/indexer-notices.php';
+		include PSF_SEARCH_DIR . 'partials/admin/indexer-header.php';
 		$html = ob_get_contents();
 		ob_end_clean();
 
@@ -897,27 +891,27 @@ class Builder {
 		if ( in_array( $status, [ 'building', 'preparing' ] ) ) {
 			$html = '<button class="button js-ajax-stop-build-index">' . __(
 				'Stop process',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			) . '</button>';
 		} elseif ( in_array( $status, [ 'completed' ] ) ) {
 			$html = '<button class="button js-ajax-build-index">' . __(
 				'Rebuild index',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			) . '</button>';
 		} elseif ( in_array( $status, [ 'error' ] ) ) {
 			$html = '<button class="button js-ajax-build-index">' . __(
 				'Try to rebuild the index',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			) . '</button>';
 		} elseif ( in_array( $status, [ 'cancellation' ] ) ) {
 			$html = '<button class="button js-ajax-build-index" disabled="disabled">' . __(
 				'Stop process',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			) . '</button>';
 		} else {
 			$html = '<button class="button js-ajax-build-index ajax-build-index-primary">' . __(
 				'Build index',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			) . '</button>';
 		}
 
@@ -932,7 +926,7 @@ class Builder {
 	public static function readableIndexExists( $indexRoleSuffix = '' ) {
 		global $wpdb;
 
-		return Helpers::isTableExists( $wpdb->dgwt_wcas_index . $indexRoleSuffix );
+		return Helpers::isTableExists( $wpdb->psf_search_index . $indexRoleSuffix );
 	}
 
 	/**
@@ -943,7 +937,7 @@ class Builder {
 	public static function taxIndexExists( $indexRoleSuffix = '' ) {
 		global $wpdb;
 
-		return Helpers::isTableExists( $wpdb->dgwt_wcas_tax_index . $indexRoleSuffix );
+		return Helpers::isTableExists( $wpdb->psf_search_tax_index . $indexRoleSuffix );
 	}
 
 	/**
@@ -954,18 +948,7 @@ class Builder {
 	public static function variationsIndexExists( $indexRoleSuffix = '' ) {
 		global $wpdb;
 
-		return Helpers::isTableExists( $wpdb->dgwt_wcas_var_index . $indexRoleSuffix );
-	}
-
-	/**
-	 * Check if vendors table exist
-	 *
-	 * @return bool
-	 */
-	public static function vendorsIndexExists( $indexRoleSuffix = '' ) {
-		global $wpdb;
-
-		return Helpers::isTableExists( $wpdb->dgwt_wcas_ven_index . $indexRoleSuffix );
+		return Helpers::isTableExists( $wpdb->psf_search_var_index . $indexRoleSuffix );
 	}
 
 	/**
@@ -1001,8 +984,8 @@ class Builder {
 			foreach ( $langs as $lang ) {
 				$lang = str_replace( '-', '_', $lang );
 
-				$wordlistTable = $wpdb->dgwt_wcas_si_wordlist . '_' . $lang . $indexRoleSuffix;
-				$doclistTable  = $wpdb->dgwt_wcas_si_doclist . '_' . $lang . $indexRoleSuffix;
+				$wordlistTable = $wpdb->psf_search_si_wordlist . '_' . $lang . $indexRoleSuffix;
+				$doclistTable  = $wpdb->psf_search_si_doclist . '_' . $lang . $indexRoleSuffix;
 
 				if ( Helpers::isTableExists( $wordlistTable ) ) {
 					$wordlistInstances ++;
@@ -1021,8 +1004,8 @@ class Builder {
 				$doclistExists = true;
 			}
 		} else {
-			$wordlistExists = Helpers::isTableExists( $wpdb->dgwt_wcas_si_wordlist . $indexRoleSuffix );
-			$doclistExists  = Helpers::isTableExists( $wpdb->dgwt_wcas_si_doclist . $indexRoleSuffix );
+			$wordlistExists = Helpers::isTableExists( $wpdb->psf_search_si_wordlist . $indexRoleSuffix );
+			$doclistExists  = Helpers::isTableExists( $wpdb->psf_search_si_doclist . $indexRoleSuffix );
 		}
 
 		ob_end_clean();
@@ -1044,7 +1027,7 @@ class Builder {
 		$lang = Multilingual::isLangCode( $lang ) ? $lang : '';
 		$lang = str_replace( '-', '_', $lang );
 
-		$cacheTable = $wpdb->dgwt_wcas_si_cache;
+		$cacheTable = $wpdb->psf_search_si_cache;
 		if ( ! empty( $postType ) ) {
 			$cacheTable .= '_' . $postType;
 		}
@@ -1062,7 +1045,7 @@ class Builder {
 
 		if ( self::readableIndexExists( Config::getIndexRoleSuffix() ) ) {
 			//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$r = $wpdb->get_var( 'SELECT COUNT(DISTINCT post_id) FROM ' . $wpdb->dgwt_wcas_index . Config::getIndexRoleSuffix() );
+			$r = $wpdb->get_var( 'SELECT COUNT(DISTINCT post_id) FROM ' . $wpdb->psf_search_index . Config::getIndexRoleSuffix() );
 			if ( ! empty( $r ) && is_numeric( $r ) ) {
 				$count = absint( $r );
 			}
@@ -1091,10 +1074,9 @@ class Builder {
 		$logs                  = self::getLogs( Config::getIndexRole() );
 		$isDetails             = get_transient( self::DETAILS_DISPLAY_KEY );
 		$canBuildTaxonomyIndex = self::canBuildTaxonomyIndex();
-		$canBuildVendorsIndex  = self::canBuildVendorsIndex();
 
 		ob_start();
-		include DGWT_WCAS_DIR . 'partials/admin/indexer-body.php';
+		include PSF_SEARCH_DIR . 'partials/admin/indexer-body.php';
 		$html = ob_get_contents();
 		ob_end_clean();
 
@@ -1107,16 +1089,7 @@ class Builder {
 	 * @return bool
 	 */
 	public static function canBuildTaxonomyIndex() {
-		return ! empty( DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' ) );
-	}
-
-	/**
-	 * Check if can index vendors
-	 *
-	 * @return bool
-	 */
-	public static function canBuildVendorsIndex() {
-		return apply_filters( 'dgwt/wcas/search/vendors', false );
+		return ! empty( PSF_SEARCH()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' ) );
 	}
 
 	/**
@@ -1151,8 +1124,8 @@ class Builder {
 		$uploadDir = wp_upload_dir();
 		if ( ! empty( $uploadDir['basedir'] ) ) {
 
-			$directory = $uploadDir['basedir'] . '/wcas-search';
-			$file      = $uploadDir['basedir'] . '/wcas-search/products.index';
+			$directory = $uploadDir['basedir'] . '/psf-search-search';
+			$file      = $uploadDir['basedir'] . '/psf-search-search/products.index';
 
 			if ( file_exists( $file ) && is_writable( $file ) ) {
 				@unlink( $file );
@@ -1186,7 +1159,7 @@ class Builder {
 			self::log( 'Indexing completed' );
 			self::copyTmpIndexToMain();
 			self::flushOptionsCache();
-			do_action( 'dgwt/wcas/indexer/status/completed' );
+			do_action( 'psf_search/indexer/status/completed' );
 		}
 	}
 
@@ -1208,7 +1181,7 @@ class Builder {
 
 		$tables               = Utils::getAllPluginTables();
 		$nonRemovableTables   = [
-			'dgwt_wcas_stats',
+			'psf_search_stats',
 		];
 		$nonRemovableTables[] = Storage::getTableName();
 		foreach ( $tables as $table ) {
@@ -1337,8 +1310,8 @@ class Builder {
 		}
 
 		try {
-			$queue->cancel_all( 'dgwt/wcas/tnt/background_product_update' );
-			$queue->cancel_all( 'dgwt/wcas/tnt/init_variations_update' );
+			$queue->cancel_all( 'psf_search/tnt/background_product_update' );
+			$queue->cancel_all( 'psf_search/tnt/init_variations_update' );
 			//phpcs:ignore Squiz.Commenting.EmptyCatchComment.Missing,Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 		} catch ( Exception $e ) {
 
@@ -1393,7 +1366,7 @@ class Builder {
 		 *
 		 * @param int $maxNoActionTime Max time in seconds. 16 min if WP-Cron is enabled or 61 min if not
 		 */
-		$maxNoActionTime = apply_filters( 'dgwt/wcas/indexer/max_no_action_time', $maxNoActionTime );
+		$maxNoActionTime = apply_filters( 'psf_search/indexer/max_no_action_time', $maxNoActionTime );
 
 		if ( $forceMaxNoActionTime > 0 ) {
 			$maxNoActionTime = $forceMaxNoActionTime;

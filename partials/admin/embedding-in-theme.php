@@ -1,25 +1,24 @@
 <?php
 
-use DgoraWcas\Admin\Promo\Upgrade;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-if ( DGWT_WCAS()->themeCompatibility->isCurrentThemeSupported() ) :
+if ( PSF_SEARCH()->themeCompatibility->isCurrentThemeSupported() ) :
 
-	if ( ! DGWT_WCAS()->themeCompatibility->isWhiteLabel() ) :
+	if ( ! PSF_SEARCH()->themeCompatibility->isWhiteLabel() ) :
 
-		$name        = DGWT_WCAS()->themeCompatibility->getThemeName();
+		$name        = PSF_SEARCH()->themeCompatibility->getThemeName();
 		$parentLabel = '';
 
-		if ( DGWT_WCAS()->themeCompatibility->isChildTheme() ) {
-			$parentLabel = ', ' . sprintf( __( 'child theme of <b>%s</b>', 'ajax-search-for-woocommerce' ), DGWT_WCAS()->themeCompatibility->getParentThemeName() );
+		if ( PSF_SEARCH()->themeCompatibility->isChildTheme() ) {
+			$parentLabel = ', ' . sprintf( __( 'child theme of <b>%s</b>', 'psf-search' ), PSF_SEARCH()->themeCompatibility->getParentThemeName() );
 		}
 
 		?>
-		<h2><?php printf( __( 'You are using the <b>%1$s</b> theme%2$s. Fantastic!', 'ajax-search-for-woocommerce' ), $name, $parentLabel ); ?></h2>
-		<p><?php _e( 'We support this theme so you can easily replace all default search bars.', 'ajax-search-for-woocommerce' ); ?></p>
+		<h2><?php printf( __( 'You are using the <b>%1$s</b> theme%2$s. Fantastic!', 'psf-search' ), $name, $parentLabel ); ?></h2>
+		<p><?php _e( 'We support this theme so you can easily replace all default search bars.', 'psf-search' ); ?></p>
 	<?php endif; ?>
 <?php endif; ?>

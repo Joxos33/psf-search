@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,13 +51,8 @@ class Search {
 			return $args;
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			list( $results, $totalResults, $totalPages ) = $this->doSearch__premium_only( $phrase, $args );
-		}
+		list( $results, $totalResults, $totalPages ) = $this->doSearch__premium_only( $phrase, $args );
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			list( $results, $totalResults, $totalPages ) = $this->doSearch( $phrase, $args );
-		}
 
 		$response = [
 			'results'     => $results,
@@ -77,7 +72,7 @@ class Search {
 	 * @return array Array with results.
 	 */
 	private function doSearch( $phrase, $args ): array {
-		$searchResults = DGWT_WCAS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
+		$searchResults = PSF_SEARCH()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
 		$results       = [];
 
 		if (
@@ -117,7 +112,7 @@ class Search {
 			return [ $results, $totalResults, $totalPages ];
 		}
 
-		$results = DGWT_WCAS()->nativeSearch->getProductsData(
+		$results = PSF_SEARCH()->nativeSearch->getProductsData(
 			$results,
 			- 1,
 			[
@@ -219,25 +214,21 @@ class Search {
 		}
 
 		$allowedPostTypes = [ 'product' ];
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			$allowedPostTypes = Helpers::getAllowedPostTypes();
-		}
+		$allowedPostTypes = Helpers::getAllowedPostTypes();
 		if ( ! in_array( $args['post_type'], $allowedPostTypes, true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-post-type', 'Invalid argument: post_type' );
+			$error->add( 'psf-search-invalid-arg-post-type', 'Invalid argument: post_type' );
 		}
 
 		if ( ! in_array( $args['fields'], [ 'all', 'ids' ], true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-fields', 'Invalid argument: fields' );
+			$error->add( 'psf-search-invalid-arg-fields', 'Invalid argument: fields' );
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
-				$error->add( 'dgwt-wcas-invalid-arg-orderby', 'Invalid argument: orderby' );
-			}
+		if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
+			$error->add( 'psf-search-invalid-arg-orderby', 'Invalid argument: orderby' );
+		}
 
-			if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
-				$error->add( 'dgwt-wcas-invalid-arg-order', 'Invalid argument: order' );
-			}
+		if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
+			$error->add( 'psf-search-invalid-arg-order', 'Invalid argument: order' );
 		}
 
 		if ( $error->has_errors() ) {

@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Debug;
+namespace PsfSearch\Engines\TNTSearchMySQL\Debug;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ class Product {
 
 		$productID = absint( $productID );
 
-		$this->product   = new \DgoraWcas\Product( $productID );
+		$this->product   = new \PsfSearch\Product( $productID );
 		$this->productID = $productID;
 		$this->indexerR  = new IndexerR();
 		$this->indexerS  = new IndexerS();

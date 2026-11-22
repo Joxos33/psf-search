@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 class WPDB {
 	/** @var \wpdb */
@@ -33,7 +33,7 @@ class WPDB {
 	 * @return void
 	 */
 	private function clear_saved_queries() {
-		if ( defined( 'DGWT_WCAS_INDEXER_ALLOW_SAVEQUERIES' ) && DGWT_WCAS_INDEXER_ALLOW_SAVEQUERIES ) {
+		if ( defined( 'PSF_SEARCH_INDEXER_ALLOW_SAVEQUERIES' ) && PSF_SEARCH_INDEXER_ALLOW_SAVEQUERIES ) {
 			return;
 		}
 

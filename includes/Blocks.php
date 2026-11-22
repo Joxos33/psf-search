@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,14 +21,14 @@ class Blocks {
 
 	private function registerBlocks() {
 		register_block_type(
-			DGWT_WCAS_DIR . 'build/blocks/search',
+			PSF_SEARCH_DIR . 'build/blocks/search',
 			[
 				'render_callback' => [ $this, 'renderCallback' ],
 			]
 		);
 
 		register_block_type(
-			DGWT_WCAS_DIR . 'build/blocks/search-nav',
+			PSF_SEARCH_DIR . 'build/blocks/search-nav',
 			[
 				'render_callback' => [ $this, 'renderCallback' ],
 			]
@@ -36,7 +36,7 @@ class Blocks {
 	}
 
 	/**
-	 * Render FiboSearch blocks content
+	 * Render PSF Search blocks content
 	 *
 	 * @param $attributes
 	 * @param $content
@@ -66,28 +66,28 @@ class Blocks {
 			if ( $isBackend ) {
 				if ( isset( $attributes['layout'] ) && $attributes['layout'] === 'icon-flexible' ) {
 					ob_start();
-					echo '<div class="dgwt-wcas-show-on-preview-desktop">';
+					echo '<div class="psf-search-show-on-preview-desktop">';
 					$normalizedAttributes['layout'] = 'classic';
-					echo do_shortcode( '[fibosearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
+					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
-					echo '<div class="dgwt-wcas-show-on-preview-tablet dgwt-wcas-show-on-preview-mobile">';
+					echo '<div class="psf-search-show-on-preview-tablet psf-search-show-on-preview-mobile">';
 					$normalizedAttributes['layout'] = 'icon';
-					echo do_shortcode( '[fibosearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
+					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
 					return ob_get_clean();
 				} elseif ( isset( $attributes['layout'] ) && $attributes['layout'] === 'icon-flexible-inv' ) {
 					ob_start();
 
-					echo '<div class="dgwt-wcas-show-on-preview-desktop">';
+					echo '<div class="psf-search-show-on-preview-desktop">';
 					$normalizedAttributes['layout'] = 'icon';
-					echo do_shortcode( '[fibosearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
+					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
-					echo '<div class="dgwt-wcas-show-on-preview-tablet dgwt-wcas-show-on-preview-mobile">';
+					echo '<div class="psf-search-show-on-preview-tablet psf-search-show-on-preview-mobile">';
 					$normalizedAttributes['layout'] = 'classic';
-					echo do_shortcode( '[fibosearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
+					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
 					return ob_get_clean();
@@ -95,11 +95,11 @@ class Blocks {
 			}
 		}
 
-		return do_shortcode( '[fibosearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
+		return do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 	}
 
 	public function hideLegacyWidgetBlock( $widgetTypes ) {
-		$widgetTypes[] = 'dgwt_wcas_ajax_search';
+		$widgetTypes[] = 'psf_search_ajax_search';
 
 		return $widgetTypes;
 	}

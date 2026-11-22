@@ -1,22 +1,22 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\SearchQuery;
+namespace PsfSearch\Engines\TNTSearchMySQL\SearchQuery;
 
-use DgoraWcas\Analytics\Recorder;
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Debug\Debugger;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Cache;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\SynonymsHandler;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Collection;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Expression;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Analytics\Recorder;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Debug\Debugger;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Cache;
+use PsfSearch\Engines\TNTSearchMySQL\Support\SynonymsHandler;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Collection;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Expression;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,7 +52,6 @@ abstract class MainQuery {
 	private $foundProductsIds = [];
 	protected $foundProducts  = [];
 	protected $foundTax       = [];
-	protected $foundVendors   = [];
 	protected $foundPosts     = [];
 	/** @var string */
 	protected $lang = '';
@@ -106,11 +105,9 @@ abstract class MainQuery {
 	 */
 	private function loadFilters() {
 		$theme = Config::getCurrentThemePath();
+		// Optional custom-code file (filters for the SHORTINIT endpoint), in the active theme or wp-content.
 		$files = [
-			'fibosearch.php',
-			'asfw-filters.php',
-			'ajax-search-for-woocommerce.php',
-			'ajax-search-filters.php',
+			'psf-search-filters.php',
 		];
 
 		if ( file_exists( $theme ) ) {
@@ -149,7 +146,7 @@ abstract class MainQuery {
 	 * @return void
 	 */
 	public function setPhrase( $phrase ) {
-		$charLimit = apply_filters( 'dgwt/wcas/search/input_chars_limit', 200 );
+		$charLimit = apply_filters( 'psf_search/search/input_chars_limit', 200 );
 
 		if ( mb_strlen( $phrase ) > $charLimit ) {
 			// Limit the number of characters
@@ -161,12 +158,12 @@ abstract class MainQuery {
 			}
 		}
 
-		$phrase              = apply_filters( 'dgwt/wcas/phrase/initial', $phrase );
+		$phrase              = apply_filters( 'psf_search/phrase/initial', $phrase );
 		$phrase              = $this->replacePhrase( $phrase );
 		$phrase              = $this->removeInPhrase( $phrase );
-		$this->nonGreeklishS = apply_filters( 'dgwt/wcas/phrase/final-no-greeklish', $phrase );
+		$this->nonGreeklishS = apply_filters( 'psf_search/phrase/final-no-greeklish', $phrase );
 		$phrase              = $this->greeklish( $phrase );
-		$this->s             = apply_filters( 'dgwt/wcas/phrase/final', $phrase );
+		$this->s             = apply_filters( 'psf_search/phrase/final', $phrase );
 	}
 
 	/**
@@ -203,7 +200,7 @@ abstract class MainQuery {
 		$phrase = trim( $this->s );
 		$phrase = str_replace( '  ', ' ', $phrase );
 
-		return apply_filters( 'dgwt/wcas/search_phrase', $phrase );
+		return apply_filters( 'psf_search/search_phrase', $phrase );
 	}
 
 	/**
@@ -253,22 +250,22 @@ abstract class MainQuery {
 		$fuzzines = $this->getFuzzinessSettings();
 
 		$config = apply_filters(
-			'dgwt/wcas/tnt/query/config',
+			'psf_search/tnt/query/config',
 			[
 				'debug'                  => $this->debug,
-				'wordlistByKeywordLimit' => apply_filters( 'dgwt/wcas/tnt/wordlist_by_keyword_limit', 5000 ),
+				'wordlistByKeywordLimit' => apply_filters( 'psf_search/tnt/wordlist_by_keyword_limit', 5000 ),
 				'maxDocs'                => 50000,
 				'fuzziness'              => $fuzzines['fuzziness'],
 				'fuzzy'                  => $fuzzines['fuzzy'],
 			]
 		);
 
-		if ( defined( 'DGWT_WCAS_TNT_WORDLIST_LIMIT' ) ) {
-			$config['wordlistByKeywordLimit'] = absint( DGWT_WCAS_TNT_WORDLIST_LIMIT );
+		if ( defined( 'PSF_SEARCH_TNT_WORDLIST_LIMIT' ) ) {
+			$config['wordlistByKeywordLimit'] = absint( PSF_SEARCH_TNT_WORDLIST_LIMIT );
 		}
 
-		if ( defined( 'DGWT_WCAS_TNT_DOCS_LIMIT' ) ) {
-			$config['maxDocs'] = absint( DGWT_WCAS_TNT_DOCS_LIMIT );
+		if ( defined( 'PSF_SEARCH_TNT_DOCS_LIMIT' ) ) {
+			$config['maxDocs'] = absint( PSF_SEARCH_TNT_DOCS_LIMIT );
 		}
 
 		$this->setConfig( $config );
@@ -292,7 +289,7 @@ abstract class MainQuery {
 	private function getFuzzinessSettings() {
 
 		// If debug is enabled, return empty fuzziness settings
-		if ( Helpers::isFiboDebugEnabled( 'nofuzzy' ) ) {
+		if ( Helpers::isPsfDebugEnabled( 'nofuzzy' ) ) {
 			return [
 				'fuzziness' => false,
 				'fuzzy'     => [],
@@ -435,10 +432,10 @@ abstract class MainQuery {
 
 		$max    = $limit ?? $this->searchableLimit;
 		$phrase = $this->getPhrase( 'searchable' );
-		$result = $this->searchFibo( $phrase, $max );
+		$result = $this->searchPsf( $phrase, $max );
 
 		if ( ! empty( $result['ids'] ) && is_array( $result['ids'] ) ) {
-			$this->foundProductsIds = apply_filters( 'dgwt/wcas/tnt/search_results/ids', $result['ids'], $phrase );
+			$this->foundProductsIds = apply_filters( 'psf_search/tnt/search_results/ids', $result['ids'], $phrase );
 
 			$this->tntTime = $this->tntTime + (float) ( str_replace( ' ms', '', $result['execution_time'] ) );
 			$found         = true;
@@ -465,41 +462,19 @@ abstract class MainQuery {
 				$max    = $limit ?? $this->searchableLimit;
 				$phrase = $this->getPhrase( 'searchable' );
 				$this->setType( 'tax_' . $taxonomy );
-				$searchResult = $this->searchFibo( $phrase, $max );
+				$searchResult = $this->searchPsf( $phrase, $max );
 				if ( ! empty( $searchResult['ids'] ) && is_array( $searchResult['ids'] ) ) {
 					$termIds = array_merge( $termIds, $searchResult['ids'] );
 				}
 			}
 
-			$termIds = apply_filters( 'dgwt/wcas/search_results/term_ids', $termIds, $phrase );
+			$termIds = apply_filters( 'psf_search/search_results/term_ids', $termIds, $phrase );
 
 			if ( ! empty( $termIds ) ) {
 				$this->foundTax = $this->taxQuery->getResults( $termIds, $phrase );
 			}
 
 			if ( ! empty( $this->foundTax ) ) {
-				$found = true;
-			}
-		}
-
-		return $found;
-	}
-
-	/**
-	 * Search no-products items (vendors)
-	 *
-	 * @return bool true if something was found
-	 */
-	public function searchVendors() {
-		$found = false;
-
-		$vendorQuery = new VendorQuery();
-		$vendorQuery->init();
-
-		if ( $vendorQuery->isEnabled() ) {
-			$this->foundVendors = $vendorQuery->search( $this->getPhrase() );
-
-			if ( ! empty( $this->foundVendors ) ) {
 				$found = true;
 			}
 		}
@@ -528,12 +503,12 @@ abstract class MainQuery {
 				$max    = $limit ?? $this->searchableLimit;
 				$phrase = $this->getPhrase( 'searchable' );
 				$this->setType( $postType );
-				$result = $this->searchFibo( $phrase, $max );
+				$result = $this->searchPsf( $phrase, $max );
 
 				$ids = [];
 				if ( ! empty( $result['ids'] ) && is_array( $result['ids'] ) ) {
-					$ids = apply_filters( 'dgwt/wcas/tnt/search_results' . $postType . '/ids', $result['ids'], $phrase );
-					$ids = apply_filters( 'dgwt/wcas/tnt/search_results/' . $postType . '/ids', $ids, $phrase );
+					$ids = apply_filters( 'psf_search/tnt/search_results' . $postType . '/ids', $result['ids'], $phrase );
+					$ids = apply_filters( 'psf_search/tnt/search_results/' . $postType . '/ids', $ids, $phrase );
 				}
 
 				if ( is_array( $ids ) && ! empty( $ids ) ) {
@@ -558,7 +533,7 @@ abstract class MainQuery {
 	 * @return  bool
 	 */
 	public function hasResults() {
-		return ! empty( $this->foundProductsIds ) || ! empty( $this->foundTax ) || ! empty( $this->foundPosts ) || ! empty( $this->foundVendors );
+		return ! empty( $this->foundProductsIds ) || ! empty( $this->foundTax ) || ! empty( $this->foundPosts );
 	}
 
 	/**
@@ -595,7 +570,7 @@ abstract class MainQuery {
 				foreach ( $r as $index => $value ) {
 					$r[ $index ]->meta = maybe_unserialize( $value->meta );
 				}
-				$this->foundProducts = apply_filters( 'dgwt/wcas/tnt/search_results/products', $r, $this->getPhrase(), $this->getLang() );
+				$this->foundProducts = apply_filters( 'psf_search/tnt/search_results/products', $r, $this->getPhrase(), $this->getLang() );
 			}
 		}
 	}
@@ -672,7 +647,7 @@ abstract class MainQuery {
 			}
 		}
 
-		$orderBy = apply_filters( 'dgwt/wcas/tnt/sort_products/order_by', $orderBy );
+		$orderBy = apply_filters( 'psf_search/tnt/sort_products/order_by', $orderBy );
 
 		switch ( $orderBy ) {
 			case 'relevance':
@@ -753,7 +728,7 @@ abstract class MainQuery {
 
 		}
 
-		$this->foundProducts = apply_filters( 'dgwt/wcas/tnt/sort_products', $this->foundProducts, $orderBy );
+		$this->foundProducts = apply_filters( 'psf_search/tnt/sort_products', $this->foundProducts, $orderBy );
 	}
 
 	/**
@@ -766,7 +741,7 @@ abstract class MainQuery {
 
 		$includeSynonyms       = false;
 		$canonizedSearchPhrase = '';
-		if ( ! empty( $this->settings['search_synonyms'] ) && apply_filters( 'dgwt/wcas/tnt/product/score/include_synonyms', true ) ) {
+		if ( ! empty( $this->settings['search_synonyms'] ) && apply_filters( 'psf_search/tnt/product/score/include_synonyms', true ) ) {
 			$this->synonymsHandler->setSynonyms( $this->settings['search_synonyms'] );
 			$this->synonymsHandler->buildLookup();
 			$includeSynonyms       = $this->synonymsHandler->canCanonize();
@@ -828,12 +803,12 @@ abstract class MainQuery {
 				);
 			}
 
-			$this->foundProducts[ $i ]->score = apply_filters( 'dgwt/wcas/tnt/product/score', (float) $score, $product->post_id, $product, $this );
+			$this->foundProducts[ $i ]->score = apply_filters( 'psf_search/tnt/product/score', (float) $score, $product->post_id, $product, $this );
 
 			$i ++;
 		}
 
-		usort( $this->foundProducts, [ 'DgoraWcas\Helpers', 'cmpSimilarity' ] );
+		usort( $this->foundProducts, [ 'PsfSearch\Helpers', 'cmpSimilarity' ] );
 	}
 
 	/**
@@ -853,7 +828,7 @@ abstract class MainQuery {
 	public function getExtraPostTypes() {
 		$postTypes = Builder::getInfo( 'active_post_types' );
 
-		return apply_filters( 'dgwt/wcas/tnt/search_post_types', $postTypes );
+		return apply_filters( 'psf_search/tnt/search_post_types', $postTypes );
 	}
 
 	/**
@@ -903,7 +878,7 @@ abstract class MainQuery {
 	 */
 	private function replacePhrase( $phrase ) {
 		$phrase    = trim( mb_strtolower( $phrase ) );
-		$toReplace = apply_filters( 'dgwt/wcas/phrase/replace', [] );
+		$toReplace = apply_filters( 'psf_search/phrase/replace', [] );
 		if ( empty( $toReplace ) || ! is_array( $toReplace ) ) {
 			return $phrase;
 		}
@@ -930,7 +905,7 @@ abstract class MainQuery {
 	 */
 	private function removeInPhrase( $phrase ) {
 		$phrase   = trim( mb_strtolower( $phrase ) );
-		$toRemove = apply_filters( 'dgwt/wcas/phrase/remove', [] );
+		$toRemove = apply_filters( 'psf_search/phrase/remove', [] );
 		if ( empty( $toRemove ) || ! is_array( $toRemove ) ) {
 			return $phrase;
 		}
@@ -949,7 +924,7 @@ abstract class MainQuery {
 	 * @return string
 	 */
 	private function greeklish( $phrase ) {
-		if ( ! apply_filters( 'dgwt/wcas/search/convert_to_greeklish', true ) ) {
+		if ( ! apply_filters( 'psf_search/search/convert_to_greeklish', true ) ) {
 			return $phrase;
 		}
 		if ( Helpers::isGreekText__premium_only( $phrase ) ) {
@@ -981,7 +956,7 @@ abstract class MainQuery {
 	 *
 	 * @return array
 	 */
-	public function searchFibo( string $phrase, int $numOfResults = 100 ): array {
+	public function searchPsf( string $phrase, int $numOfResults = 100 ): array {
 		$startTimer = microtime( true );
 
 		/**
@@ -989,7 +964,7 @@ abstract class MainQuery {
 		 *
 		 * In this case, we return only one result, if the SKU is exactly the same as the search phrase.
 		 */
-		if ( empty( $this->type ) && $this->searchIn( 'sku' ) && apply_filters( 'dgwt/wcas/search/exact_sku_match', false ) ) {
+		if ( empty( $this->type ) && $this->searchIn( 'sku' ) && apply_filters( 'psf_search/search/exact_sku_match', false ) ) {
 			$exactSkuDocIds = $this->searchExactSKU( $phrase, $this->lang );
 			if ( ! empty( $exactSkuDocIds ) ) {
 				$stopTimer = microtime( true );
@@ -1024,7 +999,7 @@ abstract class MainQuery {
 			Debugger::log( '<b>Last keyword:</b> ' . var_export( $last, true ) . '<br /><br />', 'product-search-flow' );
 		}
 
-		$keywords->sortWith( 'usort', 'DgoraWcas\Helpers::sortFromLongest' );
+		$keywords->sortWith( 'usort', 'PsfSearch\Helpers::sortFromLongest' );
 
 		if ( $this->debug ) {
 			Debugger::log( '<b>Keywords after sorting:</b> <pre>' . var_export( $keywords->toArray(), true ) . '</pre>', 'product-search-flow' );
@@ -1233,7 +1208,7 @@ abstract class MainQuery {
 	 *
 	 * @return array
 	 */
-	public function searchFiboBM25( $phrase, $numOfResults = 100 ) {
+	public function searchPsfBM25( $phrase, $numOfResults = 100 ) {
 		$startTimer = microtime( true );
 		$keywords   = $this->breakIntoTokens( $phrase );
 		$keywords   = new Collection( $keywords );
@@ -1255,7 +1230,7 @@ abstract class MainQuery {
 		}
 
 		$last = $keywords->last();
-		$keywords->sortWith( 'usort', 'DgoraWcas\Helpers::sortFromLongest' );
+		$keywords->sortWith( 'usort', 'PsfSearch\Helpers::sortFromLongest' );
 
 		if ( $this->debug ) {
 			Debugger::log( '<b>Keywords after sorting:</b> <pre>' . var_export( $keywords->toArray(), true ) . '</pre>', 'product-search-flow' );
@@ -1474,7 +1449,7 @@ abstract class MainQuery {
 			$keywordLike = $wpdb->esc_like( $keyword ) . '%';
 		}
 
-		return apply_filters( 'dgwt/wcas/tnt/keyword_like_format', $keywordLike, $keyword, $isLastKeyword, true );
+		return apply_filters( 'psf_search/tnt/keyword_like_format', $keywordLike, $keyword, $isLastKeyword, true );
 	}
 
 	/**
@@ -1635,7 +1610,7 @@ abstract class MainQuery {
 	 * @return array
 	 */
 	public function breakIntoTokens( $phrase ) {
-		$stopwords = apply_filters( 'dgwt/wcas/search/stopwords', [], $this->getLang() );
+		$stopwords = apply_filters( 'psf_search/search/stopwords', [], $this->getLang() );
 
 		return $this->tokenizer->tokenize( $phrase, $stopwords );
 	}

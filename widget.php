@@ -12,43 +12,43 @@ if ( class_exists( 'WC_Widget' ) ) {
 	add_action(
 		'widgets_init',
 		function () {
-			register_widget( 'DGWT_WCAS_Search_Widget' );
+			register_widget( 'PSF_SEARCH_Search_Widget' );
 		}
 	);
 
-	class DGWT_WCAS_Search_Widget extends WC_Widget {
+	class PSF_SEARCH_Search_Widget extends WC_Widget {
 
 		/**
 		 * Constructor
 		 */
 		public function __construct() {
 
-			$this->widget_cssclass    = 'woocommerce dgwt-wcas-widget';
-			$this->widget_description = __( 'AJAX (live) search form for WooCommerce', 'ajax-search-for-woocommerce' );
-			$this->widget_id          = 'dgwt_wcas_ajax_search';
-			$this->widget_name        = __( 'FiboSearch bar', 'ajax-search-for-woocommerce' );
+			$this->widget_cssclass    = 'woocommerce psf-search-widget';
+			$this->widget_description = __( 'AJAX (live) search form for WooCommerce', 'psf-search' );
+			$this->widget_id          = 'psf_search_ajax_search';
+			$this->widget_name        = __( 'PSF Search bar', 'psf-search' );
 			$this->settings           = [
 				'title'          => [
 					'type'  => 'text',
 					'std'   => '',
-					'label' => __( 'Title', 'ajax-search-for-woocommerce' ),
+					'label' => __( 'Title', 'psf-search' ),
 				],
 				'layout'         => [
 					'type'    => 'select',
 					'std'     => 'default',
 					'options' => [
-						'default'           => __( 'Default', 'ajax-search-for-woocommerce' ),
-						'classic'           => __( 'Search bar', 'ajax-search-for-woocommerce' ),
-						'icon'              => __( 'Search icon', 'ajax-search-for-woocommerce' ),
-						'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'ajax-search-for-woocommerce' ),
-						'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'ajax-search-for-woocommerce' ),
+						'default'           => __( 'Default', 'psf-search' ),
+						'classic'           => __( 'Search bar', 'psf-search' ),
+						'icon'              => __( 'Search icon', 'psf-search' ),
+						'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'psf-search' ),
+						'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'psf-search' ),
 					],
-					'label'   => __( 'Layout', 'ajax-search-for-woocommerce' ),
+					'label'   => __( 'Layout', 'psf-search' ),
 				],
 				'mobile_overlay' => [
 					'type'  => 'checkbox',
 					'std'   => '',
-					'label' => __( 'Overlay on mobile', 'ajax-search-for-woocommerce' ),
+					'label' => __( 'Overlay on mobile', 'psf-search' ),
 				],
 			];
 
@@ -78,13 +78,13 @@ if ( class_exists( 'WC_Widget' ) ) {
 				$params .= ' mobile_overlay="1"';
 			}
 
-			echo do_shortcode( '[fibosearch' . $params . ']' );
+			echo do_shortcode( '[psfsearch' . $params . ']' );
 
 			$this->widget_end( $args );
 
 			$html = ob_get_clean();
 			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo apply_filters( 'dgwt/wcas/widget/html', $html, $args, $instance );
+			echo apply_filters( 'psf_search/widget/html', $html, $args, $instance );
 		}
 	}
 }

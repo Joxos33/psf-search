@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Debug;
+namespace PsfSearch\Engines\TNTSearchMySQL\Debug;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerT;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerT;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,7 +22,7 @@ class Term {
 
 		$termID = absint( $termID );
 
-		$this->term     = new \DgoraWcas\Term( $termID, $taxonomy );
+		$this->term     = new \PsfSearch\Term( $termID, $taxonomy );
 		$this->termID   = $termID;
 		$this->taxonomy = $taxonomy;
 		$this->indexerT = new IndexerT();

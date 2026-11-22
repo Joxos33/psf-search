@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Admin;
+namespace PsfSearch\Admin;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Storage;
-use DgoraWcas\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Storage;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,8 +34,8 @@ class Install {
 	 */
 	public static function install() {
 
-		if ( ! defined( 'DGWT_WCAS_INSTALLING' ) ) {
-			define( 'DGWT_WCAS_INSTALLING', true );
+		if ( ! defined( 'PSF_SEARCH_INSTALLING' ) ) {
+			define( 'PSF_SEARCH_INSTALLING', true );
 		}
 
 		self::saveActivationDate();
@@ -45,7 +45,7 @@ class Install {
 		self::maybeUpgradeOptions();
 
 		// Update plugin version
-		update_option( 'dgwt_wcas_version', DGWT_WCAS_VERSION );
+		update_option( 'psf_search_version', PSF_SEARCH_VERSION );
 
 	}
 
@@ -56,9 +56,9 @@ class Install {
 	 */
 	public static function createOptions() {
 
-		global $dgwtWcasSettings;
+		global $psfSearchSettings;
 
-		$sections = DGWT_WCAS()->settings->settingsFields();
+		$sections = PSF_SEARCH()->settings->settingsFields();
 
 		$settings = [];
 
@@ -69,7 +69,7 @@ class Install {
 
 					foreach ( $options as $option ) {
 
-						if ( isset( $option['name'] ) && ! isset( $dgwtWcasSettings[ $option['name'] ] ) ) {
+						if ( isset( $option['name'] ) && ! isset( $psfSearchSettings[ $option['name'] ] ) ) {
 
 							$settings[ $option['name'] ] = isset( $option['default'] ) ? $option['default'] : '';
 						}
@@ -78,9 +78,9 @@ class Install {
 			}
 		}
 
-		$updateOptions = array_merge( $settings, $dgwtWcasSettings );
+		$updateOptions = array_merge( $settings, $psfSearchSettings );
 
-		update_option( DGWT_WCAS_SETTINGS_KEY, $updateOptions );
+		update_option( PSF_SEARCH_SETTINGS_KEY, $updateOptions );
 	}
 
 	/**
@@ -89,15 +89,15 @@ class Install {
 	 * @param string $version free | pro
 	 */
 	private static function maybeUpgradeOptions( $version = 'free' ) {
-		$freeSettingsVersion = (int) get_option( 'dgwt_wcas_settings_version', 0 );
-		$proSettingsVersion  = (int) get_option( 'dgwt_wcas_settings_version_pro', 0 );
+		$freeSettingsVersion = (int) get_option( 'psf_search_settings_version', 0 );
+		$proSettingsVersion  = (int) get_option( 'psf_search_settings_version_pro', 0 );
 		$mainVersion         = $freeSettingsVersion;
-		$mainKey             = 'dgwt_wcas_settings_version';
+		$mainKey             = 'psf_search_settings_version';
 		$upgraded            = false;
 
 		if ( $version === 'pro' ) {
 			$mainVersion = $proSettingsVersion;
-			$mainKey     = 'dgwt_wcas_settings_version_pro';
+			$mainKey     = 'psf_search_settings_version_pro';
 		}
 
 		if ( $freeSettingsVersion === 0 && $proSettingsVersion === 0 ) {
@@ -117,12 +117,12 @@ class Install {
 
 		if ( $mainVersion < self::SETTINGS_VERSION ) {
 			update_option( $mainKey, self::SETTINGS_VERSION );
-			DGWT_WCAS()->settings->clearCache();
+			PSF_SEARCH()->settings->clearCache();
 		}
 	}
 
 	private static function upgradeOptionsTo1() {
-		$settings = get_option( DGWT_WCAS_SETTINGS_KEY );
+		$settings = get_option( PSF_SEARCH_SETTINGS_KEY );
 
 		if ( empty( $settings ) ) {
 			return;
@@ -153,22 +153,22 @@ class Install {
 		}
 
 		// Product brands
-		if ( DGWT_WCAS()->brands->hasBrands() ) {
+		if ( PSF_SEARCH()->brands->hasBrands() ) {
 			if ( isset( $settings['show_matching_brands'] ) ) {
-				$settings[ 'show_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ] = $settings['show_matching_brands'];
+				$settings[ 'show_product_tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() ] = $settings['show_matching_brands'];
 				unset( $settings['show_matching_brands'] );
 			}
 			if ( isset( $settings['search_in_brands'] ) ) {
-				$settings[ 'search_in_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ] = $settings['search_in_brands'];
+				$settings[ 'search_in_product_tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() ] = $settings['search_in_brands'];
 				unset( $settings['search_in_brands'] );
 			}
 			if ( isset( $settings['show_brands_images'] ) ) {
-				$settings[ 'show_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() . '_images' ] = $settings['show_brands_images'];
+				$settings[ 'show_product_tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() . '_images' ] = $settings['show_brands_images'];
 				unset( $settings['show_brands_images'] );
 			}
 		}
 
-		update_option( DGWT_WCAS_SETTINGS_KEY, $settings );
+		update_option( PSF_SEARCH_SETTINGS_KEY, $settings );
 	}
 
 	/**
@@ -184,7 +184,7 @@ class Install {
 	 *  So we have to copy value of "mobile_breakpoint" to "mobile_overlay_breakpoint" to keep backwards compatibility
 	 */
 	private static function upgradeOptionsTo2() {
-		$settings = get_option( DGWT_WCAS_SETTINGS_KEY );
+		$settings = get_option( PSF_SEARCH_SETTINGS_KEY );
 
 		if ( empty( $settings ) ) {
 			return;
@@ -193,7 +193,7 @@ class Install {
 		if ( isset( $settings['mobile_breakpoint'] ) && isset( $settings['mobile_overlay_breakpoint'] )
 		) {
 			$settings['mobile_overlay_breakpoint'] = $settings['mobile_breakpoint'];
-			update_option( DGWT_WCAS_SETTINGS_KEY, $settings );
+			update_option( PSF_SEARCH_SETTINGS_KEY, $settings );
 		}
 	}
 
@@ -204,10 +204,10 @@ class Install {
 	 * @return void
 	 */
 	private static function saveActivationDate() {
-		$date = get_option( 'dgwt_wcas_activation_date' );
+		$date = get_option( 'psf_search_activation_date' );
 
 		if ( empty( $date ) ) {
-			update_option( 'dgwt_wcas_activation_date', time() );
+			update_option( 'psf_search_activation_date', time() );
 		}
 	}
 
@@ -222,7 +222,7 @@ class Install {
 		$result = $wpdb->get_var( "SELECT JSON_CONTAINS('[1,2,3]', '2')" );
 		$wpdb->suppress_errors( $suppress_errors );
 
-		update_option( 'dgwt_wcas_db_json_support', ( $result === '1' && empty( $wpdb->last_error ) ) ? 'yes' : 'no' );
+		update_option( 'psf_search_db_json_support', ( $result === '1' && empty( $wpdb->last_error ) ) ? 'yes' : 'no' );
 	}
 
 	/**
@@ -231,7 +231,7 @@ class Install {
 	private static function checkIfDbSupportLocks() {
 		global $wpdb;
 
-		$lockName = 'fibosearch_lock_test';
+		$lockName = 'psfsearch_lock_test';
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare( 'SELECT GET_LOCK(%s,%d) as set_lock', $lockName, 5 )
@@ -241,9 +241,9 @@ class Install {
 			$wpdb->get_row(
 				$wpdb->prepare( 'SELECT RELEASE_LOCK(%s) as lock_released', $lockName )
 			);
-			update_option( 'dgwt_wcas_db_locking_support', 'yes' );
+			update_option( 'psf_search_db_locking_support', 'yes' );
 		} else {
-			update_option( 'dgwt_wcas_db_locking_support', 'no' );
+			update_option( 'psf_search_db_locking_support', 'no' );
 		}
 	}
 
@@ -255,65 +255,44 @@ class Install {
 	public static function checkVersion() {
 		if ( ! defined( 'IFRAME_REQUEST' ) ) {
 
-			// One-time removal of Freemius sticky notices that older versions may have stored with
-			// unescaped request data. The escaping filters in fs/config.php only
-			// affect notices written after the update, so previously stored ones are cleared here.
-			if ( get_option( 'dgwt_wcas_security_notices_cleaned' ) !== 'yes' ) {
-				dgoraAsfwFs()->remove_sticky( [ 'plan_purchased', 'activation_pending' ], false );
-				// The call above always targets the current site's storage (also from the network admin). On multisite
-				// the SDK keeps network-level notices in a separate storage, so clear that one explicitly as well.
-				if ( is_multisite() ) {
-					dgoraAsfwFs()->remove_sticky( [ 'plan_purchased', 'activation_pending' ], true );
-				}
-				// Autoloaded: this flag is read on every admin_init, so keep it in the preloaded
-				// options instead of querying the database on each admin page load.
-				update_option( 'dgwt_wcas_security_notices_cleaned', 'yes', true );
-			}
+			$pluginVersion = Helpers::getPluginVersion__premium_only();
 
-			if ( ! dgoraAsfwFs()->is_premium() && get_option( 'dgwt_wcas_version' ) != DGWT_WCAS_VERSION ) {
-				self::install();
-			}
+			if ( $pluginVersion != PSF_SEARCH_VERSION ) {
+				Builder::flushOptionsCache();
+				update_option( 'psf_search_version_pro', PSF_SEARCH_VERSION );
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
-				$pluginVersion = Helpers::getPluginVersion__premium_only();
+				/**
+				 * Temporarily removing the index rebuild action when plugin settings change to prevent it from
+				 * occurring in self::createOptions(), as the index rebuild will be triggered manually a few lines later.
+				 */
+				remove_action( 'update_option_' . PSF_SEARCH_SETTINGS_KEY, [ PSF_SEARCH()->tntsearchMySql, 'buildIndexOnchangeSettings' ], 10 );
 
-				if ( $pluginVersion != DGWT_WCAS_VERSION ) {
-					Builder::flushOptionsCache();
-					update_option( 'dgwt_wcas_version_pro', DGWT_WCAS_VERSION );
+				self::createOptions();
 
-					/**
-					 * Temporarily removing the index rebuild action when plugin settings change to prevent it from
-					 * occurring in self::createOptions(), as the index rebuild will be triggered manually a few lines later.
-					 */
-					remove_action( 'update_option_' . DGWT_WCAS_SETTINGS_KEY, [ DGWT_WCAS()->tntsearchMySql, 'buildIndexOnchangeSettings' ], 10 );
+				self::maybeUpgradeOptions( 'pro' );
 
-					self::createOptions();
+				self::checkIfDbSupportJson();
 
-					self::maybeUpgradeOptions( 'pro' );
+				self::checkIfDbSupportLocks();
 
-					self::checkIfDbSupportJson();
+				Storage::maybeCreate();
 
-					self::checkIfDbSupportLocks();
+				// Remove deprecated options for storing indexer logs.
+				delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs' );
+				delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs_tmp' );
 
-					Storage::maybeCreate();
-
-					// Remove deprecated options for storing indexer logs.
-					delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs' );
-					delete_option( Builder::LAST_BUILD_OPTION_KEY . '_logs_tmp' );
-
-					if ( self::shouldRebuildIndex__premium_only( $pluginVersion, DGWT_WCAS_VERSION ) ) {
-						// Whenever a plugin version is changed, we always remove the old index
-						// when parallel building is enabled, to avoid compatibility problems.
-						if ( Config::isParallelBuildingEnabled() ) {
-							Builder::wipeIndexTables( 'main' );
-							Builder::addInfo( 'status', 'not-exist', 'main' );
-						}
-
-						Builder::buildIndex();
+				if ( self::shouldRebuildIndex__premium_only( $pluginVersion, PSF_SEARCH_VERSION ) ) {
+					// Whenever a plugin version is changed, we always remove the old index
+					// when parallel building is enabled, to avoid compatibility problems.
+					if ( Config::isParallelBuildingEnabled() ) {
+						Builder::wipeIndexTables( 'main' );
+						Builder::addInfo( 'status', 'not-exist', 'main' );
 					}
 
-					Builder::wipeSQLiteAfterEffects();
+					Builder::buildIndex();
 				}
+
+				Builder::wipeSQLiteAfterEffects();
 			}
 		}
 	}

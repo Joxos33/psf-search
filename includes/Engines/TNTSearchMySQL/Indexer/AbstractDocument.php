@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\SynonymsHandler;
-use DgoraWcas\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\SynonymsHandler;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -309,7 +309,7 @@ abstract class AbstractDocument {
 		$text      = Utils::appendJoinedText( $key, $text );
 		$text      = Utils::replaceSpecialCharacters( $text );
 		$text      = $this->synonymsHandler->applySynonyms( $text );
-		$stopwords = apply_filters( 'dgwt/wcas/indexer/searchable/stopwords', [], $this->getType(), $this->getID(), $this->getLang() );
+		$stopwords = apply_filters( 'psf_search/indexer/searchable/stopwords', [], $this->getType(), $this->getID(), $this->getLang() );
 		$words     = $this->tokenizer->tokenize( $text, $stopwords );
 		$stems     = [];
 		foreach ( $words as $word ) {
@@ -317,7 +317,7 @@ abstract class AbstractDocument {
 				$stems[] = $this->stemmer->stem( $word );
 			}
 		}
-		if ( ! empty( $stems ) && apply_filters( 'dgwt/wcas/indexer/searchable/convert_to_greeklish', true ) ) {
+		if ( ! empty( $stems ) && apply_filters( 'psf_search/indexer/searchable/convert_to_greeklish', true ) ) {
 			foreach ( $stems as $stem ) {
 				if ( Helpers::isGreekText__premium_only( $stem ) ) {
 					$greeklish = Helpers::convertToGreeklish__premium_only( Helpers::removeGreekAccents( $stem ) );

@@ -1,14 +1,14 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDBException;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDB;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDBException;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDB;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Cache;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,18 +25,18 @@ class Database {
 	public static function registerTables() {
 		global $wpdb;
 
-		$wpdb->dgwt_wcas_si_wordlist = $wpdb->prefix . Config::SEARCHABLE_INDEX_WORDLIST;
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_si_wordlist ) ) {
+		$wpdb->psf_search_si_wordlist = $wpdb->prefix . Config::SEARCHABLE_INDEX_WORDLIST;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_wordlist ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_WORDLIST;
 		}
 
-		$wpdb->dgwt_wcas_si_doclist = $wpdb->prefix . Config::SEARCHABLE_INDEX_DOCLIST;
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_si_doclist ) ) {
+		$wpdb->psf_search_si_doclist = $wpdb->prefix . Config::SEARCHABLE_INDEX_DOCLIST;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_doclist ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_DOCLIST;
 		}
 
-		$wpdb->dgwt_wcas_si_cache = $wpdb->prefix . Config::SEARCHABLE_INDEX_CACHE;
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_si_cache ) ) {
+		$wpdb->psf_search_si_cache = $wpdb->prefix . Config::SEARCHABLE_INDEX_CACHE;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_cache ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_CACHE;
 		}
 	}
@@ -64,7 +64,7 @@ class Database {
 			$doclistTableName = Utils::getTableName( 'searchable_doclist', $lang ) . Config::getIndexRoleSuffix();
 			WPDB::get_instance()->query( "CREATE INDEX main_term_id_index ON $doclistTableName(term_id);" );
 			WPDB::get_instance()->query( "CREATE INDEX main_doc_id_index ON $doclistTableName(doc_id);" );
-			if ( defined( 'DGWT_WCAS_INDEXER_EXTENDED_DOCLIST_INDEX' ) && DGWT_WCAS_INDEXER_EXTENDED_DOCLIST_INDEX ) {
+			if ( defined( 'PSF_SEARCH_INDEXER_EXTENDED_DOCLIST_INDEX' ) && PSF_SEARCH_INDEXER_EXTENDED_DOCLIST_INDEX ) {
 				WPDB::get_instance()->query( "CREATE INDEX main_doc_id_term_id_index ON $doclistTableName(doc_id,term_id);" );
 			}
 
@@ -88,9 +88,9 @@ class Database {
 			foreach ( $tables as $table ) {
 				if (
 					(
-						strpos( $table, 'dgwt_wcas_invindex_doclist' ) !== false
-						|| strpos( $table, 'dgwt_wcas_invindex_wordlist' ) !== false
-						|| strpos( $table, 'dgwt_wcas_invindex_cache' ) !== false
+						strpos( $table, 'psf_search_invindex_doclist' ) !== false
+						|| strpos( $table, 'psf_search_invindex_wordlist' ) !== false
+						|| strpos( $table, 'psf_search_invindex_cache' ) !== false
 					)
 					&& Helpers::endsWith( $table, $indexRoleSuffix )
 				) {

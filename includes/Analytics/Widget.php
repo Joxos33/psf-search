@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,13 +50,13 @@ class Widget {
 	 * @return bool
 	 */
 	public function isCriticalSearchesWidgetEnabled() {
-		return DGWT_WCAS()->settings->getOption( 'analytics_critical_searches_widget_enabled', 'off' ) === 'on';
+		return PSF_SEARCH()->settings->getOption( 'analytics_critical_searches_widget_enabled', 'off' ) === 'on';
 	}
 
 	public function addWidget() {
 		wp_add_dashboard_widget(
-			'fibosearch_analytics_critical_searches',
-			esc_html__( 'FiboSearch - Search Analytics', 'ajax-search-for-woocommerce' ),
+			'psfsearch_analytics_critical_searches',
+			esc_html__( 'PSF Search - Search Analytics', 'psf-search' ),
 			[ $this, 'render' ]
 		);
 	}
@@ -68,7 +68,7 @@ class Widget {
 			'days'                    => $this->ui->getExpirationInDays(),
 			'critical-searches'       => [],
 			'critical-searches-total' => 0,
-			'settings-analytics-url'  => admin_url( 'admin.php?page=dgwt_wcas_settings#analytics' ),
+			'settings-analytics-url'  => admin_url( 'admin.php?page=psf_search_settings#analytics' ),
 			'multilingual'            => [],
 		];
 
@@ -92,18 +92,18 @@ class Widget {
 
 		ob_start();
 		?>
-		<h3><strong><?php _e( 'Critical searches without result', 'ajax-search-for-woocommerce' ); ?></strong></h3>
+		<h3><strong><?php _e( 'Critical searches without result', 'psf-search' ); ?></strong></h3>
 		<?php if ( ! empty( $vars['multilingual'] ) ) { ?>
 			<p>
-				<?php _e( 'Language', 'ajax-search-for-woocommerce' ); ?>:
-				<span class="dgwt-wcas-widget-tab-wrapper">
+				<?php _e( 'Language', 'psf-search' ); ?>:
+				<span class="psf-search-widget-tab-wrapper">
 					<?php
 					$next = false;
 					foreach ( $vars['multilingual']['langs'] as $lang => $langData ) {
 						if ( $next ) {
 							echo ' | ';
 						}
-						printf( '<a class="dgwt-wcas-widget-tab" title="%s" href="%s">%s</a>', esc_attr( $langData['name'] ), esc_attr( '#dgwt-wcas-widget-tab-content-' . $lang ), esc_html( $langData['name'] ) );
+						printf( '<a class="psf-search-widget-tab" title="%s" href="%s">%s</a>', esc_attr( $langData['name'] ), esc_attr( '#psf-search-widget-tab-content-' . $lang ), esc_html( $langData['name'] ) );
 						$next = true;
 					}
 					?>
@@ -113,8 +113,8 @@ class Widget {
 			foreach ( $vars['multilingual']['langs'] as $lang => $langName ) {
 				?>
 				<div
-					class="dgwt-wcas-widget-tab-content"
-					id="dgwt-wcas-widget-tab-content-<?php echo esc_attr( $lang ); ?>">
+					class="psf-search-widget-tab-content"
+					id="psf-search-widget-tab-content-<?php echo esc_attr( $lang ); ?>">
 					<?php
 					$this->renderTable(
 						array_merge( $vars, $vars['multilingual']['langs'][ $lang ] )
@@ -128,7 +128,7 @@ class Widget {
 		}
 		?>
 		<p>
-			<?php printf( __( 'Go to FiboSearch Settings page → %s to see more.', 'ajax-search-for-woocommerce' ), sprintf( '<a title="%2$s" href="%1$s">%2$s</a>', $vars['settings-analytics-url'], esc_attr__( 'Analytics tab', 'ajax-search-for-woocommerce' ) ) ); ?>
+			<?php printf( __( 'Go to PSF Search Settings page → %s to see more.', 'psf-search' ), sprintf( '<a title="%2$s" href="%1$s">%2$s</a>', $vars['settings-analytics-url'], esc_attr__( 'Analytics tab', 'psf-search' ) ) ); ?>
 		</p>
 		<?php
 		echo ob_get_clean();
@@ -141,20 +141,20 @@ class Widget {
 				<?php
 				// TODO
 				//phpcs:ignore WordPress.WP.I18n.MismatchedPlaceholders,WordPress.WP.I18n.MissingSingularPlaceholder
-				printf( _n( 'The FiboSearch analyzer found <b>1 critical search phrase</b>.', 'The FiboSearch analyzer found <b>%d critical search phrases</b>.', $vars['critical-searches-total'], 'ajax-search-for-woocommerce' ), $vars['critical-searches-total'] );
+				printf( _n( 'The PSF Search analyzer found <b>1 critical search phrase</b>.', 'The PSF Search analyzer found <b>%d critical search phrases</b>.', $vars['critical-searches-total'], 'psf-search' ), $vars['critical-searches-total'] );
 				echo ' ';
 				//phpcs:ignore WordPress.WP.I18n.MismatchedPlaceholders,WordPress.WP.I18n.MissingSingularPlaceholder
-				printf( _n( 'These phrases have been typed by users over the last 1 day.', 'These phrases have been typed by users over the last %d days.', $vars['days'], 'ajax-search-for-woocommerce' ), $vars['days'] );
+				printf( _n( 'These phrases have been typed by users over the last 1 day.', 'These phrases have been typed by users over the last %d days.', $vars['days'], 'psf-search' ), $vars['days'] );
 				echo ' ';
-				_e( "These phrases don`t return any search results. It's time to fix it.", 'ajax-search-for-woocommerce' );
+				_e( "These phrases don`t return any search results. It's time to fix it.", 'psf-search' );
 				?>
 			</p>
 			<table class="widefat fixed">
 				<thead>
 				<tr>
 					<th>#</th>
-					<th><?php _e( 'Phrase', 'ajax-search-for-woocommerce' ); ?></th>
-					<th><?php _e( 'Repetitions', 'ajax-search-for-woocommerce' ); ?></th>
+					<th><?php _e( 'Phrase', 'psf-search' ); ?></th>
+					<th><?php _e( 'Repetitions', 'psf-search' ); ?></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -177,7 +177,7 @@ class Widget {
 		} else {
 			?>
 			<p>
-				<?php printf( __( "Fantastic! The FiboSearch analyzer hasn't found any critical search phrases for the last %d days.", 'ajax-search-for-woocommerce' ), $vars['days'] ); ?>
+				<?php printf( __( "Fantastic! The PSF Search analyzer hasn't found any critical search phrases for the last %d days.", 'psf-search' ), $vars['days'] ); ?>
 			</p>
 			<?php
 		}
@@ -190,19 +190,19 @@ class Widget {
 		<script>
 			(function ($) {
 					$(document).ready(function () {
-						const tabs = $('#fibosearch_analytics_critical_searches .dgwt-wcas-widget-tab');
+						const tabs = $('#psfsearch_analytics_critical_searches .psf-search-widget-tab');
 						tabs.on('click', function (event) {
 							event.preventDefault();
 
 							// Never pass the attribute value to $(), it would be parsed as HTML.
 							const href = $(this).attr('href');
-							if (typeof href !== 'string' || !/^#dgwt-wcas-widget-tab-content-[A-Za-z0-9_-]+$/.test(href)) {
+							if (typeof href !== 'string' || !/^#psf-search-widget-tab-content-[A-Za-z0-9_-]+$/.test(href)) {
 								return;
 							}
 
-							tabs.filter('.dgwt-wcas-widget-tab-active').removeClass('dgwt-wcas-widget-tab-active');
-							$(this).addClass('dgwt-wcas-widget-tab-active');
-							$('#fibosearch_analytics_critical_searches .dgwt-wcas-widget-tab-content').hide();
+							tabs.filter('.psf-search-widget-tab-active').removeClass('psf-search-widget-tab-active');
+							$(this).addClass('psf-search-widget-tab-active');
+							$('#psfsearch_analytics_critical_searches .psf-search-widget-tab-content').hide();
 							$(document.getElementById(href.slice(1))).show();
 						});
 

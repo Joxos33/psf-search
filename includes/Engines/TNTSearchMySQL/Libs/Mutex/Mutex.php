@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Libs\Mutex;
+namespace PsfSearch\Engines\TNTSearchMySQL\Libs\Mutex;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

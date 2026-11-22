@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,12 +94,12 @@ class SourceQuery {
 		$select .= $this->selectTitle();
 
 		// Select the full description of the product
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_content' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_content' ) === 'on' ) {
 			$select .= $this->selectDescription();
 		}
 
 		// Select the short description of the product
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_excerpt' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_excerpt' ) === 'on' ) {
 			$select .= $this->selectShortDescription();
 		}
 
@@ -121,7 +121,7 @@ class SourceQuery {
 		}
 
 		// Select the attributes of the product
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_attributes' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_attributes' ) === 'on' ) {
 			$attributesTaxonomies = Helpers::getAttributesTaxonomies();
 			foreach ( $attributesTaxonomies as $taxonomy ) {
 				$select .= $this->selectTerms( $taxonomy );
@@ -129,9 +129,9 @@ class SourceQuery {
 		}
 
 		// Select the custom fields values of the product.
-		$customFields = DGWT_WCAS()->settings->getOption( 'search_in_custom_fields' );
+		$customFields = PSF_SEARCH()->settings->getOption( 'search_in_custom_fields' );
 		$customFields = empty( $customFields ) ? [] : explode( ',', $customFields );
-		$customFields = apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/search_in_custom_fields', $customFields );
+		$customFields = apply_filters( 'psf_search/indexer/' . $this->type . '/search_in_custom_fields', $customFields );
 		if ( ! empty( $customFields ) ) {
 			foreach ( $customFields as $customField ) {
 				if ( empty( $customField ) ) {
@@ -142,12 +142,12 @@ class SourceQuery {
 		}
 
 		// Select the values of terms in selected taxonomies
-		$activeTaxonomies = DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_related_products' );
+		$activeTaxonomies = PSF_SEARCH()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_related_products' );
 		foreach ( $activeTaxonomies as $taxonomy ) {
 			$select .= $this->selectTerms( $taxonomy );
 
-			$indexDescOld = apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/term_description', false ); // Deprecated filter name
-			$indexDescNew = apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/term_description', false );
+			$indexDescOld = apply_filters( 'psf_search/tnt/' . $this->type . '/term_description', false ); // Deprecated filter name
+			$indexDescNew = apply_filters( 'psf_search/indexer/' . $this->type . '/term_description', false );
 
 			if ( $indexDescOld || $indexDescNew ) {
 				$select .= $this->selectTerms( $taxonomy, 'desc', 'tax_desc_' );
@@ -174,12 +174,12 @@ class SourceQuery {
 		$where .= $this->whereExcludeFromSearch();
 
 		// WooCommerce visibility - Exclude out of stock
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$where .= $this->whereExcludeOutOfStock();
 		};
 
 		// Exclude/include products matched by filters
-		if ( ! empty( DGWT_WCAS()->settings->getOption( 'filter_products_rules' ) ) ) {
+		if ( ! empty( PSF_SEARCH()->settings->getOption( 'filter_products_rules' ) ) ) {
 			$where .= $this->whereExcludeOrIncludeMatchedByFilters();
 		};
 
@@ -198,12 +198,12 @@ class SourceQuery {
 		// BUILD QUERY
 		// -------------------------------
 
-		$select = apply_filters( 'dgwt/wcas/tnt/source_query/select', $select, $this, $onlyIDs ); // deprecated
-		$where  = apply_filters( 'dgwt/wcas/tnt/source_query/where', $where, $this, $onlyIDs ); // deprecated
+		$select = apply_filters( 'psf_search/tnt/source_query/select', $select, $this, $onlyIDs ); // deprecated
+		$where  = apply_filters( 'psf_search/tnt/source_query/where', $where, $this, $onlyIDs ); // deprecated
 
-		$select = apply_filters( 'dgwt/wcas/indexer/source_query/select', $select, $this, $onlyIDs );
-		$join   = apply_filters( 'dgwt/wcas/indexer/source_query/join', '', $this, $onlyIDs );
-		$where  = apply_filters( 'dgwt/wcas/indexer/source_query/where', $where, $this, $onlyIDs );
+		$select = apply_filters( 'psf_search/indexer/source_query/select', $select, $this, $onlyIDs );
+		$join   = apply_filters( 'psf_search/indexer/source_query/join', '', $this, $onlyIDs );
+		$where  = apply_filters( 'psf_search/indexer/source_query/where', $where, $this, $onlyIDs );
 
 		// Password-protected products are never searchable. Applied after the filters, so it cannot be removed.
 		$where .= " AND posts.post_password = '' ";
@@ -215,7 +215,7 @@ class SourceQuery {
                 $where
                ";
 
-		$this->query = apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/query', $sql, $this, $onlyIDs );
+		$this->query = apply_filters( 'psf_search/indexer/' . $this->type . '/query', $sql, $this, $onlyIDs );
 	}
 
 
@@ -236,7 +236,7 @@ class SourceQuery {
 			$this->visibilityTermIds['exclude-from-search']
 		);
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/exclude_from_search', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/exclude_from_search', $where );
 	}
 
 	/**
@@ -257,7 +257,7 @@ class SourceQuery {
 			$this->visibilityTermIds['outofstock']
 		);
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/exclude_outofstock', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/exclude_outofstock', $where );
 	}
 
 	/**
@@ -276,7 +276,7 @@ class SourceQuery {
 			return $where;
 		}
 
-		$filterMode              = DGWT_WCAS()->settings->getOption( 'filter_products_mode', 'exclude' );
+		$filterMode              = PSF_SEARCH()->settings->getOption( 'filter_products_mode', 'exclude' );
 		$filteredTermTaxonomyIds = [];
 		$langs                   = [];
 
@@ -323,7 +323,7 @@ class SourceQuery {
 		);
 		//phpcs:enable
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/exclude_include', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/exclude_include', $where );
 	}
 
 	/**
@@ -342,7 +342,7 @@ class SourceQuery {
 		//phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$where = $wpdb->prepare( " AND posts.ID IN ($format)", $setIds );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/narrow_set', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/narrow_set', $where );
 	}
 
 	/**
@@ -369,7 +369,7 @@ class SourceQuery {
 
 		}
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/post_types', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/post_types', $where );
 	}
 
 	/**
@@ -380,7 +380,7 @@ class SourceQuery {
 	protected function wherePublished() {
 		$where = " AND post_status = 'publish' ";
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/published', $where );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/where/published', $where );
 	}
 
 
@@ -396,7 +396,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( 'posts.ID AS %s', $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/id', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/id', $select, $groupName );
 	}
 
 	/**
@@ -411,7 +411,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ', posts.post_title AS %s', $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/name', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/name', $select, $groupName );
 	}
 
 	/**
@@ -426,7 +426,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ', posts.post_content AS %s', $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/description', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/description', $select, $groupName );
 	}
 
 	/**
@@ -441,7 +441,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ', posts.post_excerpt AS %s', $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/excerpt', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/excerpt', $select, $groupName );
 	}
 
 	/**
@@ -456,7 +456,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ", (SELECT meta_value FROM $wpdb->postmeta WHERE post_id = posts.ID AND meta_key='_sku' LIMIT 1) AS %s", $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/sku', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/sku', $select, $groupName );
 	}
 
 	/**
@@ -471,7 +471,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ", (SELECT meta_value FROM $wpdb->postmeta WHERE post_id = posts.ID AND meta_key='_global_unique_id' LIMIT 1) AS %s", $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/global_unique_id', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/global_unique_id', $select, $groupName );
 	}
 
 	/**
@@ -485,7 +485,7 @@ class SourceQuery {
 		global $wpdb;
 
 		$excludeOutOfStockSql = '';
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$excludeOutOfStockSql = "AND psv.ID NOT IN (
 							            SELECT post_id FROM $wpdb->posts AS psv2
 			                            JOIN $wpdb->postmeta AS pmsv2 ON psv2.ID = pmsv2.post_id
@@ -511,7 +511,7 @@ class SourceQuery {
 		);
 		//phpcs:enable
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/variations_skus', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/variations_skus', $select, $groupName );
 	}
 
 	/**
@@ -525,7 +525,7 @@ class SourceQuery {
 		global $wpdb;
 
 		$excludeOutOfStockSql = '';
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$excludeOutOfStockSql = "AND psv.ID NOT IN (
 							            SELECT post_id FROM $wpdb->posts AS psv2
 			                            JOIN $wpdb->postmeta AS pmsv2 ON psv2.ID = pmsv2.post_id
@@ -550,7 +550,7 @@ class SourceQuery {
 		);
 		//phpcs:enable
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/variations_global_unique_ids', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/variations_global_unique_ids', $select, $groupName );
 	}
 
 	/**
@@ -565,7 +565,7 @@ class SourceQuery {
 		global $wpdb;
 
 		$excludeOutOfStockSql = '';
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$excludeOutOfStockSql = "AND pvd.ID NOT IN (
 							            SELECT post_id FROM $wpdb->posts AS pvd2
 			                            JOIN $wpdb->postmeta AS pmvd2 ON pvd2.ID = pmvd2.post_id
@@ -590,7 +590,7 @@ class SourceQuery {
 		);
 		//phpcs:enable
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/variations_descriptions', $select, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/variations_descriptions', $select, $groupName );
 	}
 
 	/**
@@ -611,7 +611,7 @@ class SourceQuery {
 			$groupName
 		);
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/custom_field', $select, $key, $groupName );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/custom_field', $select, $key, $groupName );
 	}
 
 	/**
@@ -661,7 +661,7 @@ class SourceQuery {
 			//phpcs:enable
 		}
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/terms', $select, $taxonomy, $groupName, $typeOfData );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/terms', $select, $taxonomy, $groupName, $typeOfData );
 	}
 
 	/**
@@ -713,7 +713,7 @@ class SourceQuery {
 
 		}
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/lang', $select );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/lang', $select );
 	}
 
 	/**
@@ -726,7 +726,7 @@ class SourceQuery {
 
 		$select = $wpdb->prepare( ', posts.post_type AS %s', $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/post_type', $select );
+		return apply_filters( 'psf_search/indexer/' . $this->type . '/select/post_type', $select );
 	}
 
 	/**
@@ -739,10 +739,10 @@ class SourceQuery {
 
 		$onlyIDs = $this->onlyIDs();
 
-		do_action( 'dgwt/wcas/tnt/source_query/before_request', $this, $onlyIDs ); // Deprecated action name
-		do_action( 'dgwt/wcas/indexer/' . $this->type . '/before_request', $this, $onlyIDs );
+		do_action( 'psf_search/tnt/source_query/before_request', $this, $onlyIDs ); // Deprecated action name
+		do_action( 'psf_search/indexer/' . $this->type . '/before_request', $this, $onlyIDs );
 
-		$groupConcatMaxLen = apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/group_concat_max_len', 100000 );
+		$groupConcatMaxLen = apply_filters( 'psf_search/tnt/' . $this->type . '/group_concat_max_len', 100000 );
 
 		if ( ! empty( $groupConcatMaxLen ) ) {
 			$groupConcatMaxLen = absint( $groupConcatMaxLen );
@@ -752,9 +752,9 @@ class SourceQuery {
 		// TODO
 		//phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		if ( $onlyIDs ) {
-			$rows = $wpdb->get_col( apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/request', $this->query, $this, $onlyIDs ) );
+			$rows = $wpdb->get_col( apply_filters( 'psf_search/tnt/' . $this->type . '/request', $this->query, $this, $onlyIDs ) );
 		} else {
-			$rows = $wpdb->get_results( apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/request', $this->query, $this, $onlyIDs ), ARRAY_A );
+			$rows = $wpdb->get_results( apply_filters( 'psf_search/tnt/' . $this->type . '/request', $this->query, $this, $onlyIDs ), ARRAY_A );
 		}
 		//phpcs:enable
 
@@ -767,12 +767,12 @@ class SourceQuery {
 		// Generate variants of specified fields.
 		if ( ! $onlyIDs && ! empty( $response ) ) {
 			// Variants without spaces.
-			$variantsWithoutSpace = apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/data/variants_without_space', [] );
+			$variantsWithoutSpace = apply_filters( 'psf_search/tnt/' . $this->type . '/data/variants_without_space', [] );
 			if ( ! empty( $variantsWithoutSpace ) ) {
 				$response = Helpers::generateFieldVariants__premium_only(
 					$response,
 					[
-						'\DgoraWcas\Helpers',
+						'\PsfSearch\Helpers',
 						'removeSpacesFilter__premium_only',
 					],
 					$variantsWithoutSpace,
@@ -781,7 +781,7 @@ class SourceQuery {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/tnt/' . $this->type . '/data', $response, $this, $onlyIDs );
+		return apply_filters( 'psf_search/tnt/' . $this->type . '/data', $response, $this, $onlyIDs );
 	}
 
 	/**

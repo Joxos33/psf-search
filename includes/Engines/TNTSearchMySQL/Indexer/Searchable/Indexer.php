@@ -1,19 +1,19 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AbstractIndexer;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\PostsSourceQuery;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\SourceQuery;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\VariationsSourceQuery;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\SynonymsHandler;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\AbstractIndexer;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\PostsSourceQuery;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\SourceQuery;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\VariationsSourceQuery;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\SynonymsHandler;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,7 +55,7 @@ class Indexer extends AbstractIndexer {
 		$config = [
 			'scope'      => [
 				// @TODO rest of scope for future use
-				'attributes' => DGWT_WCAS()->settings->getOption( 'search_in_product_attributes' ) === 'on' ? true : false,
+				'attributes' => PSF_SEARCH()->settings->getOption( 'search_in_product_attributes' ) === 'on' ? true : false,
 			],
 			'index_role' => Config::getIndexRole(),
 		];
@@ -94,7 +94,7 @@ class Indexer extends AbstractIndexer {
 			}
 		}
 
-		$row = apply_filters( 'dgwt/wcas/indexer/items_row', $row );
+		$row = apply_filters( 'psf_search/indexer/items_row', $row );
 
 		$document = new Document( $row, $this->config );
 		$document->setStemmer( $this->stemmer );

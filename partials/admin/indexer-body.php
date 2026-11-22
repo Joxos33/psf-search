@@ -3,7 +3,7 @@
  * Exit if accessed directly
  */
 
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
@@ -15,16 +15,16 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		<div class="pro-bar">
 			<small class="progress_bar_title">
 				<?php
-				$text = __( 'Indexing... This process will continue in the background. You can leave this page without any worries.', 'ajax-search-for-woocommerce' );
+				$text = __( 'Indexing... This process will continue in the background. You can leave this page without any worries.', 'psf-search' );
 				if ( empty( $progressPercent ) ) {
-					$text = __( 'Index build progress', 'ajax-search-for-woocommerce' );
+					$text = __( 'Index build progress', 'psf-search' );
 				} elseif ( $progressPercent == 100 ) {
-					$txt  = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getReadableTotalIndexed();
-					$text = sprintf( __( 'Finalization... Wait a moment. (%s products)', 'ajax-search-for-woocommerce' ), $txt );
+					$txt  = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getReadableTotalIndexed();
+					$text = sprintf( __( 'Finalization... Wait a moment. (%s products)', 'psf-search' ), $txt );
 				}
 
 				if ( $info['status'] === 'cancellation' ) {
-					$text = __( 'Cancellation...', 'ajax-search-for-woocommerce' );
+					$text = __( 'Cancellation...', 'psf-search' );
 				}
 
 				echo $text;
@@ -37,50 +37,50 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 	</div>
 <?php endif; ?>
 
-<div class="js-dgwt-wcas-indexer-details<?php echo $isDetails ? ' show' : ' hide'; ?>">
-	<table class="dgwt-wcas-indexer-table js-dgwt-wcas-indexer-table js-dgwt-wcas-indexer-table">
+<div class="js-psf-search-indexer-details<?php echo $isDetails ? ' show' : ' hide'; ?>">
+	<table class="psf-search-indexer-table js-psf-search-indexer-table js-psf-search-indexer-table">
 		<tbody>
 		<tr>
-			<td><?php _e( 'Build ID', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Build ID', 'psf-search' ); ?></td>
 			<td><?php echo ! empty( $info['build_id'] ) ? $info['build_id'] : '-'; ?></td>
 		</tr>
 		<tr>
-			<td><?php _e( 'DB', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'DB', 'psf-search' ); ?></td>
 			<td><?php echo ! empty( $info['db'] ) ? $info['db'] : '-'; ?></td>
 		</tr>
 		<tr>
-			<td><?php _e( 'Index build start', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Index build start', 'psf-search' ); ?></td>
 			<td><?php echo ! empty( $info['start_ts'] ) ? date( 'Y-m-d H:i:s', $info['start_ts'] ) : '-'; ?></td>
 		</tr>
 		<tr>
-			<td><?php _e( 'Status', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Status', 'psf-search' ); ?></td>
 			<td><?php echo ! empty( $info['status'] ) ? $info['status'] : '-'; ?></td>
 		</tr>
 		<tr>
-			<td><?php _e( 'Products', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Products', 'psf-search' ); ?></td>
 			<td><?php echo ! empty( $info['total_products_for_indexing'] ) ? absint( $info['total_products_for_indexing'] ) : '-'; ?></td>
 		</tr>
 		<?php if ( ! empty( $totalNonProducts ) ) : ?>
 			<tr>
-				<td><?php _e( 'Non-products', 'ajax-search-for-woocommerce' ); ?></td>
+				<td><?php _e( 'Non-products', 'psf-search' ); ?></td>
 				<td><?php echo $totalNonProducts; ?></td>
 			</tr>
 		<?php endif; ?>
 		<tr>
-			<td><?php _e( 'Searchable', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Searchable', 'psf-search' ); ?></td>
 			<td>
-				<table class="dgwt-wcas-indexer-table__in">
+				<table class="psf-search-indexer-table__in">
 					<tr>
-						<td><?php _e( 'Start', 'ajax-search-for-woocommerce' ); ?></td>
+						<td><?php _e( 'Start', 'psf-search' ); ?></td>
 						<td><?php echo ! empty( $info['start_searchable_ts'] ) ? date( 'H:i:s', $info['start_searchable_ts'] ) : '-'; ?></td>
 					</tr>
 					<tr>
-						<td><?php _e( 'End', 'ajax-search-for-woocommerce' ); ?></td>
+						<td><?php _e( 'End', 'psf-search' ); ?></td>
 						<td><?php echo ! empty( $info['end_searchable_ts'] ) ? date( 'H:i:s', $info['end_searchable_ts'] ) : '-'; ?></td>
 					</tr>
 					<?php if ( ! empty( $info['start_searchable_ts'] ) && ! empty( $info['end_searchable_ts'] ) ) : ?>
 						<tr>
-							<td><?php _e( 'Time', 'ajax-search-for-woocommerce' ); ?></td>
+							<td><?php _e( 'Time', 'psf-search' ); ?></td>
 							<td><?php echo $info['end_searchable_ts'] - $info['start_searchable_ts']; ?> sec</td>
 						</tr>
 					<?php endif; ?>
@@ -89,21 +89,21 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 			</td>
 		</tr>
 		<tr>
-			<td><?php _e( 'Readable', 'ajax-search-for-woocommerce' ); ?></td>
+			<td><?php _e( 'Readable', 'psf-search' ); ?></td>
 			<td>
-				<table class="dgwt-wcas-indexer-table__in">
+				<table class="psf-search-indexer-table__in">
 					<tbody>
 					<tr>
-						<td><?php _e( 'Start', 'ajax-search-for-woocommerce' ); ?></td>
+						<td><?php _e( 'Start', 'psf-search' ); ?></td>
 						<td><?php echo ! empty( $info['start_readable_ts'] ) ? date( 'H:i:s', $info['start_readable_ts'] ) : '-'; ?></td>
 					</tr>
 					<tr>
-						<td><?php _e( 'End', 'ajax-search-for-woocommerce' ); ?></td>
+						<td><?php _e( 'End', 'psf-search' ); ?></td>
 						<td><?php echo ! empty( $info['end_readable_ts'] ) ? date( 'H:i:s', $info['end_readable_ts'] ) : '-'; ?></td>
 					</tr>
 					<?php if ( ! empty( $info['start_readable_ts'] ) && ! empty( $info['end_readable_ts'] ) ) : ?>
 						<tr>
-							<td><?php _e( 'Time', 'ajax-search-for-woocommerce' ); ?></td>
+							<td><?php _e( 'Time', 'psf-search' ); ?></td>
 							<td><?php echo $info['end_readable_ts'] - $info['start_readable_ts']; ?> sec</td>
 						</tr>
 					<?php endif; ?>
@@ -114,21 +114,21 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		</tr>
 		<?php if ( $canBuildTaxonomyIndex ) : ?>
 			<tr>
-				<td><?php _e( 'Taxonomies', 'ajax-search-for-woocommerce' ); ?></td>
+				<td><?php _e( 'Taxonomies', 'psf-search' ); ?></td>
 				<td>
-					<table class="dgwt-wcas-indexer-table__in">
+					<table class="psf-search-indexer-table__in">
 						<tbody>
 						<tr>
-							<td><?php _e( 'Start', 'ajax-search-for-woocommerce' ); ?></td>
+							<td><?php _e( 'Start', 'psf-search' ); ?></td>
 							<td><?php echo ! empty( $info['start_taxonomies_ts'] ) ? date( 'H:i:s', $info['start_taxonomies_ts'] ) : '-'; ?></td>
 						</tr>
 						<tr>
-							<td><?php _e( 'End', 'ajax-search-for-woocommerce' ); ?></td>
+							<td><?php _e( 'End', 'psf-search' ); ?></td>
 							<td><?php echo ! empty( $info['end_taxonomies_ts'] ) ? date( 'H:i:s', $info['end_taxonomies_ts'] ) : '-'; ?></td>
 						</tr>
 						<?php if ( ! empty( $info['start_taxonomies_ts'] ) && ! empty( $info['end_taxonomies_ts'] ) ) : ?>
 							<tr>
-								<td><?php _e( 'Time', 'ajax-search-for-woocommerce' ); ?></td>
+								<td><?php _e( 'Time', 'psf-search' ); ?></td>
 								<td><?php echo $info['end_taxonomies_ts'] - $info['start_taxonomies_ts']; ?> sec</td>
 							</tr>
 						<?php endif; ?>
@@ -141,11 +141,11 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		</tbody>
 	</table>
 
-	<div class="dgwt-wcas-indexer-logs">
-		<h4><?php _e( 'Logs', 'ajax-search-for-woocommerce' ); ?></h4>
+	<div class="psf-search-indexer-logs">
+		<h4><?php _e( 'Logs', 'psf-search' ); ?></h4>
 		<?php
 		foreach ( $logs as $log ) {
-			$class = $log['error'] ? 'dgwt-wcas-indexer-log dgwt-wcas-indexer-logs__error' : 'dgwt-wcas-indexer-log';
+			$class = $log['error'] ? 'psf-search-indexer-log psf-search-indexer-logs__error' : 'psf-search-indexer-log';
 			echo '<span class="' . $class . '">[' . date( 'Y-m-d H:i:s', $log['time'] ) . '] ' . $log['message'] . '</span>';
 		}
 		?>

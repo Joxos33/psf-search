@@ -1,24 +1,24 @@
 <?php
 
-use DgoraWcas\Integrations\Plugins\AbstractPluginIntegration;
+use PsfSearch\Integrations\Plugins\AbstractPluginIntegration;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-$plugins        = new \DgoraWcas\Integrations\Plugins\PluginsCompatibility();
+$plugins        = new \PsfSearch\Integrations\Plugins\PluginsCompatibility();
 $pluginsClasses = $plugins->getIntegrationClasses();
 ?>
 
-<div class="dgwt-wcas-debug dgwt-wcas-debug-active-integrations">
+<div class="psf-search-debug psf-search-debug-active-integrations">
 	<h3>Active integrations with the plugins</h3>
 
 	<table class="widefat striped">
 		<thead>
 		<tr>
-			<th><?php esc_html_e( 'Plugin name', 'ajax-search-for-woocommerce' ); ?></th>
-			<th><?php esc_html_e( 'Version', 'ajax-search-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Plugin name', 'psf-search' ); ?></th>
+			<th><?php esc_html_e( 'Version', 'psf-search' ); ?></th>
 		</tr>
 		</thead>
 		<tbody>

@@ -1,13 +1,11 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
-use DgoraWcas\Admin\Promo\Upgrade;
-use DgoraWcas\Admin\SettingsAPI;
-use DgoraWcas\Admin\Promo\FeedbackNotice;
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Scheduler;
+use PsfSearch\Admin\SettingsAPI;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Scheduler;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +21,7 @@ class Settings {
 	 *
 	 * @var string
 	 */
-	private $settingSlug = DGWT_WCAS_SETTINGS_KEY;
+	private $settingSlug = PSF_SEARCH_SETTINGS_KEY;
 
 	/**
 	 * All options values in one array
@@ -61,44 +59,42 @@ class Settings {
 	private $settingsCache = [];
 
 	public function __construct() {
-		global $dgwtWcasSettings;
+		global $psfSearchSettings;
 
 		// Set global variable with settings
 		$settings = get_option( $this->settingSlug );
 		if ( ! isset( $settings ) || empty( $settings ) ) {
-			$dgwtWcasSettings = [];
+			$psfSearchSettings = [];
 		} else {
-			$dgwtWcasSettings = $settings;
+			$psfSearchSettings = $settings;
 		}
 
 		$this->settingsApi = new SettingsAPI( $this->settingSlug );
 
 		add_action( 'admin_init', [ $this, 'settingsInit' ] );
 
-		add_filter( 'dgwt/wcas/settings/option_value', [ $this, 'restoreDefaultValueForFreePlan' ], 10, 3 );
+		add_filter( 'psf_search/settings/option_value', [ $this, 'restoreDefaultValueForFreePlan' ], 10, 3 );
 
-		add_action( 'wp_ajax_dgwt_wcas_adv_settings', [ $this, 'toggleAdvancedSettings' ] );
+		add_action( 'wp_ajax_psf_search_adv_settings', [ $this, 'toggleAdvancedSettings' ] );
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			add_action(
-				'wp_ajax_dgwt_wcas_settings_list_custom_fields',
-				[
-					$this,
-					'listSearchableCustomFields__premium_only',
-				]
-			);
-			add_action(
-				'wp_ajax_dgwt_wcas_settings_search_terms',
-				[
-					$this,
-					'searchTermsForFilter__premium_only',
-				]
-			);
-		}
+		add_action(
+			'wp_ajax_psf_search_settings_list_custom_fields',
+			[
+				$this,
+				'listSearchableCustomFields__premium_only',
+			]
+		);
+		add_action(
+			'wp_ajax_psf_search_settings_search_terms',
+			[
+				$this,
+				'searchTermsForFilter__premium_only',
+			]
+		);
 
 		if ( Helpers::shopManagerHasAccess() ) {
 			add_filter(
-				'option_page_capability_dgwt_wcas_troubleshooting',
+				'option_page_capability_psf_search_troubleshooting',
 				function ( $cap ) {
 					return 'manage_woocommerce';
 				}
@@ -133,54 +129,43 @@ class Settings {
 
 		$sections = [
 			5  => [
-				'id'    => 'dgwt_wcas_basic',
-				'title' => __( 'Starting', 'ajax-search-for-woocommerce' ),
+				'id'    => 'psf_search_basic',
+				'title' => __( 'Starting', 'psf-search' ),
 			],
 			10 => [
-				'id'    => 'dgwt_wcas_form_body',
-				'title' => __( 'Search bar', 'ajax-search-for-woocommerce' ),
+				'id'    => 'psf_search_form_body',
+				'title' => __( 'Search bar', 'psf-search' ),
 			],
 			15 => [
-				'id'    => 'dgwt_wcas_autocomplete',
-				'title' => __( 'Autocomplete', 'ajax-search-for-woocommerce' ),
+				'id'    => 'psf_search_autocomplete',
+				'title' => __( 'Autocomplete', 'psf-search' ),
 			],
 			25 => [
-				'id'    => 'dgwt_wcas_search',
-				'title' => __( 'Search config', 'ajax-search-for-woocommerce' ),
+				'id'    => 'psf_search_search',
+				'title' => __( 'Search config', 'psf-search' ),
 			],
 		];
 
-		if ( dgoraAsfwFs()->is_premium() ) {
-			$suffix = '';
-			// TODO tutaj trzeba wskazac budowany indeks
-			if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark active">!</span>';
-			} else {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-error dgwt-wcas-tab-mark">!</span>';
-			}
-
-			if ( in_array( Builder::getInfo( 'status', Config::getIndexRole() ), [ 'preparing', 'building', 'cancellation' ] ) ) {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress active"></span>';
-			} else {
-				$suffix .= '<span class="js-dgwt-wcas-indexer-tab-progress dgwt-wcas-tab-progress"></span>';
-			}
-			$sections[30] = [
-				'id'    => 'dgwt_wcas_performance',
-				'title' => __( 'Indexer', 'ajax-search-for-woocommerce' ) . $suffix,
-			];
+		$suffix = '';
+		// TODO tutaj trzeba wskazac budowany indeks
+		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
+			$suffix .= '<span class="js-psf-search-indexer-tab-error psf-search-tab-mark active">!</span>';
 		} else {
-			$sections[30] = [
-				'id'    => 'dgwt_wcas_performance',
-				'title' => Helpers::getSettingsProLabel(
-					__( 'Increase sales', 'ajax-search-for-woocommerce' ),
-					'header',
-					__( 'with simple tricks', 'ajax-search-for-woocommerce' )
-				),
-			];
+			$suffix .= '<span class="js-psf-search-indexer-tab-error psf-search-tab-mark">!</span>';
 		}
 
-		$sections = apply_filters( 'dgwt_wcas_settings_sections', $sections ); // deprecated since v1.2.0
-		$sections = apply_filters( 'dgwt/wcas/settings/sections', $sections );
+		if ( in_array( Builder::getInfo( 'status', Config::getIndexRole() ), [ 'preparing', 'building', 'cancellation' ] ) ) {
+			$suffix .= '<span class="js-psf-search-indexer-tab-progress psf-search-tab-progress active"></span>';
+		} else {
+			$suffix .= '<span class="js-psf-search-indexer-tab-progress psf-search-tab-progress"></span>';
+		}
+		$sections[30] = [
+			'id'    => 'psf_search_performance',
+			'title' => __( 'Indexer', 'psf-search' ) . $suffix,
+		];
+
+		$sections = apply_filters( 'psf_search_settings_sections', $sections ); // deprecated since v1.2.0
+		$sections = apply_filters( 'psf_search/settings/sections', $sections );
 
 		ksort( $sections );
 
@@ -209,389 +194,389 @@ class Settings {
 		$searchBySkuLink    = 'https://fibosearch.com/documentation/plugins-integrations/search-in-single-variations/#search-by-exact-sku-match';
 		$searchByGuidLink   = 'https://fibosearch.com/documentation/plugins-integrations/search-in-single-variations/#search-by-exact-guid-match';
 
-		$readMore = __( '<a target="_blank" href="%s">Read more</a> about this feature.', 'ajax-search-for-woocommerce' );
+		$readMore = __( '<a target="_blank" href="%s">Read more</a> about this feature.', 'psf-search' );
 
 		$settingsFields = [
-			'dgwt_wcas_basic'        => apply_filters(
-				'dgwt/wcas/settings/section=basic',
+			'psf_search_basic'        => apply_filters(
+				'psf_search/settings/section=basic',
 				[
 					90  => [
 						'name'  => 'embedding_search_form_head',
-						'label' => __( 'How to add search bar in your theme?', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'How to add search bar in your theme?', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					100 => [
 						'name'  => 'how_to_use',
-						'label' => __( 'How to add?', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'How to add?', 'psf-search' ),
 						'type'  => 'desc',
-						'class' => 'dgwt-wcas-only-desc',
+						'class' => 'psf-search-only-desc',
 						'desc'  => Helpers::howToUseHtml(),
 					],
 				]
 			),
-			'dgwt_wcas_form_body'    => apply_filters(
-				'dgwt/wcas/settings/section=form',
+			'psf_search_form_body'    => apply_filters(
+				'psf_search/settings/section=form',
 				[
 					100  => [
 						'name'  => 'form_head',
-						'label' => __( 'Basic', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Basic', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					200  => [
 						'name'              => 'min_chars',
-						'label'             => __( 'Minimum characters', 'ajax-search-for-woocommerce' ),
+						'label'             => __( 'Minimum characters', 'psf-search' ),
 						'type'              => 'number',
 						'size'              => 'small',
 						'number_min'        => 1,
-						'class'             => 'js-dgwt-wcas-adv-settings',
-						'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'sanitize_natural_numbers' ],
-						'desc'              => __( 'Min characters to show autocomplete', 'ajax-search-for-woocommerce' ),
+						'class'             => 'js-psf-search-adv-settings',
+						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_natural_numbers' ],
+						'desc'              => __( 'Min characters to show autocomplete', 'psf-search' ),
 						'default'           => 3,
 					],
 					300  => [
 						'name'    => 'max_form_width',
-						'label'   => __( 'Max form width', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Max form width', 'psf-search' ),
 						'type'    => 'number',
 						'size'    => 'small',
-						'desc'    => ' px. ' . __( 'To set 100% width leave blank', 'ajax-search-for-woocommerce' ),
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'desc'    => ' px. ' . __( 'To set 100% width leave blank', 'psf-search' ),
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => 600,
 					],
 					400  => [
 						'name'    => 'show_submit_button',
-						'label'   => __( 'Show submit button', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show submit button', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'dgwt-wcas-options-cb-toggle js-dgwt-wcas-cbtgroup-submit-btn',
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-submit-btn',
 						'size'    => 'small',
 						'default' => 'off',
 					],
 					500  => [
 						'name'    => 'search_submit_text',
-						'label'   => __( 'Label', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search-submit-text', __( 'To display the magnifier icon leave this field empty.', 'ajax-search-for-woocommerce' ) ),
+						'label'   => __( 'Label', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search-submit-text', __( 'To display the magnifier icon leave this field empty.', 'psf-search' ) ),
 						'type'    => 'text',
-						'class'   => 'js-dgwt-wcas-cbtgroup-submit-btn dgwt-wcas-settings-suboption',
-						'default' => __( 'Search', 'ajax-search-for-woocommerce' ),
+						'class'   => 'js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
+						'default' => __( 'Search', 'psf-search' ),
 					],
 					510  => [
 						'name'    => 'bg_submit_color',
-						'label'   => __( 'Background color', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Background color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings js-dgwt-wcas-cbtgroup-submit-btn dgwt-wcas-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
 						'default' => '',
 					],
 					520  => [
 						'name'    => 'text_submit_color',
-						'label'   => '<span>' . __( 'Text color', 'ajax-search-for-woocommerce' ) . ' </span><span>' . __( 'Search icon color', 'ajax-search-for-woocommerce' ) . '</span>',
+						'label'   => '<span>' . __( 'Text color', 'psf-search' ) . ' </span><span>' . __( 'Search icon color', 'psf-search' ) . '</span>',
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings js-dgwt-wcas-cbtgroup-submit-btn dgwt-wcas-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
 						'default' => '',
 					],
 					600  => [
 						'name'              => 'search_placeholder',
-						'label'             => __( 'Search input placeholder', 'ajax-search-for-woocommerce' ),
+						'label'             => __( 'Search input placeholder', 'psf-search' ),
 						'type'              => 'text',
-						'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'strip_all_tags' ],
-						'default'           => __( 'Search for products...', 'ajax-search-for-woocommerce' ),
+						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'strip_all_tags' ],
+						'default'           => __( 'Search for products...', 'psf-search' ),
 					],
 					630  => [
 						'name'  => 'layout_head',
-						'label' => __( 'Appearance', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Appearance', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					645  => [
 						'name'    => 'search_style',
-						'label'   => __( 'Style', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Style', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'search_style',
 							sprintf(
 								__(
-									'FiboSearch provides two different styles of search bars: Solaris and Pirx. Solaris has a rectangular shape while Pirx is a bean-shaped bar with curvy and smooth edges. <a target="_blank" href="%s">See the differences</a> between Solaris and Pirx style.',
-									'ajax-search-for-woocommerce'
+									'PSF Search provides two different styles of search bars: Solaris and Pirx. Solaris has a rectangular shape while Pirx is a bean-shaped bar with curvy and smooth edges. <a target="_blank" href="%s">See the differences</a> between Solaris and Pirx style.',
+									'psf-search'
 								),
 								$styleLink
 							)
 						),
 						'type'    => 'select',
 						'options' => [
-							'pirx'         => _x( 'Pirx', 'Pirx is proper name.', 'ajax-search-for-woocommerce' ),
-							'pirx-compact' => _x( 'Pirx (compact version)', 'Pirx (compact) is proper name.', 'ajax-search-for-woocommerce' ),
-							'solaris'      => _x( 'Solaris', 'Solaris is proper name.', 'ajax-search-for-woocommerce' ),
+							'pirx'         => _x( 'Pirx', 'Pirx is proper name.', 'psf-search' ),
+							'pirx-compact' => _x( 'Pirx (compact version)', 'Pirx (compact) is proper name.', 'psf-search' ),
+							'solaris'      => _x( 'Solaris', 'Solaris is proper name.', 'psf-search' ),
 						],
 						'default' => 'pirx',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					660  => [
 						'name'    => 'search_layout',
-						'label'   => __( 'Layout', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Layout', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'search_layout',
-							__( 'FiboSearch might be displayed as a search bar, icon, or mixed of them.', 'ajax-search-for-woocommerce' )
-							. ' <a target="_blank" href="' . $searchLayoutLink . '">' . __( 'See what each of these layouts looks like', 'ajax-search-for-woocommerce' ) . '</a>'
+							__( 'PSF Search might be displayed as a search bar, icon, or mixed of them.', 'psf-search' )
+							. ' <a target="_blank" href="' . $searchLayoutLink . '">' . __( 'See what each of these layouts looks like', 'psf-search' ) . '</a>'
 						),
 						'type'    => 'select',
 						'options' => [
-							'classic'           => __( 'Search bar', 'ajax-search-for-woocommerce' ),
-							'icon'              => __( 'Search icon', 'ajax-search-for-woocommerce' ),
-							'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'ajax-search-for-woocommerce' ),
-							'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'ajax-search-for-woocommerce' ),
+							'classic'           => __( 'Search bar', 'psf-search' ),
+							'icon'              => __( 'Search icon', 'psf-search' ),
+							'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'psf-search' ),
+							'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'psf-search' ),
 						],
 						'default' => 'classic',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					670  => [
 						'name'    => 'mobile_breakpoint',
-						'label'   => __( 'Breakpoint', 'ajax-search-for-woocommerce' ),
-						'desc'    => __( 'px', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Breakpoint', 'psf-search' ),
+						'desc'    => __( 'px', 'psf-search' ),
 						'type'    => 'number',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'size'    => 'small',
 						'default' => 992,
 					],
 					675  => [
 						'name'    => 'search_icon_color',
-						'label'   => __( 'Search icon color', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search icon color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'default' => '',
 					],
 					680  => [
 						'name'    => 'enable_mobile_overlay',
-						'label'   => __( 'Overlay on mobile', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Overlay on mobile', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'enable_mobile_overlay',
 							__(
 								'Covers anything that is displayed on the screen and simplifies the view to search bar + results.',
-								'ajax-search-for-woocommerce'
+								'psf-search'
 							) . ' ' . sprintf(
 								$readMore,
 								$mobileOverlayLink
 							)
 						),
-						'desc'    => __( 'The search will open as an overlay on mobile', 'ajax-search-for-woocommerce' ),
+						'desc'    => __( 'The search will open as an overlay on mobile', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'on',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					685  => [
 						'name'    => 'mobile_overlay_breakpoint',
-						'label'   => __( 'Breakpoint', 'ajax-search-for-woocommerce' ),
-						'desc'    => __( 'px', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Breakpoint', 'psf-search' ),
+						'desc'    => __( 'px', 'psf-search' ),
 						'type'    => 'number',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'size'    => 'small',
 						'default' => 992,
 					],
 					695  => [
 						'name'    => 'darken_background',
-						'label'   => __( 'Darkened background', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Darkened background', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'darken-_background',
 							__(
 								'Darkening the page background while autocomplete is active gives it stronger emphasis, minimizing elements (e.g., ads, carousels, and other page content) that could distract users from considering autocomplete suggestions.',
-								'ajax-search-for-woocommerce'
+								'psf-search'
 							) . ' ' . sprintf(
 								$readMore,
 								$darkenedBgLink
 							)
 						),
 						'type'    => 'checkbox',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'size'    => 'small',
 						'default' => 'off',
 					],
 					700  => [
 						'name'  => 'search_form',
-						'label' => __( 'Other colors', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Other colors', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					790  => [
 						'name'    => 'bg_input_underlay_color',
-						'label'   => __( 'Search bar underlay', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search bar underlay', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					800  => [
 						'name'    => 'bg_input_color',
-						'label'   => __( 'Search input background', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search input background', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					900  => [
 						'name'    => 'text_input_color',
-						'label'   => __( 'Search input text', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search input text', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					1000 => [
 						'name'    => 'border_input_color',
-						'label'   => __( 'Search input border', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search input border', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					1500 => [
 						'name'  => 'preloader_head',
-						'label' => __( 'Preloader', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Preloader', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					1700 => [
 						'name'    => 'show_preloader',
-						'label'   => __( 'Show preloader', 'ajax-search-for-woocommerce' ),
-						'class'   => 'dgwt-wcas-options-cb-toggle js-dgwt-wcas-cbtgroup-preloader js-dgwt-wcas-adv-settings',
+						'label'   => __( 'Show preloader', 'psf-search' ),
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-preloader js-psf-search-adv-settings',
 						'type'    => 'checkbox',
 						'default' => 'on',
 					],
 					1800 => [
 						'name'    => 'preloader_url',
-						'label'   => __( 'Upload preloader image', 'ajax-search-for-woocommerce' ),
-						'class'   => 'js-dgwt-wcas-cbtgroup-preloader js-dgwt-wcas-adv-settings',
+						'label'   => __( 'Upload preloader image', 'psf-search' ),
+						'class'   => 'js-psf-search-cbtgroup-preloader js-psf-search-adv-settings',
 						'type'    => 'file',
 						'default' => '',
 					],
 				]
 			),
-			'dgwt_wcas_autocomplete' => apply_filters(
-				'dgwt/wcas/settings/section=autocomplete',
+			'psf_search_autocomplete' => apply_filters(
+				'psf_search/settings/section=autocomplete',
 				[
 					20   => [
 						'name'  => 'autocomplete_head',
-						'label' => __( 'Basic', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Basic', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					50   => [
 						'name'    => 'suggestions_limit',
-						'label'   => __( 'Limit', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Limit', 'psf-search' ),
 						'type'    => 'number',
 						'size'    => 'small',
-						'desc'    => __( 'maximum number of suggestions', 'ajax-search-for-woocommerce' ),
+						'desc'    => __( 'maximum number of suggestions', 'psf-search' ),
 						'default' => 7,
 					],
 					80   => [
 						'name'              => 'search_no_results_text',
-						'label'             => _x( 'No results label', 'admin', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'             => _x( 'No results label', 'admin', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'no-results-label',
-							sprintf( __( 'The following HTML tags are allowed:<br /> %s.', 'ajax-search-for-woocommerce' ), '<code>h1-h6,p,ul,ol,li,b,em,br,div,span,a</code>' )
-							. ' <br /> ' . sprintf( __( 'See an example of a more complex "No results" message in <a href="%s" target="_blank">our documentation</a>.', 'ajax-search-for-woocommerce' ), $noResultsExtLink )
+							sprintf( __( 'The following HTML tags are allowed:<br /> %s.', 'psf-search' ), '<code>h1-h6,p,ul,ol,li,b,em,br,div,span,a</code>' )
+							. ' <br /> ' . sprintf( __( 'See an example of a more complex "No results" message in <a href="%s" target="_blank">our documentation</a>.', 'psf-search' ), $noResultsExtLink )
 						),
 						'type'              => 'textarea',
 						'textarea_rows'     => 2,
-						'class'             => 'dgwt-wcas-settings-textarea--half',
-						'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'sanitize_no_results_field' ],
-						'default'           => __( 'No results', 'ajax-search-for-woocommerce' ),
+						'class'             => 'psf-search-settings-textarea--half',
+						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_no_results_field' ],
+						'default'           => __( 'No results', 'psf-search' ),
 					],
 					100  => [
 						'name'  => 'product_suggestion_head',
-						'label' => __( 'Products', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Products', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					300  => [
 						'name'    => 'show_product_image',
-						'label'   => __( 'Show product image', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show product image', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'on',
 					],
 					400  => [
 						'name'    => 'show_product_price',
-						'label'   => __( 'Show price', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show price', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					500  => [
 						'name'    => 'show_product_desc',
-						'label'   => __( 'Show product description', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show product description', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					600  => [
 						'name'    => 'show_product_sku',
-						'label'   => __( 'Show SKU', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show SKU', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 					// 700 => array(
 					// 'name'       => 'show_sale_badge',
-					// 'label'      => __( 'Show sale badge', 'ajax-search-for-woocommerce' ),
+					// 'label'      => __( 'Show sale badge', 'psf-search' ),
 					// 'type'       => 'checkbox',
 					// 'default'    => 'off',
 					// ),
 					// 800 => array(
 					// 'name'       => 'show_featured_badge',
-					// 'label'      => __( 'Show featured badge', 'ajax-search-for-woocommerce' ),
+					// 'label'      => __( 'Show featured badge', 'psf-search' ),
 					// 'type'       => 'checkbox',
 					// 'default'    => 'off',
 					// ),
 					900  => [
 						'name'              => 'search_see_all_results_text',
-						'label'             => __( 'More results label', 'ajax-search-for-woocommerce' ),
+						'label'             => __( 'More results label', 'psf-search' ),
 						'type'              => 'text',
-						'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'strip_all_tags' ],
-						'default'           => __( 'See all products...', 'ajax-search-for-woocommerce' ),
+						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'strip_all_tags' ],
+						'default'           => __( 'See all products...', 'psf-search' ),
 					],
 					1000 => [
 						'name'  => 'non_products_in_autocomplete_head',
-						'label' => __( 'Non-products in autocomplete', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Non-products in autocomplete', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					1100 => [
 						'name'       => 'show_product_tax_product_cat',
-						'label'      => __( 'Show categories', 'ajax-search-for-woocommerce' ),
+						'label'      => __( 'Show categories', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-dgwt-wcas-settings-margin js-dgwt-wcas-options-toggle-sibling',
+						'class'      => 'js-psf-search-settings-margin js-psf-search-options-toggle-sibling',
 						'default'    => 'on',
 						'input_data' => 'data-option-trigger="show_matching_categories"',
 					],
 					1150 => [
 						'name'       => 'show_product_tax_product_cat_images',
-						'label'      => __( 'show images', 'ajax-search-for-woocommerce' ),
+						'label'      => __( 'show images', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'      => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default'    => 'off',
-						'desc'       => __( 'show images', 'ajax-search-for-woocommerce' ),
+						'desc'       => __( 'show images', 'psf-search' ),
 						'move_dest'  => 'show_product_tax_product_cat',
 						'input_data' => 'data-option-trigger="show_categories_images"',
 					],
 					1300 => [
 						'name'       => 'show_product_tax_product_tag',
-						'label'      => __( 'Show tags', 'ajax-search-for-woocommerce' ),
+						'label'      => __( 'Show tags', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-dgwt-wcas-settings-margin js-dgwt-wcas-adv-settings',
+						'class'      => 'js-psf-search-settings-margin js-psf-search-adv-settings',
 						'default'    => 'off',
 						'input_data' => 'data-option-trigger="show_matching_tags"',
 					],
 					1600 => [
 						'name'    => 'show_matching_posts',
-						'label'   => __( 'Show posts', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show posts', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					1800 => [
 						'name'    => 'show_matching_pages',
-						'label'   => __( 'Show pages', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Show pages', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					2000 => [
 						'name'  => 'details_box_head',
-						'label' => __( 'Extra views', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Extra views', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					2100 => [
 						'name'    => 'show_details_box',
-						'label'   => __( 'Show Details Panel', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Show Details Panel', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'details-box',
-							__( 'The Details Panel is an additional container for extended information. The details change dynamically when the cursor hovers over one of the suggestions.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $detailsPanelLink )
+							__( 'The Details Panel is an additional container for extended information. The details change dynamically when the cursor hovers over one of the suggestions.', 'psf-search' ) . ' ' . sprintf( $readMore, $detailsPanelLink )
 						),
 						'type'    => 'checkbox',
 						'size'    => 'small',
@@ -599,240 +584,222 @@ class Settings {
 					],
 					2200 => [
 						'name'    => 'show_user_history',
-						'label'   => __( 'User search history', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'User search history', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'user-search-history',
-							__( "The current search history is presented when the user clicked/taped on the search bar, but hasn't yet typed the query. The history includes the last searched products and phrases.", 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $searchHistory )
+							__( "The current search history is presented when the user clicked/taped on the search bar, but hasn't yet typed the query. The history includes the last searched products and phrases.", 'psf-search' ) . ' ' . sprintf( $readMore, $searchHistory )
 						),
 						'type'    => 'checkbox',
 						'size'    => 'small',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => 'off',
 					],
 					2500 => [
 						'name'  => 'suggestions_style_head',
-						'label' => __( 'Suggestions colors', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Suggestions colors', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					2600 => [
 						'name'    => 'sug_bg_color',
-						'label'   => __( 'Suggestion background', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Suggestion background', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2700 => [
 						'name'    => 'sug_hover_color',
-						'label'   => __( 'Suggestion selected', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Suggestion selected', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2800 => [
 						'name'    => 'sug_text_color',
-						'label'   => __( 'Text color', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Text color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2900 => [
 						'name'    => 'sug_highlight_color',
-						'label'   => __( 'Highlight color', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Highlight color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					3000 => [
 						'name'    => 'sug_border_color',
-						'label'   => __( 'Border color', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Border color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-dgwt-wcas-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 				]
 			),
-			'dgwt_wcas_search'       => apply_filters(
-				'dgwt/wcas/settings/section=search',
+			'psf_search_search'       => apply_filters(
+				'psf_search/settings/section=search',
 				[
 					10  => [
 						'name'  => 'search_search_head',
-						'label' => __( 'Products search scope', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Products search scope', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					50  => [
 						'name'    => 'search_in_product_content',
-						'label'   => __( 'Search in description', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search in description', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					100 => [
 						'name'    => 'search_in_product_excerpt',
-						'label'   => __( 'Search in short description', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search in short description', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					150 => [
 						'name'    => 'search_in_product_sku',
-						'label'   => __( 'Search in SKU', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Search in SKU', 'psf-search' ),
 						'type'    => 'checkbox',
-						'desc'    => dgoraAsfwFs()->is_premium() ? __(
+						'desc'    => __(
 							'searching also in variable products SKU',
-							'ajax-search-for-woocommerce'
-						) : sprintf(
-							__(
-								'Searching in variable products SKU is available only in <a target="_blank" href="%s">the pro version</a>.',
-								'ajax-search-for-woocommerce'
-							),
-							Upgrade::getUpgradeUrl()
+							'psf-search'
 						),
 						'default' => 'off',
 					],
 					160 => [
 						'name'    => 'search_in_product_global_unique_id',
-						'label'   => __( 'Search in GUID', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_product_global_unique_id', __( 'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).', 'ajax-search-for-woocommerce' ) ),
+						'label'   => __( 'Search in GUID', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search_in_product_global_unique_id', __( 'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).', 'psf-search' ) ),
 						'type'    => 'checkbox',
-						'desc'    => dgoraAsfwFs()->is_premium() ? __(
+						'desc'    => __(
 							'searching also in variable products GUID',
-							'ajax-search-for-woocommerce'
-						) : sprintf(
-							__(
-								'Searching in variable products GUID is available only in <a target="_blank" href="%s">the pro version</a>.',
-								'ajax-search-for-woocommerce'
-							),
-							Upgrade::getUpgradeUrl()
+							'psf-search'
 						),
 						'default' => 'off',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-hidden dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-hidden psf-search-premium-only',
 					],
 					200 => [
 						'name'    => 'search_in_product_attributes',
-						'label'   => __( 'Search in attributes', 'ajax-search-for-woocommerce' ),
-						'class'   => 'dgwt-wcas-premium-only',
+						'label'   => __( 'Search in attributes', 'psf-search' ),
+						'class'   => 'psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					250 => [
 						'name'    => 'search_in_product_tax_product_cat',
-						'label'   => __( 'Search in categories', 'ajax-search-for-woocommerce' ),
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'label'   => __( 'Search in categories', 'psf-search' ),
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					275 => [
 						'name'    => 'search_in_product_tax_product_tag',
-						'label'   => __( 'Search in tags', 'ajax-search-for-woocommerce' ),
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'label'   => __( 'Search in tags', 'psf-search' ),
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					300 => [
 						'name'    => 'search_in_custom_fields',
-						'label'   => __( 'Search in custom fields', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
-						'class'   => 'dgwt-wcas-premium-only',
+						'label'   => __( 'Search in custom fields', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'psf-search' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
+						'class'   => 'psf-search-premium-only',
 						'type'    => 'text',
 						'default' => '',
 					],
 					350 => [
 						'name'    => 'exclude_out_of_stock',
-						'label'   => __( 'Exclude “out of stock” products', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Exclude “out of stock” products', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					400 => [
 						'name'  => 'search_scope_fuzziness_head',
-						'label' => __( 'Fuzziness', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Fuzziness', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					500 => [
 						'name'  => 'search_synonyms_head',
-						'label' => __( 'Synonyms', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Synonyms', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					520 => [
 						'name'  => 'search_synonyms',
-						'label' => __( 'Synonyms', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label' => __( 'Synonyms', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'synonyms',
 							sprintf(
-								__( 'The synonyms feature allows your users to find more relevant results. If your products have alternative names and users often misspell them, consider adding synonyms. <a target="_blank" href="%s">Read more</a> about this feature.', 'ajax-search-for-woocommerce' ),
+								__( 'The synonyms feature allows your users to find more relevant results. If your products have alternative names and users often misspell them, consider adding synonyms. <a target="_blank" href="%s">Read more</a> about this feature.', 'psf-search' ),
 								$synonymsLink
 							)
 						),
 						'type'  => 'textarea',
 						'desc'  => __(
-							'Synonyms should be separated by a comma. Each new synonyms group is entered in a new line. You can use a phrase instead of a single word. <br /> <br />Sample list:<br /> <br /><span class="dgwt-wcas-synonyms-sample">sofa, couch, davenport, divan, settee<br />big, grand, great, large, outsize</span>',
-							'ajax-search-for-woocommerce'
+							'Synonyms should be separated by a comma. Each new synonyms group is entered in a new line. You can use a phrase instead of a single word. <br /> <br />Sample list:<br /> <br /><span class="psf-search-synonyms-sample">sofa, couch, davenport, divan, settee<br />big, grand, great, large, outsize</span>',
+							'psf-search'
 						),
-						'class'             => 'dgwt-wcas-settings-synonyms js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'             => 'psf-search-settings-synonyms js-psf-search-adv-settings psf-search-premium-only',
 						'sanitize_callback' => 'sanitize_textarea_field',
 					],
 					600 => [
 						'name'  => 'filter_products_head',
-						'label' => __( 'Exclude/include products', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Exclude/include products', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					625 => [
 						'name'    => 'filter_products_mode',
-						'label'   => __( 'Filtering mode', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Filtering mode', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'filter_products_mode',
-							__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
+							__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'psf-search' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
 							'',
 							'right'
 						),
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'select',
 						'options' => [
-							'exclude' => __( 'Exclude', 'ajax-search-for-woocommerce' ),
-							'include' => __( 'Include', 'ajax-search-for-woocommerce' ),
+							'exclude' => __( 'Exclude', 'psf-search' ),
+							'include' => __( 'Include', 'psf-search' ),
 						],
 						'default' => 'exclude',
 					],
 					650 => [
 						'name'    => 'filter_products_rules',
-						'label'   => __( 'Filters', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Filters', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'filter_products_head',
-							__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
+							__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'psf-search' ),
 							'',
 							'right'
 						),
 						'type'    => 'filters_rules_plug',
-						'class'   => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => '[]',
 					],
 				]
 			),
-			'dgwt_wcas_performance'  => apply_filters(
-				'dgwt/wcas/settings/section=performance',
+			'psf_search_performance'  => apply_filters(
+				'psf_search/settings/section=performance',
 				[
-					0   => [
-						'name'  => 'pro_features',
-						'label' => __( 'Pro features', 'ajax-search-for-woocommerce' ),
-						'type'  => 'desc',
-						'desc'  => Helpers::featuresHtml(),
-					],
 					10  => [
 						'name'  => 'search_engine_head',
-						'label' => __( 'Speed up search!', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Speed up search!', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 
 					100 => [
 						'name'  => 'indexer_schedule_head',
-						'label' => __( 'Scheduling indexing', 'ajax-search-for-woocommerce' ),
+						'label' => __( 'Scheduling indexing', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					110 => [
 						'name'    => 'indexer_schedule',
-						'label'   => __( 'Enable Scheduler', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
+						'label'   => __( 'Enable Scheduler', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 							'indexer-schedule',
 							__(
 								"In most cases, you don't need to use the scheduler because the search index updates when you edit products. If you use import tools or custom code to refresh prices or bulk add/edit products, the indexing scheduler will be helpful.",
-								'ajax-search-for-woocommerce'
+								'psf-search'
 							) . ' ' . sprintf(
 								$readMore,
 								$schedulerLink
@@ -840,25 +807,25 @@ class Settings {
 						),
 						'type'    => 'checkbox',
 						'size'    => 'small',
-						'class'   => 'dgwt-wcas-options-cb-toggle js-dgwt-wcas-cbtgroup-indexer-schedule js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					120 => [
 						'name'    => 'indexer_schedule_interval',
-						'label'   => __( 'Interval', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Interval', 'psf-search' ),
 						'type'    => 'select',
-						'class'   => 'js-dgwt-wcas-cbtgroup-indexer-schedule js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'options' => [
-							'daily'  => __( 'daily', 'ajax-search-for-woocommerce' ),
-							'weekly' => __( 'weekly', 'ajax-search-for-woocommerce' ),
+							'daily'  => __( 'daily', 'psf-search' ),
+							'weekly' => __( 'weekly', 'psf-search' ),
 						],
 						'default' => 'weekly',
 					],
 					130 => [
 						'name'    => 'indexer_schedule_start_time',
-						'label'   => __( 'Schedule time', 'ajax-search-for-woocommerce' ),
+						'label'   => __( 'Schedule time', 'psf-search' ),
 						'type'    => 'select',
-						'class'   => 'js-dgwt-wcas-cbtgroup-indexer-schedule js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+						'class'   => 'js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'options' => Helpers::getHours(),
 						'default' => 3,
 					],
@@ -866,171 +833,132 @@ class Settings {
 			),
 		];
 
-		$fuzzinesText1 = '<strong>' . __( 'Increases sales conversions.', 'ajax-search-for-woocommerce' ) . '</strong>';
+		$fuzzinesText1 = '<strong>' . __( 'Increases sales conversions.', 'psf-search' ) . '</strong>';
 		$fuzzinesText2 = sprintf(
 			__(
 				'Returns suggestions based on likely relevance, even though a search keyword may not exactly match. E.g if you type “ipho<b>m</b>e” you get the same results as for “iphone”. <a target="_blank" href="%s">Read more</a> about the fuzzy search feature.',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			),
 			$fuzzySearchLink
 		);
 
-		if ( dgoraAsfwFs()->is_premium() ) {
 
-			if ( dgoraAsfwFs()->is__premium_only() ) {
 
-				// Custom fields option
-				$settingsFields['dgwt_wcas_search'][300] = [
-					'name'                 => 'search_in_custom_fields',
-					'label'                => __( 'Search in custom fields', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
-					'type'                 => 'selectize',
-					'options'              => [],
-					'sanitize_callback'    => [
-						'\DgoraWcas\Admin\SettingsAPI',
-						'sanitize_selectize_custom_fields__premium_only',
-					],
-					'desc'                 => __( 'select the custom fields you want to add to the search scope', 'ajax-search-for-woocommerce' ),
-					'disabled_before_init' => true,
-				];
+		// Custom fields option
+		$settingsFields['psf_search_search'][300] = [
+			'name'                 => 'search_in_custom_fields',
+			'label'                => __( 'Search in custom fields', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'psf-search' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
+			'type'                 => 'selectize',
+			'options'              => [],
+			'sanitize_callback'    => [
+				'\PsfSearch\Admin\SettingsAPI',
+				'sanitize_selectize_custom_fields__premium_only',
+			],
+			'desc'                 => __( 'select the custom fields you want to add to the search scope', 'psf-search' ),
+			'disabled_before_init' => true,
+		];
 
-				// Fuzzy search option
-				$settingsFields['dgwt_wcas_search'][450] = [
-					'name'    => 'fuzziness_enabled',
-					'label'   => __( 'Fuzzy matching', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark( 'fuzzy_search', $fuzzinesText2 ),
-					'class'   => 'dgwt-wcas-premium-only',
-					'type'    => 'select',
-					'options' => [
-						'off'    => __( '-- Disabled', 'ajax-search-for-woocommerce' ),
-						'soft'   => __( 'Soft', 'ajax-search-for-woocommerce' ),
-						'normal' => __( 'Normal', 'ajax-search-for-woocommerce' ),
-						'hard'   => __( 'Hard', 'ajax-search-for-woocommerce' ),
-					],
-					'default' => 'normal',
-				];
+		// Fuzzy search option
+		$settingsFields['psf_search_search'][450] = [
+			'name'    => 'fuzziness_enabled',
+			'label'   => __( 'Fuzzy matching', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'fuzzy_search', $fuzzinesText2 ),
+			'class'   => 'psf-search-premium-only',
+			'type'    => 'select',
+			'options' => [
+				'off'    => __( '-- Disabled', 'psf-search' ),
+				'soft'   => __( 'Soft', 'psf-search' ),
+				'normal' => __( 'Normal', 'psf-search' ),
+				'hard'   => __( 'Hard', 'psf-search' ),
+			],
+			'default' => 'normal',
+		];
 
-				// Exclude/include products feature
-				$settingsFields['dgwt_wcas_search'][600] = [
-					'name'  => 'filter_products_head',
-					'label' => __( 'Exclude/include products', 'ajax-search-for-woocommerce' ),
-					'type'  => 'head',
-					'class' => 'dgwt-wcas-sgs-header js-dgwt-wcas-adv-settings',
-				];
-				$settingsFields['dgwt_wcas_search'][625] = [
-					'name'    => 'filter_products_mode',
-					'label'   => __( 'Filtering mode', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
-						'filter_products_mode',
-						__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'ajax-search-for-woocommerce' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
-						'',
-						'right'
-					),
-					'class'   => 'js-dgwt-wcas-adv-settings',
-					'type'    => 'select',
-					'options' => [
-						'exclude' => __( 'Exclude', 'ajax-search-for-woocommerce' ),
-						'include' => __( 'Include', 'ajax-search-for-woocommerce' ),
-					],
-					'default' => 'exclude',
-				];
-				$settingsFields['dgwt_wcas_search'][650] = [
-					'name'              => 'filter_products_rules',
-					'label'             => __( 'Filters', 'ajax-search-for-woocommerce' ) . ' ' . Helpers::createQuestionMark(
-						'filter_products_rules',
-						__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'ajax-search-for-woocommerce' ),
-						'',
-						'right'
-					),
-					'type'              => 'filters_rules__premium_only',
-					'sanitize_callback' => [ '\DgoraWcas\Admin\SettingsAPI', 'sanitize_filters_rules__premium_only' ],
-					'class'             => 'js-dgwt-wcas-adv-settings',
-					'default'           => '[]',
-				];
+		// Exclude/include products feature
+		$settingsFields['psf_search_search'][600] = [
+			'name'  => 'filter_products_head',
+			'label' => __( 'Exclude/include products', 'psf-search' ),
+			'type'  => 'head',
+			'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
+		];
+		$settingsFields['psf_search_search'][625] = [
+			'name'    => 'filter_products_mode',
+			'label'   => __( 'Filtering mode', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
+				'filter_products_mode',
+				__( 'Exclude the product group from the search results or allow search only among the indicated product group.', 'psf-search' ) . ' ' . sprintf( $readMore, $excludeIncludeLink ),
+				'',
+				'right'
+			),
+			'class'   => 'js-psf-search-adv-settings',
+			'type'    => 'select',
+			'options' => [
+				'exclude' => __( 'Exclude', 'psf-search' ),
+				'include' => __( 'Include', 'psf-search' ),
+			],
+			'default' => 'exclude',
+		];
+		$settingsFields['psf_search_search'][650] = [
+			'name'              => 'filter_products_rules',
+			'label'             => __( 'Filters', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
+				'filter_products_rules',
+				__( 'Filters that specify the product group and taxonomy that will be affected by the above mode', 'psf-search' ),
+				'',
+				'right'
+			),
+			'type'              => 'filters_rules__premium_only',
+			'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_filters_rules__premium_only' ],
+			'class'             => 'js-psf-search-adv-settings',
+			'default'           => '[]',
+		];
 
-				// Search in SKU - tooltip only for Pro version.
-				$settingsFields['dgwt_wcas_search'][150]['label'] .= ' ' .
-					Helpers::createQuestionMark(
-						'search_in_product_sku',
-						sprintf(
-							'%s %s',
-							__( 'In the autocomplete results, a variation may appear when there\'s an exact SKU match.', 'ajax-search-for-woocommerce' ),
-							sprintf( $readMore, $searchBySkuLink )
-						)
-					);
+		// Search in SKU - tooltip only for Pro version.
+		$settingsFields['psf_search_search'][150]['label'] .= ' ' .
+			Helpers::createQuestionMark(
+				'search_in_product_sku',
+				sprintf(
+					'%s %s',
+					__( 'In the autocomplete results, a variation may appear when there\'s an exact SKU match.', 'psf-search' ),
+					sprintf( $readMore, $searchBySkuLink )
+				)
+			);
 
-				// Search in GUID.
-				$settingsFields['dgwt_wcas_search'][160]['label'] =
-					__( 'Search in GUID', 'ajax-search-for-woocommerce' ) . ' ' .
-					Helpers::createQuestionMark(
-						'search_in_product_global_unique_id',
-						__(
-							'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).',
-							'ajax-search-for-woocommerce'
-						) . '<br />' .
-						__(
-							'In the autocomplete results, a variation may appear when there\'s an exact GUID match.',
-							'ajax-search-for-woocommerce'
-						) . ' ' .
-						sprintf( $readMore, $searchByGuidLink )
-					);
+		// Search in GUID.
+		$settingsFields['psf_search_search'][160]['label'] =
+			__( 'Search in GUID', 'psf-search' ) . ' ' .
+			Helpers::createQuestionMark(
+				'search_in_product_global_unique_id',
+				__(
+					'Make your products searchable by their Global Unique Identifier (GTIN, UPC, EAN or ISBN).',
+					'psf-search'
+				) . '<br />' .
+				__(
+					'In the autocomplete results, a variation may appear when there\'s an exact GUID match.',
+					'psf-search'
+				) . ' ' .
+				sprintf( $readMore, $searchByGuidLink )
+			);
 
-				// Indexer feature
-				$settingsFields['dgwt_wcas_performance'][11] = [
-					'name'  => 'search_engine_build',
-					'label' => __( 'Index status', 'ajax-search-for-woocommerce' ),
-					'type'  => 'desc',
-					'desc'  => Helpers::isSettingsPage() ? Builder::renderIndexingStatus() : '',
-					'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
-				];
+		// Indexer feature
+		$settingsFields['psf_search_performance'][11] = [
+			'name'  => 'search_engine_build',
+			'label' => __( 'Index status', 'psf-search' ),
+			'type'  => 'desc',
+			'desc'  => Helpers::isSettingsPage() ? Builder::renderIndexingStatus() : '',
+			'class' => 'psf-search-premium-only psf-search-opt-tntsearch',
+		];
 
-				// Show next task description
-				$settingsFields['dgwt_wcas_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
+		// Show next task description
+		$settingsFields['psf_search_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
 
-				// Remove promo box with list of Pro features
-				unset( $settingsFields['dgwt_wcas_performance'][0] );
-			}
-		} else {
-
-			// Fuzzy search feature preview
-			$settingsFields['dgwt_wcas_search'][450] = [
-				'name'    => 'fuzziness_enabled_demo',
-				'label'   => __( 'Fuzzy matching', 'ajax-search-for-woocommerce' ),
-				'desc'    => $fuzzinesText1 . ' ' . $fuzzinesText2,
-				'class'   => 'dgwt-wcas-premium-only',
-				'type'    => 'select',
-				'options' => [
-					'off'    => __( '-- Disabled', 'ajax-search-for-woocommerce' ),
-					'soft'   => __( 'Soft', 'ajax-search-for-woocommerce' ),
-					'normal' => __( 'Normal', 'ajax-search-for-woocommerce' ),
-					'hard'   => __( 'Hard', 'ajax-search-for-woocommerce' ),
-				],
-				'default' => 'off',
-			];
-
-			// Indexer feature preview
-			$settingsFields['dgwt_wcas_performance'][11] = [
-				'name'  => 'search_engine_build',
-				'label' => __( 'Index status', 'ajax-search-for-woocommerce' ),
-				'type'  => 'desc',
-				'desc'  => Helpers::indexerDemoHtml(),
-				'class' => 'dgwt-wcas-premium-only wcas-opt-tntsearch',
-			];
-		}
+		// Remove promo box with list of Pro features
+		unset( $settingsFields['psf_search_performance'][0] );
 
 		// Show "Search in GUID" option if there are products with these values.
 		if ( Helpers::isSettingsPage() && Helpers::productsUseGlobalUniqueId() ) {
-			$settingsFields['dgwt_wcas_search'][160]['class'] = str_replace( 'dgwt-wcas-hidden', '', $settingsFields['dgwt_wcas_search'][160]['class'] );
+			$settingsFields['psf_search_search'][160]['class'] = str_replace( 'psf-search-hidden', '', $settingsFields['psf_search_search'][160]['class'] );
 		}
 
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			foreach ( $settingsFields as $key => $sections ) {
-				foreach ( $sections as $keyl2 => $option ) {
-					if ( self::isOptionPremium( $option ) ) {
-						$settingsFields[ $key ][ $keyl2 ]['label'] = Helpers::getSettingsProLabel( $option['label'], 'option-label' );
-					}
-				}
-			}
-		}
 
-		$settingsFields = apply_filters( 'dgwt/wcas/settings', $settingsFields );
+		$settingsFields = apply_filters( 'psf_search/settings', $settingsFields );
 
 		// Set defaults
 		foreach ( $settingsFields as $sections ) {
@@ -1093,8 +1021,8 @@ class Settings {
 			$value = $default;
 		}
 
-		$value = apply_filters( 'dgwt/wcas/settings/load_value', $value, $option_key );
-		$value = apply_filters( 'dgwt/wcas/settings/load_value/key=' . $option_key, $value );
+		$value = apply_filters( 'psf_search/settings/load_value', $value, $option_key );
+		$value = apply_filters( 'psf_search/settings/load_value/key=' . $option_key, $value );
 
 		return $value;
 	}
@@ -1115,8 +1043,8 @@ class Settings {
 
 			$settings = get_option( $this->settingSlug );
 
-			$value = apply_filters( 'dgwt/wcas/settings/update_value', $value, $optionKey );
-			$value = apply_filters( 'dgwt/wcas/settings/update_value/key=' . $optionKey, $value );
+			$value = apply_filters( 'psf_search/settings/update_value', $value, $optionKey );
+			$value = apply_filters( 'psf_search/settings/update_value/key=' . $optionKey, $value );
 
 			$canUpdate = false;
 			if ( array_key_exists( $optionKey, $this->defaults ) ) {
@@ -1128,7 +1056,7 @@ class Settings {
 				$updated = update_option( $this->settingSlug, $settings );
 				if ( $updated ) {
 					$this->settingsCache = [];
-					do_action( 'dgwt/wcas/settings/option_updated', $optionKey, $value );
+					do_action( 'psf_search/settings/option_updated', $optionKey, $value );
 				}
 			}
 		}
@@ -1141,9 +1069,9 @@ class Settings {
 	 */
 	public static function output() {
 
-		$settings = DGWT_WCAS()->settings->settingsApi;
+		$settings = PSF_SEARCH()->settings->settingsApi;
 
-		include_once DGWT_WCAS_DIR . 'partials/admin/settings.php';
+		include_once PSF_SEARCH_DIR . 'partials/admin/settings.php';
 	}
 
 	/**
@@ -1156,11 +1084,6 @@ class Settings {
 	 * @return mixed
 	 */
 	public function restoreDefaultValueForFreePlan( $value, $default, $option ) {
-		if ( ! dgoraAsfwFs()->is_premium() ) {
-			if ( self::isOptionPremium( $option ) ) {
-				$value = $default;
-			}
-		}
 
 		return $value;
 	}
@@ -1178,7 +1101,7 @@ class Settings {
 			$canSee = $this->canSeeAdvSettings;
 		} else {
 
-			$settings = get_option( 'dgwt_wcas_settings_show_advanced' );
+			$settings = get_option( 'psf_search_settings_show_advanced' );
 
 			if ( ! empty( $settings ) ) {
 
@@ -1206,11 +1129,11 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_advanced_options_switch' );
+		check_ajax_referer( 'psf_search_advanced_options_switch' );
 
 		$show = ! empty( $_GET['adv_settings_value'] ) && $_GET['adv_settings_value'] === 'show' ? 'on' : 'off';
 
-		update_option( 'dgwt_wcas_settings_show_advanced', $show );
+		update_option( 'psf_search_settings_show_advanced', $show );
 
 		wp_send_json_success();
 	}
@@ -1226,7 +1149,7 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_get_custom_fields' );
+		check_ajax_referer( 'psf_search_get_custom_fields' );
 
 		wp_send_json_success( Helpers::getSearchableCustomFields() );
 	}
@@ -1242,7 +1165,7 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'dgwt_wcas_get_filter_terms' );
+		check_ajax_referer( 'psf_search_get_filter_terms' );
 
 		$query = ! empty( $_POST['query'] ) ? wc_clean( wp_unslash( $_POST['query'] ) ) : '';
 		$type  = ! empty( $_POST['type'] ) ? wc_clean( wp_unslash( $_POST['type'] ) ) : '';
@@ -1297,7 +1220,7 @@ class Settings {
 	 */
 	public static function isOptionPremium( $option ) {
 		$is_premium = false;
-		if ( ! empty( $option['class'] ) && strpos( $option['class'], 'dgwt-wcas-premium-only' ) !== false ) {
+		if ( ! empty( $option['class'] ) && strpos( $option['class'], 'psf-search-premium-only' ) !== false ) {
 			$is_premium = true;
 		}
 
@@ -1312,9 +1235,9 @@ class Settings {
 	 */
 	private function dependentOptions() {
 		add_filter(
-			'dgwt/wcas/settings/section=form',
+			'psf_search/settings/section=form',
 			function ( $settings ) {
-				$text                   = __( "You have selected the <b>Appearance -> Style -> Pirx</b> option. Pirx style forces a submit button to be enabled. You can find this option a few rows below. That's why this option is blocked.", 'ajax-search-for-woocommerce' );
+				$text                   = __( "You have selected the <b>Appearance -> Style -> Pirx</b> option. Pirx style forces a submit button to be enabled. You can find this option a few rows below. That's why this option is blocked.", 'psf-search' );
 				$settings[400]['label'] = Helpers::createOverrideTooltip( 'ovtt-pirx-submit-button', '<p>' . $text . '</p>' ) . $settings[400]['label'];
 
 				return $settings;
@@ -1327,14 +1250,14 @@ class Settings {
 
 			// Submit button
 			add_filter(
-				'dgwt/wcas/settings/load_value/key=show_submit_button',
+				'psf_search/settings/load_value/key=show_submit_button',
 				function () {
 					return 'on';
 				}
 			);
 
 			add_filter(
-				'dgwt/wcas/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[400]['disabled'] = true;
 
@@ -1344,17 +1267,17 @@ class Settings {
 
 			// Value of submit button
 			add_filter(
-				'dgwt/wcas/settings/load_value/key=search_submit_text',
+				'psf_search/settings/load_value/key=search_submit_text',
 				function () {
 					return '';
 				}
 			);
 
 			add_filter(
-				'dgwt/wcas/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[500]['disabled'] = true;
-					$settings[500]['class']    = $settings[500]['class'] . ' dgwt-wcas-hidden';
+					$settings[500]['class']    = $settings[500]['class'] . ' psf-search-hidden';
 
 					return $settings;
 				}
@@ -1362,17 +1285,17 @@ class Settings {
 
 			// Submit background color
 			add_filter(
-				'dgwt/wcas/settings/load_value/key=bg_submit_color',
+				'psf_search/settings/load_value/key=bg_submit_color',
 				function () {
 					return '';
 				}
 			);
 
 			add_filter(
-				'dgwt/wcas/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[510]['disabled'] = true;
-					$settings[510]['class']    = $settings[510]['class'] . ' dgwt-wcas-hidden';
+					$settings[510]['class']    = $settings[510]['class'] . ' psf-search-hidden';
 
 					return $settings;
 				}

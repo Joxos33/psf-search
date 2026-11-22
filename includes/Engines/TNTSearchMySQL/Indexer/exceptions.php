@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 use Throwable;
 
 /**
- * Frames all Indexer exceptions ("$e instanceof DgoraWcas\Engines\TNTSearchMySQL\Indexer\Exception").
+ * Frames all Indexer exceptions ("$e instanceof PsfSearch\Engines\TNTSearchMySQL\Indexer\Exception").
  */
 abstract class Exception extends \Exception {
 	/** @var string[] */

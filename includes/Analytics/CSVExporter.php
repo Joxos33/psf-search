@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
 use WC_CSV_Exporter;
 
@@ -32,10 +32,10 @@ class CSVExporter extends WC_CSV_Exporter {
 
 		if ( in_array( $this->context, [ 'autocomplete', 'search-results-page' ] ) ) {
 			$data->setContext( $this->context );
-			$this->set_filename( 'fibosearch-analytics_' . $this->context . '_' . ( empty( $this->lang ) ? '' : $this->lang . '_' ) . $dateSuffix );
+			$this->set_filename( 'psfsearch-analytics_' . $this->context . '_' . ( empty( $this->lang ) ? '' : $this->lang . '_' ) . $dateSuffix );
 		} else {
 			//phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
-			$this->set_filename( 'fibosearch-analytics_critical' . '_' . ( empty( $this->lang ) ? '' : $this->lang . '_' ) . $dateSuffix );
+			$this->set_filename( 'psfsearch-analytics_critical' . '_' . ( empty( $this->lang ) ? '' : $this->lang . '_' ) . $dateSuffix );
 		}
 
 		$this->set_column_names(

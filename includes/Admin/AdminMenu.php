@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Admin;
+namespace PsfSearch\Admin;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Helpers;
-use DgoraWcas\Settings;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Helpers;
+use PsfSearch\Settings;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,44 +26,42 @@ class AdminMenu {
 	public function addMenu() {
 
 		$menuSuffix = '';
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-				$menuSuffix = '<span class="dgwt-wcas-menu-warning-icon">!</span>';
-				add_action(
-					'admin_print_styles',
-					function () {
-						?>
-					<style>
-						.dgwt-wcas-menu-warning-icon {
-							display: inline-block;
-							vertical-align: top;
-							box-sizing: border-box;
-							margin: 1px 0 -1px 3px;
-							padding: 0 5px;
-							min-width: 18px;
-							height: 18px;
-							border-radius: 9px;
-							background-color: #d63638;
-							color: #fff;
-							font-size: 11px;
-							line-height: 1.6;
-							text-align: center;
-							z-index: 26;
-						}
-					</style>
-						<?php
-					}
-				);
-			}
-		}
-
-		if ( dgoraAsfwFs()->is_activation_mode() ) {
+		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
+			$menuSuffix = '<span class="psf-search-menu-warning-icon">!</span>';
 			add_action(
 				'admin_print_styles',
 				function () {
 					?>
 				<style>
-					#adminmenu > .toplevel_page_dgwt_wcas_settings {
+					.psf-search-menu-warning-icon {
+						display: inline-block;
+						vertical-align: top;
+						box-sizing: border-box;
+						margin: 1px 0 -1px 3px;
+						padding: 0 5px;
+						min-width: 18px;
+						height: 18px;
+						border-radius: 9px;
+						background-color: #d63638;
+						color: #fff;
+						font-size: 11px;
+						line-height: 1.6;
+						text-align: center;
+						z-index: 26;
+					}
+				</style>
+					<?php
+				}
+			);
+		}
+
+		if ( false ) {
+			add_action(
+				'admin_print_styles',
+				function () {
+					?>
+				<style>
+					#adminmenu > .toplevel_page_psf_search_settings {
 						display: none;
 					}
 				</style>
@@ -74,20 +72,20 @@ class AdminMenu {
 
 		add_submenu_page(
 			'woocommerce',
-			__( 'FiboSearch', 'ajax-search-for-woocommerce' ),
-			__( 'FiboSearch', 'ajax-search-for-woocommerce' ) . $menuSuffix,
+			__( 'PSF Search', 'psf-search' ),
+			__( 'PSF Search', 'psf-search' ) . $menuSuffix,
 			Helpers::shopManagerHasAccess() ? 'manage_woocommerce' : 'manage_options',
-			'dgwt_wcas_settings',
+			'psf_search_settings',
 			[ $this, 'settingsPage' ]
 		);
 
-		if ( ! dgoraAsfwFs()->is_activation_mode() && Helpers::isDebugPage() ) {
+		if ( ! false && Helpers::isDebugPage() ) {
 			add_submenu_page(
 				'woocommerce',
-				'FiboSearch Debug',
+				'PSF Search Debug',
 				sprintf( '<span class="fs-submenu-item fs-sub">%s</span>', 'Debug' ),
 				'manage_options',
-				'dgwt_wcas_debug',
+				'psf_search_debug',
 				[ $this, 'debugPage' ]
 			);
 		}
@@ -108,6 +106,6 @@ class AdminMenu {
 	 * @return void
 	 */
 	public function debugPage() {
-		include_once DGWT_WCAS_DIR . 'partials/admin/debug/debug.php';
+		include_once PSF_SEARCH_DIR . 'partials/admin/debug/debug.php';
 	}
 }

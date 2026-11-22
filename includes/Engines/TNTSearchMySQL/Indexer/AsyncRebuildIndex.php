@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPAsyncRequestWithCron;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPAsyncRequestWithCron;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ class AsyncRebuildIndex extends WPAsyncRequestWithCron {
 	 *
 	 * @var string
 	 */
-	protected $prefix = 'wcas';
+	protected $prefix = 'psf_search';
 
 	/**
 	 * @var string

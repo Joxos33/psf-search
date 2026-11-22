@@ -1,30 +1,30 @@
 <?php
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 if (
-	! empty( $_REQUEST['dgwt-wcas-debug-analytics-delete-all-records'] ) &&
+	! empty( $_REQUEST['psf-search-debug-analytics-delete-all-records'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'dgwt_wcas_debug_analytics' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_analytics' )
 ) {
-	\DgoraWcas\Analytics\Database::wipeAllRecords();
+	\PsfSearch\Analytics\Database::wipeAllRecords();
 	?>
-	<div class="dgwt-wcas-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>All analytics records have been deleted.</p>
 	</div>
 	<?php
 }
 
 if (
-	! empty( $_REQUEST['dgwt-wcas-debug-analytics-run-maintenance-task'] ) &&
+	! empty( $_REQUEST['psf-search-debug-analytics-run-maintenance-task'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'dgwt_wcas_debug_analytics' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_analytics' )
 ) {
-	do_action( \DgoraWcas\Analytics\Maintenance::HOOK );
+	do_action( \PsfSearch\Analytics\Maintenance::HOOK );
 	?>
-	<div class="dgwt-wcas-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>The task of maintaining the search analytics has been completed.</p>
 	</div>
 	<?php
@@ -33,32 +33,32 @@ if (
 ?>
 	<h3>Analytics</h3>
 	<form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-		<input type="hidden" name="page" value="dgwt_wcas_debug">
-		<?php wp_nonce_field( 'dgwt_wcas_debug_analytics', '_wpnonce', false ); ?>
-		<input type="submit" name="dgwt-wcas-debug-analytics-delete-all-records" class="button" value="Delete all records">
-		<input type="submit" name="dgwt-wcas-debug-analytics-run-maintenance-task" class="button" value="Run maintenance task">
+		<input type="hidden" name="page" value="psf_search_debug">
+		<?php wp_nonce_field( 'psf_search_debug_analytics', '_wpnonce', false ); ?>
+		<input type="submit" name="psf-search-debug-analytics-delete-all-records" class="button" value="Delete all records">
+		<input type="submit" name="psf-search-debug-analytics-run-maintenance-task" class="button" value="Run maintenance task">
 	</form>
 
-	<table class="wc_status_table widefat dgwt-wcas-table-debug-analytics">
+	<table class="wc_status_table widefat psf-search-table-debug-analytics">
 		<tr>
 			<td><b>Does the table exist?</b></td>
-			<td><?php echo \DgoraWcas\Analytics\Database::exist() ? 'yes' : 'no'; ?></td>
+			<td><?php echo \PsfSearch\Analytics\Database::exist() ? 'yes' : 'no'; ?></td>
 		</tr>
 		<tr>
 			<td><b>Total records</b></td>
-			<td><?php echo \DgoraWcas\Analytics\Database::getRecordsCount(); ?></td>
+			<td><?php echo \PsfSearch\Analytics\Database::getRecordsCount(); ?></td>
 		</tr>
 		<tr>
 			<td><b>Is the maintenance task scheduled?</b></td>
-			<td><?php echo wp_next_scheduled( \DgoraWcas\Analytics\Maintenance::HOOK ) ? 'yes' : 'no'; ?></td>
+			<td><?php echo wp_next_scheduled( \PsfSearch\Analytics\Maintenance::HOOK ) ? 'yes' : 'no'; ?></td>
 		</tr>
 		<tr>
-			<td><b>Constant <code>DGWT_WCAS_ANALYTICS_ONLY_CRITICAL</code></b></td>
-			<?php if ( defined( 'DGWT_WCAS_ANALYTICS_ONLY_CRITICAL' ) ) { ?>
+			<td><b>Constant <code>PSF_SEARCH_ANALYTICS_ONLY_CRITICAL</code></b></td>
+			<?php if ( defined( 'PSF_SEARCH_ANALYTICS_ONLY_CRITICAL' ) ) { ?>
 				<td>Is defined. <b>
 						<?php
 						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
-						var_dump( DGWT_WCAS_ANALYTICS_ONLY_CRITICAL );
+						var_dump( PSF_SEARCH_ANALYTICS_ONLY_CRITICAL );
 						?>
 						</b></td>
 			<?php } else { ?>
@@ -66,9 +66,9 @@ if (
 			<?php } ?>
 		</tr>
 		<tr>
-			<td><b>Constant <code>DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS</code></b></td>
-			<?php if ( defined( 'DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS' ) ) { ?>
-				<td>Is defined. Days: <b><?php echo DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS; ?></b></td>
+			<td><b>Constant <code>PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS</code></b></td>
+			<?php if ( defined( 'PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS' ) ) { ?>
+				<td>Is defined. Days: <b><?php echo PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS; ?></b></td>
 			<?php } else { ?>
 				<td>not defined</td>
 			<?php } ?>

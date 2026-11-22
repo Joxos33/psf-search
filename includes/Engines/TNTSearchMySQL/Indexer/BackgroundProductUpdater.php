@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
-use DgoraWcas\Helpers;
-use DgoraWcas\Product;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
+use PsfSearch\Helpers;
+use PsfSearch\Product;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class BackgroundProductUpdater {
 
 	public function init() {
-		add_action( 'dgwt/wcas/tnt/background_product_update', [ __CLASS__, 'handle' ], 10, 2 );
-		add_action( 'dgwt/wcas/tnt/init_variations_update', [ __CLASS__, 'handleInitVariationsUpdate' ] );
+		add_action( 'psf_search/tnt/background_product_update', [ __CLASS__, 'handle' ], 10, 2 );
+		add_action( 'psf_search/tnt/init_variations_update', [ __CLASS__, 'handleInitVariationsUpdate' ] );
 	}
 
 	/**
@@ -70,7 +70,7 @@ class BackgroundProductUpdater {
 		}
 		// Skip if index isn't yet completed
 		if ( Builder::getInfo( 'status' ) !== 'completed' ) {
-			$queue->cancel_all( 'dgwt/wcas/tnt/background_product_update' );
+			$queue->cancel_all( 'psf_search/tnt/background_product_update' );
 
 			return;
 		}
@@ -82,7 +82,7 @@ class BackgroundProductUpdater {
 		// Check if there is task scheduled for this product
 		$scheduledUpdates = $queue->search(
 			[
-				'hook'   => 'dgwt/wcas/tnt/background_product_update',
+				'hook'   => 'psf_search/tnt/background_product_update',
 				'args'   => [
 					'action' => $action,
 					'postID' => $postID,
@@ -95,20 +95,20 @@ class BackgroundProductUpdater {
 			// Preventing creation of too large queue of products to update in the index
 			$allScheduledUpdates = $queue->search(
 				[
-					'hook'     => 'dgwt/wcas/tnt/background_product_update',
+					'hook'     => 'psf_search/tnt/background_product_update',
 					'status'   => 'pending',
 					'per_page' => - 1,
 				]
 			);
-			$maxScheduledUpdates = apply_filters( 'dgwt/wcas/tnt/max_scheduled_updates', 30 );
+			$maxScheduledUpdates = apply_filters( 'psf_search/tnt/max_scheduled_updates', 30 );
 			if ( count( $allScheduledUpdates ) < $maxScheduledUpdates ) {
 				$queue->add(
-					'dgwt/wcas/tnt/background_product_update',
+					'psf_search/tnt/background_product_update',
 					[
 						'action' => $action,
 						'postID' => $postID,
 					],
-					'dgwt-wcas-index'
+					'psf-search-index'
 				);
 			}
 		}
@@ -118,7 +118,7 @@ class BackgroundProductUpdater {
 	 * Schedule init variations update
 	 */
 	public static function scheduleInitVariationsUpdate( $delayed = false ) {
-		$variableProductsToUpdate = get_option( 'dgwt_wcas_variable_products_to_update', [] );
+		$variableProductsToUpdate = get_option( 'psf_search_variable_products_to_update', [] );
 		if ( ! is_array( $variableProductsToUpdate ) ) {
 			$variableProductsToUpdate = [];
 		}
@@ -133,14 +133,14 @@ class BackgroundProductUpdater {
 
 		// Skip if index isn't yet completed
 		if ( Builder::getInfo( 'status' ) !== 'completed' ) {
-			$queue->cancel_all( 'dgwt/wcas/tnt/init_variations_update' );
+			$queue->cancel_all( 'psf_search/tnt/init_variations_update' );
 
 			return;
 		}
 
 		$scheduledUpdates = $queue->search(
 			[
-				'hook'   => 'dgwt/wcas/tnt/init_variations_update',
+				'hook'   => 'psf_search/tnt/init_variations_update',
 				'status' => 'pending',
 			]
 		);
@@ -149,12 +149,12 @@ class BackgroundProductUpdater {
 			if ( $delayed ) {
 				$queue->schedule_single(
 					time() + 60,
-					'dgwt/wcas/tnt/init_variations_update',
+					'psf_search/tnt/init_variations_update',
 					[],
-					'dgwt-wcas-index'
+					'psf-search-index'
 				);
 			} else {
-				$queue->add( 'dgwt/wcas/tnt/init_variations_update', [], 'dgwt-wcas-index' );
+				$queue->add( 'psf_search/tnt/init_variations_update', [], 'psf-search-index' );
 			}
 		}
 	}
@@ -167,12 +167,12 @@ class BackgroundProductUpdater {
 	public static function handleInitVariationsUpdate() {
 		global $wpdb;
 
-		$variableProductsToUpdate = get_option( 'dgwt_wcas_variable_products_to_update', [] );
+		$variableProductsToUpdate = get_option( 'psf_search_variable_products_to_update', [] );
 		if ( ! is_array( $variableProductsToUpdate ) ) {
 			$variableProductsToUpdate = [];
 		}
 
-		if ( ! empty( $variableProductsToUpdate ) && DGWT_WCAS()->tntsearchMySql->asyncVariationsUpdater->is_process_running() ) {
+		if ( ! empty( $variableProductsToUpdate ) && PSF_SEARCH()->tntsearchMySql->asyncVariationsUpdater->is_process_running() ) {
 			self::scheduleInitVariationsUpdate( true );
 
 			return;
@@ -180,20 +180,20 @@ class BackgroundProductUpdater {
 
 		if ( ! empty( $variableProductsToUpdate ) ) {
 			$productID = array_shift( $variableProductsToUpdate );
-			update_option( 'dgwt_wcas_variable_products_to_update', $variableProductsToUpdate );
+			update_option( 'psf_search_variable_products_to_update', $variableProductsToUpdate );
 
 			$product            = new Product( $productID );
 			$variations         = $product->getAvailableVariations();
 			$variationIds       = wp_list_pluck( $variations, 'variation_id' );
 			$variationIds       = array_map( fn( $id ) => (string) $id, $variationIds );
-			$variationsSetCount = apply_filters( 'dgwt/wcas/indexer/readable_set_items_count', 25 );
+			$variationsSetCount = apply_filters( 'psf_search/indexer/readable_set_items_count', 25 );
 
 			// Integrations can remove some variations from the list.
-			$variationIds = apply_filters( 'dgwt/wcas/variations_update/variation_ids', $variationIds );
+			$variationIds = apply_filters( 'psf_search/variations_update/variation_ids', $variationIds );
 
 			// Before running background update, we need to remove all variations from the index.
 			$wpdb->delete(
-				$wpdb->dgwt_wcas_index,
+				$wpdb->psf_search_index,
 				[
 					'post_or_parent_id' => $productID,
 					'type'              => 'product_variation',
@@ -207,7 +207,7 @@ class BackgroundProductUpdater {
 					$variationsSet[] = $variationId;
 
 					if ( count( $variationsSet ) === $variationsSetCount || $i + 1 === count( $variationIds ) ) {
-						DGWT_WCAS()->tntsearchMySql->asyncVariationsUpdater->push_to_queue(
+						PSF_SEARCH()->tntsearchMySql->asyncVariationsUpdater->push_to_queue(
 							[
 								'parent_id' => $productID,
 								'items'     => $variationsSet,
@@ -219,7 +219,7 @@ class BackgroundProductUpdater {
 					$i ++;
 				}
 
-				DGWT_WCAS()->tntsearchMySql->asyncVariationsUpdater->save()->maybe_dispatch();
+				PSF_SEARCH()->tntsearchMySql->asyncVariationsUpdater->save()->maybe_dispatch();
 			}
 		}
 	}

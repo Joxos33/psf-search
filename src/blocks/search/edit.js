@@ -46,7 +46,7 @@ export default function Edit( props ) {
 	}, [] );
 
 	if ( typeof deviceType === 'string' ) {
-		classnamesArg[ `wp-block-fibosearch-search__device-preview-${ deviceType.toLowerCase() }` ] = true;
+		classnamesArg[ `wp-block-psfsearch-search__device-preview-${ deviceType.toLowerCase() }` ] = true;
 	}
 	const blockProps = useBlockProps( {
 		className: classnames( classnamesArg ),
@@ -62,9 +62,9 @@ export default function Edit( props ) {
 	return (
 		<div { ...blockProps }>
 			<InspectorControls key="inspector">
-				<PanelBody title={ __( 'Settings', 'ajax-search-for-woocommerce' ) } initialOpen={ false }>
+				<PanelBody title={ __( 'Settings', 'psf-search' ) } initialOpen={ false }>
 					<ToggleControl
-						label={ __( 'Inherit global plugin settings', 'ajax-search-for-woocommerce' ) }
+						label={ __( 'Inherit global plugin settings', 'psf-search' ) }
 						checked={ inheritPluginSettings }
 						onChange={ () =>
 							setAttributes( {
@@ -75,23 +75,23 @@ export default function Edit( props ) {
 					/>
 					{ inheritPluginSettings ? null : (
 						<SelectControl
-							label={ __( 'Layout', 'ajax-search-for-woocommerce' ) }
+							label={ __( 'Layout', 'psf-search' ) }
 							value={ layout }
 							options={ [
 								{
-									label: __( 'Search bar', 'ajax-search-for-woocommerce' ),
+									label: __( 'Search bar', 'psf-search' ),
 									value: 'classic',
 								},
 								{
-									label: __( 'Search icon', 'ajax-search-for-woocommerce' ),
+									label: __( 'Search icon', 'psf-search' ),
 									value: 'icon',
 								},
 								{
-									label: __( 'Icon on mobile, search bar on desktop', 'ajax-search-for-woocommerce' ),
+									label: __( 'Icon on mobile, search bar on desktop', 'psf-search' ),
 									value: 'icon-flexible',
 								},
 								{
-									label: __( 'Icon on desktop, search bar on mobile', 'ajax-search-for-woocommerce' ),
+									label: __( 'Icon on desktop, search bar on mobile', 'psf-search' ),
 									value: 'icon-flexible-inv',
 								},
 							] }
@@ -111,7 +111,7 @@ export default function Edit( props ) {
 					) }
 					{ inheritPluginSettings ? null : (
 						<ToggleControl
-							label={ __( 'Darkened background', 'ajax-search-for-woocommerce' ) }
+							label={ __( 'Darkened background', 'psf-search' ) }
 							checked={ darkenedBackground }
 							onChange={ () =>
 								setAttributes( {
@@ -123,14 +123,14 @@ export default function Edit( props ) {
 					) }
 					{ inheritPluginSettings ? null : (
 						<ToggleControl
-							label={ __( 'Overlay on mobile', 'ajax-search-for-woocommerce' ) }
+							label={ __( 'Overlay on mobile', 'psf-search' ) }
 							checked={ mobileOverlay }
 							onChange={ () =>
 								setAttributes( {
 									mobileOverlay: ! mobileOverlay,
 								} )
 							}
-							help={ mobileOverlay ? __( 'The search will open in overlay on mobile', 'ajax-search-for-woocommerce' ) : '' }
+							help={ mobileOverlay ? __( 'The search will open in overlay on mobile', 'psf-search' ) : '' }
 							__nextHasNoMarginBottom
 						/>
 					) }

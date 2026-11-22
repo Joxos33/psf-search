@@ -1,9 +1,9 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "fibosearch/search-nav",
+  "name": "psfsearch/search-nav",
   "version": "1.0.0",
-  "title": "FiboSearch navigation item",
+  "title": "PSF Search navigation item",
   "category": "widgets",
   "description": "AJAX (live) search form for WooCommerce",
   "keywords": [
@@ -47,11 +47,11 @@
       "default": ""
     }
   },
-  "textdomain": "ajax-search-for-woocommerce",
+  "textdomain": "psf-search",
   "editorScript": "file:./index.js",
   "editorStyle": [
-    "dgwt-wcas-style",
-    "dgwt-wcas-style-personalization",
+    "psf-search-style",
+    "psf-search-style-personalization",
     "file:./index.css"
   ]
 }

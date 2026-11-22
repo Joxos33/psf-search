@@ -3,24 +3,24 @@
  * Exit if accessed directly
  */
 
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 ?>
-<div class="dgwt-wcas-indexing-header">
-	<span class="dgwt-wcas-indexing-header__title" style="color:<?php echo $statusColor; ?>"><?php echo $text; ?></span>
+<div class="psf-search-indexing-header">
+	<span class="psf-search-indexing-header__title" style="color:<?php echo $statusColor; ?>"><?php echo $text; ?></span>
 
 	<?php if ( ! empty( $lastDate ) ) : ?>
-		<span class="dgwt-wcas-indexing-header__subtitle">
+		<span class="psf-search-indexing-header__subtitle">
 
 		<?php if ( ! empty( $totalProducts ) ) : ?>
-			<?php echo sprintf( __( 'Indexed <strong>100%%</strong>, <strong>%d products</strong>.', 'ajax-search-for-woocommerce' ), $totalProducts ); ?>
+			<?php echo sprintf( __( 'Indexed <strong>100%%</strong>, <strong>%d products</strong>.', 'psf-search' ), $totalProducts ); ?>
 		<?php endif; ?>
 
 			<?php
-			echo ' ' . sprintf( __( 'Last build %s', 'ajax-search-for-woocommerce' ), $lastDate );
-			echo '. ' . __( 'All product changes will be <strong>re-indexed automatically</strong>', 'ajax-search-for-woocommerce' );
+			echo ' ' . sprintf( __( 'Last build %s', 'psf-search' ), $lastDate );
+			echo '. ' . __( 'All product changes will be <strong>re-indexed automatically</strong>', 'psf-search' );
 			?>
 			.
 
@@ -40,83 +40,82 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 		 */
 		$linkToDocs = 'https://fibosearch.com/documentation/troubleshooting/the-search-index-could-not-be-built/';
 		?>
-		<div class="dgwt-wcas-indexing-header__troubleshooting">
-			<h3><?php _e( 'Troubleshooting', 'ajax-search-for-woocommerce' ); ?></h3>
+		<div class="psf-search-indexing-header__troubleshooting">
+			<h3><?php _e( 'Troubleshooting', 'psf-search' ); ?></h3>
 
 			<?php if ( ! empty( $lastErrorMessage ) ) : ?>
-				<p><?php _e( 'The following error caused the index to be canceled:', 'ajax-search-for-woocommerce' ); ?></p>
+				<p><?php _e( 'The following error caused the index to be canceled:', 'psf-search' ); ?></p>
 				<?php if ( ! empty( $lastErrorCode ) ) : ?>
-					<span class="dgwt-wcas-indexing-header__error-code">
+					<span class="psf-search-indexing-header__error-code">
 					<?php
 					printf(
-						__( 'Error code %s', 'ajax-search-for-woocommerce' ),
+						__( 'Error code %s', 'psf-search' ),
 						$lastErrorCode
 					);
 					?>
 							</span>
 				<?php endif; ?>
-				<p class="dgwt-wcas-indexing-header__log"><?php echo $lastErrorMessage; ?></p>
+				<p class="psf-search-indexing-header__log"><?php echo $lastErrorMessage; ?></p>
 			<?php endif; ?>
 			<ol>
 
 				<?php if ( in_array( $lastErrorCode, [ 006 ] ) ) : ?>
-					<li><?php _e( 'Contact your hosting provider and ask for increasing the value of the <code>max_allowed_packet</code> variable in your MySQL server. It will definitely solve the problem.', 'ajax-search-for-woocommerce' ); ?></li>
+					<li><?php _e( 'Contact your hosting provider and ask for increasing the value of the <code>max_allowed_packet</code> variable in your MySQL server. It will definitely solve the problem.', 'psf-search' ); ?></li>
 				<?php elseif ( in_array( $lastErrorCode, [ 005 ] ) ) : ?>
-					<li><?php printf( __( "Contact your hosting provider and ask for increasing the value of the <code>wait_timeout</code> variable in your MySQL server. It should solve the source of the problem. If your hosting provider isn't able to change MySQL variables, try to solve it in an alternative way. Follow steps below:", 'ajax-search-for-woocommerce' ), 'js-ajax-build-index' ); ?></li>
+					<li><?php printf( __( "Contact your hosting provider and ask for increasing the value of the <code>wait_timeout</code> variable in your MySQL server. It should solve the source of the problem. If your hosting provider isn't able to change MySQL variables, try to solve it in an alternative way. Follow steps below:", 'psf-search' ), 'js-ajax-build-index' ); ?></li>
 					<li>
-						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin.', 'ajax-search-for-woocommerce' ); ?>
+						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin.', 'psf-search' ); ?>
 						<br/>
-						<pre>add_filter( 'dgwt/wcas/indexer/searchable_set_items_count', function ( $count ) {
+						<pre>add_filter( 'psf_search/indexer/searchable_set_items_count', function ( $count ) {
 	return 10;
 } );</pre>
 					</li>
 				<?php elseif ( in_array( $lastErrorCode, [ 003, 004 ] ) ) : ?>
-					<li><?php printf( __( 'Contact your hosting provider and ask for increasing the value of the <code>max_connections</code> variable in your MySQL server. It will definitely solve the problem.', 'ajax-search-for-woocommerce' ), 'js-ajax-build-index' ); ?></li>
+					<li><?php printf( __( 'Contact your hosting provider and ask for increasing the value of the <code>max_connections</code> variable in your MySQL server. It will definitely solve the problem.', 'psf-search' ), 'js-ajax-build-index' ); ?></li>
 				<?php else : ?>
-					<li><?php printf( __( 'If you see the <b>Troubleshooting tab</b> above, click it and try to solve the issues mentioned there', 'ajax-search-for-woocommerce' ), 'js-ajax-build-index' ); ?></li>
+					<li><?php printf( __( 'If you see the <b>Troubleshooting tab</b> above, click it and try to solve the issues mentioned there', 'psf-search' ), 'js-ajax-build-index' ); ?></li>
 				<?php endif; ?>
 
 				<?php if ( in_array( $lastErrorCode, [ 001, 002 ] ) ) : ?>
 					<li>
-						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin. Please don’t add custom code directly to your parent theme’s functions.php file as this will be wiped entirely when you update the theme.', 'ajax-search-for-woocommerce' ); ?>
+						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin. Please don’t add custom code directly to your parent theme’s functions.php file as this will be wiped entirely when you update the theme.', 'psf-search' ); ?>
 						<br/>
-<pre>add_filter( 'dgwt/wcas/indexer/searchable_set_items_count', function ( $count ) {
+<pre>add_filter( 'psf_search/indexer/searchable_set_items_count', function ( $count ) {
 	return 10;
 } );
-add_filter( 'dgwt/wcas/indexer/readable_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/readable_set_items_count', function ( $count ) {
 	return 5;
 } );
-add_filter( 'dgwt/wcas/indexer/taxonomy_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/taxonomy_set_items_count', function ( $count ) {
 	return 10;
 } );
-add_filter( 'dgwt/wcas/indexer/variations_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/variations_set_items_count', function ( $count ) {
 	return 5;
 } );</pre>
 					</li>
 					<li>
 					<?php
 					printf(
-						__( '<b>Maybe your server can’t send an HTTP requests to itself</b>. Visit the documentation and read the section <a target="_blank" href="%s">“Your server can’t send an HTTP request to itself”</a>.', 'ajax-search-for-woocommerce' ),
+						__( '<b>Maybe your server can’t send an HTTP requests to itself</b>. Visit the documentation and read the section <a target="_blank" href="%s">“Your server can’t send an HTTP request to itself”</a>.', 'psf-search' ),
 						$linkToDocs . '#loopback'
 					);
 					?>
 							</li>
 				<?php else : ?>
-					<li><?php printf( __( "If the indexer still doesn't work, add a constant <code>define('DGWT_WCAS_INDEXER_MODE', 'sync');</code> to your <code>wp-config.php</code> file and try to rebuild the search index again", 'ajax-search-for-woocommerce' ), 'js-ajax-build-index' ); ?></li>
+					<li><?php printf( __( "If the indexer still doesn't work, add a constant <code>define('PSF_SEARCH_INDEXER_MODE', 'sync');</code> to your <code>wp-config.php</code> file and try to rebuild the search index again", 'psf-search' ), 'js-ajax-build-index' ); ?></li>
 				<?php endif; ?>
 
-				<li> <?php printf( __( 'Is it still not working? Visit the <a target="_blank" href="%1$s">documentation</a> or write a <a target="_blank" href="%2$s">support request</a>', 'ajax-search-for-woocommerce' ), $linkToDocs, dgoraAsfwFs()->contact_url() ); ?></li>
 
 			</ol>
 		</div>
 	<?php endif; ?>
 
-	<div class="dgwt-wcas-indexing-header__actions">
+	<div class="psf-search-indexing-header__actions">
 		<?php echo $actionButton; ?>
 
 		<?php if ( ! in_array( $status, [ 'building', 'cancellation' ] ) ) : ?>
-			<a href="#" class="<?php echo $isDetails ? 'hide' : 'show'; ?> dgwt-wcas-indexing-details-trigger js-dgwt-wcas-indexing-details-trigger js-dgwt-wcas-indexing__showd"><?php _e( 'Show details', 'ajax-search-for-woocommerce' ); ?></a>
-			<a href="#" class="<?php echo $isDetails ? 'show' : 'hide'; ?> dgwt-wcas-indexing-details-trigger js-dgwt-wcas-indexing-details-trigger js-dgwt-wcas-indexing__hided"><?php _e( 'Hide details', 'ajax-search-for-woocommerce' ); ?></a>
+			<a href="#" class="<?php echo $isDetails ? 'hide' : 'show'; ?> psf-search-indexing-details-trigger js-psf-search-indexing-details-trigger js-psf-search-indexing__showd"><?php _e( 'Show details', 'psf-search' ); ?></a>
+			<a href="#" class="<?php echo $isDetails ? 'show' : 'hide'; ?> psf-search-indexing-details-trigger js-psf-search-indexing-details-trigger js-psf-search-indexing__hided"><?php _e( 'Hide details', 'psf-search' ); ?></a>
 		<?php endif; ?>
 	</div>
 

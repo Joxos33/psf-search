@@ -1,18 +1,18 @@
 <?php
 // Benchmark: https://gist.github.com/hawkidoki/388574a6e0eea3fa6220be565b0150a0
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Helpers;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Database as DatabaseS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Database as DatabaseR;
-use DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\AjaxQuery;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Database as DatabaseS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Database as DatabaseR;
+use PsfSearch\Engines\TNTSearchMySQL\SearchQuery\AjaxQuery;
+use PsfSearch\Multilingual;
 
-$isAlternativeSearchEndpointEnabled = defined( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED' ) && DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED;
+$isAlternativeSearchEndpointEnabled = defined( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED' ) && PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED;
 
-define( 'DGWT_SEARCH_START', microtime( true ) );
-define( 'DGWT_WCAS_DOING_SEARCH', true );
+define( 'PSF_SEARCH_SEARCH_START', microtime( true ) );
+define( 'PSF_SEARCH_DOING_SEARCH', true );
 
 if ( ! $isAlternativeSearchEndpointEnabled ) {
 	if ( ! defined( 'SHORTINIT' ) ) {
@@ -23,7 +23,7 @@ if ( ! $isAlternativeSearchEndpointEnabled ) {
 
 // Simple test for Troubleshooting module
 //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-if ( isset( $_GET['dgwt_wcas_ping'] ) ) {
+if ( isset( $_GET['psf_search_ping'] ) ) {
 	echo 'pong';
 	die();
 }
@@ -93,12 +93,11 @@ if ( ! $isAlternativeSearchEndpointEnabled ) {
 		require_once ABSPATH . WPINC . '/link-template.php';
 	}
 
-	define( 'DGWT_WCAS_PLUGIN_DIR', dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) . '/' );
+	define( 'PSF_SEARCH_PLUGIN_DIR', dirname( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) ) . '/' );
 
-	require_once DGWT_WCAS_PLUGIN_DIR . 'vendor/autoload.php';
-	require_once DGWT_WCAS_PLUGIN_DIR . 'fs/placeholder.php';
+	require_once PSF_SEARCH_PLUGIN_DIR . 'autoload.php';
 
-	if ( ! Config::isPluginActive( basename( DGWT_WCAS_PLUGIN_DIR ) . '/ajax-search-for-woocommerce.php' ) ) {
+	if ( ! Config::isPluginActive( basename( PSF_SEARCH_PLUGIN_DIR ) . '/psf-search.php' ) ) {
 		exit( 'Plugin is disabled.' );
 	}
 
@@ -116,7 +115,7 @@ $phrase = $_GET['s'] ?? '';
 
 $lang = ! empty( $_GET['l'] ) && Multilingual::isLangCode( $_GET['l'] ) ? $_GET['l'] : '';
 
-$productIdsOnly = isset( $_GET['dgwt_wcas_product_ids_only'] ) && $_GET['dgwt_wcas_product_ids_only'] === '1';
+$productIdsOnly = isset( $_GET['psf_search_product_ids_only'] ) && $_GET['psf_search_product_ids_only'] === '1';
 //phpcs:enable
 
 // Send empty response if language is invalid
@@ -156,7 +155,7 @@ if ( Builder::getInfo( 'status' ) !== 'completed' || ! Builder::isIndexValid( $l
 		require_once ABSPATH . WPINC . '/class-wp-http-requests-hooks.php';
 	}
 
-	$baseUrl = home_url( '?wc-ajax=dgwt_wcas_ajax_search' );
+	$baseUrl = home_url( '?wc-ajax=psf_search_ajax_search' );
 
 	$urlPhrase = str_replace( "\\'", "'", $phrase );
 	$urlPhrase = str_replace( '\\"', '"', $urlPhrase );
@@ -172,7 +171,7 @@ if ( Builder::getInfo( 'status' ) !== 'completed' || ! Builder::isIndexValid( $l
 	}
 
 	if ( $productIdsOnly ) {
-		$args['dgwt_wcas_product_ids_only'] = '1';
+		$args['psf_search_product_ids_only'] = '1';
 	}
 
 	$url = add_query_arg( $args, $baseUrl );
@@ -208,7 +207,7 @@ if ( Helpers::phraseContainsBlacklistedTerm( $phrase ) ) {
 }
 
 if ( ! Builder::searchableCacheExists( $lang ) ) {
-	add_filter( 'dgwt/wcas/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
+	add_filter( 'psf_search/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
 }
 
 if ( empty( $phrase ) ) {
@@ -225,7 +224,6 @@ $query->searchProducts();
 if ( ! $productIdsOnly ) {
 	$query->searchPosts();
 	$query->searchTaxonomy();
-	$query->searchVendors();
 }
 
 if ( $productIdsOnly ) {
@@ -237,7 +235,7 @@ if ( $productIdsOnly ) {
 	$query->sendResultsProductIdsOnly();
 } else {
 	if ( ! $query->hasResults() ) {
-		do_action( 'dgwt/wcas/analytics/after_searching', $query->getPhrase(), 0, $query->getLang() );
+		do_action( 'psf_search/analytics/after_searching', $query->getPhrase(), 0, $query->getLang() );
 		AjaxQuery::sendEmptyResponse();
 	}
 

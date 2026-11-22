@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Integrations\Plugins\WooCommerce;
+namespace PsfSearch\Integrations\Plugins\WooCommerce;
 
-use \DgoraWcas\Helpers;
-use DgoraWcas\Integrations\Plugins\AbstractPluginIntegration;
+use \PsfSearch\Helpers;
+use PsfSearch\Integrations\Plugins\AbstractPluginIntegration;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,12 +51,12 @@ class WooCommerce extends AbstractPluginIntegration {
 		if ( get_option( 'woocommerce_hide_out_of_stock_items' ) === 'yes' ) {
 			// Hide "Exclude “out of stock” products" option
 			add_filter(
-				'dgwt/wcas/settings',
+				'psf_search/settings',
 				function ( $settingsFields ) {
-					if ( is_array( $settingsFields['dgwt_wcas_search'] ) ) {
-						foreach ( $settingsFields['dgwt_wcas_search'] as $index => $field ) {
+					if ( is_array( $settingsFields['psf_search_search'] ) ) {
+						foreach ( $settingsFields['psf_search_search'] as $index => $field ) {
 							if ( $field['name'] === 'exclude_out_of_stock' ) {
-								unset( $settingsFields['dgwt_wcas_search'][ $index ] );
+								unset( $settingsFields['psf_search_search'][ $index ] );
 								break;
 							}
 						}
@@ -69,7 +69,7 @@ class WooCommerce extends AbstractPluginIntegration {
 
 			// Force value of "Exclude “out of stock” products" option as "on"
 			add_filter(
-				'dgwt/wcas/settings/load_value/key=exclude_out_of_stock',
+				'psf_search/settings/load_value/key=exclude_out_of_stock',
 				function ( $value ) {
 					return 'on';
 				},
@@ -79,14 +79,14 @@ class WooCommerce extends AbstractPluginIntegration {
 	}
 
 	/**
-	 * Add &dgwt_wcas=1 to the link
+	 * Add &psf_search=1 to the link
 	 *
 	 * @return string
 	 */
 	public function add_search_param_to_link( $link ) {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['s'] ) ) {
-			$link = add_query_arg( [ 'dgwt_wcas' => '1' ], $link );
+			$link = add_query_arg( [ 'psf_search' => '1' ], $link );
 		}
 
 		return $link;
@@ -104,7 +104,7 @@ class WooCommerce extends AbstractPluginIntegration {
 			return $sql;
 		}
 
-		$post_ids = apply_filters( 'dgwt/wcas/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$sql .= ' AND product_id IN(' . implode( ',', $post_ids ) . ')';
@@ -128,7 +128,7 @@ class WooCommerce extends AbstractPluginIntegration {
 			return $args;
 		}
 
-		$post_ids = apply_filters( 'dgwt/wcas/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$args['object_ids'] = $post_ids;
@@ -147,7 +147,7 @@ class WooCommerce extends AbstractPluginIntegration {
 	public function filter_counts_query( $query ) {
 		global $wpdb;
 
-		$post_ids = apply_filters( 'dgwt/wcas/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$query['where'] .= " AND $wpdb->posts.ID IN(" . implode( ',', $post_ids ) . ')';
@@ -164,12 +164,12 @@ class WooCommerce extends AbstractPluginIntegration {
 	public function declare_compatibility() {
 		// https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book#declaring-extension-incompatibility
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', DGWT_WCAS_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PSF_SEARCH_FILE, true );
 		}
 	}
 
 	/**
-	 * Remove the 'wpautop' filter from the short description on the shop page if the FiboSearch form is present
+	 * Remove the 'wpautop' filter from the short description on the shop page if the PSF Search form is present
 	 *
 	 * This is a bit tricky, because in calback of a filter we remove another filter that has a different priority.
 	 *
@@ -186,7 +186,7 @@ class WooCommerce extends AbstractPluginIntegration {
 			$shop_page = get_post( wc_get_page_id( 'shop' ) );
 
 			if ( $shop_page ) {
-				if ( strpos( $shop_page->post_content, '[fibosearch' ) !== false || strpos( $shop_page->post_content, 'wp:fibosearch/search' ) !== false ) {
+				if ( strpos( $shop_page->post_content, '[psfsearch' ) !== false || strpos( $shop_page->post_content, 'wp:psfsearch/search' ) !== false ) {
 					remove_filter( 'woocommerce_short_description', 'wpautop' );
 				}
 			}
@@ -217,7 +217,7 @@ class WooCommerce extends AbstractPluginIntegration {
 		}
 
 		add_filter(
-			'dgwt/wcas/indexer/taxonomies',
+			'psf_search/indexer/taxonomies',
 			function ( $taxonomies ) {
 				$taxonomies[] = [
 					'taxonomy'      => 'product_brand',

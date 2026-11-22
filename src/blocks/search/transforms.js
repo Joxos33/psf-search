@@ -10,7 +10,7 @@ const transforms = {
 			type: 'block',
 			blocks: [ 'core/search', 'woocommerce/product-search' ],
 			transform: () => {
-				return createBlock( 'fibosearch/search' );
+				return createBlock( 'psfsearch/search' );
 			},
 		},
 		{
@@ -21,7 +21,7 @@ const transforms = {
 					// Can't transform if raw instance is not shown in REST API.
 					return false;
 				}
-				return idBase === 'dgwt_wcas_ajax_search';
+				return idBase === 'psf_search_ajax_search';
 			},
 			transform: ( { instance } ) => {
 				const layout = instance.raw.layout;
@@ -30,31 +30,31 @@ const transforms = {
 					attributes.inheritPluginSettings = false;
 					attributes.layout = layout;
 				}
-				return createBlock( 'fibosearch/search', attributes );
+				return createBlock( 'psfsearch/search', attributes );
 			},
 		},
 		{
 			type: 'block',
 			blocks: [ 'core/shortcode' ],
 			transform: () => {
-				return createBlock( 'fibosearch/search' );
+				return createBlock( 'psfsearch/search' );
 			},
 			isMatch: ( { text } ) => {
-				const re = regexp( 'fibosearch' );
+				const re = regexp( 'psfsearch' );
 				const match = re.exec( text );
-				return Array.isArray( match ) && match[ 2 ] === 'fibosearch';
+				return Array.isArray( match ) && match[ 2 ] === 'psfsearch';
 			},
 		},
 		{
 			type: 'block',
 			blocks: [ 'core/shortcode' ],
 			transform: () => {
-				return createBlock( 'fibosearch/search' );
+				return createBlock( 'psfsearch/search' );
 			},
 			isMatch: ( { text } ) => {
-				const re = regexp( 'wcas-search-form' );
+				const re = regexp( 'psf-search-search-form' );
 				const match = re.exec( text );
-				return Array.isArray( match ) && match[ 2 ] === 'wcas-search-form';
+				return Array.isArray( match ) && match[ 2 ] === 'psf-search-search-form';
 			},
 		},
 	],

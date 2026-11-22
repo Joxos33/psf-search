@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Libs;
+namespace PsfSearch\Engines\TNTSearchMySQL\Libs;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

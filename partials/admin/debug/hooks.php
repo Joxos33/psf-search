@@ -1,17 +1,17 @@
 <?php
 // Exit if accessed directly.
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'DGWT_WCAS_Debug_Hooks' ) ) {
-	class DGWT_WCAS_Debug_Hooks {
+if ( ! class_exists( 'PSF_SEARCH_Debug_Hooks' ) ) {
+	class PSF_SEARCH_Debug_Hooks {
 
 		private const MAX_BYTES     = 131072;
-		private const ALLOWED_FILES = [ 'fibosearch.php', 'asfw-filters.php', 'ajax-search-for-woocommerce.php', 'ajax-search-filters.php' ];
+		private const ALLOWED_FILES = [ 'psf-search-filters.php' ];
 		private const HOOK_PATTERNS = [
-			'/\b(add_action|add_filter)\s*\(\s*(["\'])(dgwt\/wcas\/[^"\']+|fibosearch\/[^"\']+)\2/mi',
-			'/\b(do_action|apply_filters)\s*\(\s*(["\'])(dgwt\/wcas\/[^"\']+|fibosearch\/[^"\']+)\2/mi',
+			'/\b(add_action|add_filter)\s*\(\s*(["\'])(psf_search\/[^"\']+)\2/mi',
+			'/\b(do_action|apply_filters)\s*\(\s*(["\'])(psf_search\/[^"\']+)\2/mi',
 		];
 
 		private array $roots = [];
@@ -239,13 +239,13 @@ if ( ! class_exists( 'DGWT_WCAS_Debug_Hooks' ) ) {
 		private function render_html( array $entries ): string {
 			ob_start();
 			?>
-			<div class="dgwt-wcas-debug-hooks">
-				<h3><?php esc_html_e( 'Hooks', 'ajax-search-for-woocommerce' ); ?></h3>
+			<div class="psf-search-debug-hooks">
+				<h3><?php esc_html_e( 'Hooks', 'psf-search' ); ?></h3>
 
-				<div class="dgwt-wcas-debug-hooks__panel">
+				<div class="psf-search-debug-hooks__panel">
 					<?php if ( empty( $entries ) ) : ?>
-						<p class="description dgwt-wcas-debug-hooks__empty">
-							<?php esc_html_e( 'No allowed hooks file was found in supported locations.', 'ajax-search-for-woocommerce' ); ?>
+						<p class="description psf-search-debug-hooks__empty">
+							<?php esc_html_e( 'No allowed hooks file was found in supported locations.', 'psf-search' ); ?>
 						</p>
 					<?php else : ?>
 						<?php foreach ( $entries as $entry ) : ?>
@@ -267,34 +267,34 @@ if ( ! class_exists( 'DGWT_WCAS_Debug_Hooks' ) ) {
 			$hooks     = ( isset( $entry['hooks'] ) && is_array( $entry['hooks'] ) ) ? $entry['hooks'] : [];
 			$readable  = ! empty( $entry['readable'] );
 			?>
-			<div class="dgwt-wcas-debug-hooks__card">
-				<h4 class="dgwt-wcas-debug-hooks__head">
-					<code class="dgwt-wcas-debug-hooks__filename"><?php echo self::esc( $file ); ?></code>
+			<div class="psf-search-debug-hooks__card">
+				<h4 class="psf-search-debug-hooks__head">
+					<code class="psf-search-debug-hooks__filename"><?php echo self::esc( $file ); ?></code>
 					<?php if ( $loc_label !== '' ) : ?>
-						<span class="dgwt-wcas-debug-hooks__location">— <?php echo self::esc( $loc_label ); ?></span>
+						<span class="psf-search-debug-hooks__location">— <?php echo self::esc( $loc_label ); ?></span>
 					<?php endif; ?>
 				</h4>
 
-				<div class="dgwt-wcas-debug-hooks__chips">
-					<span class="dgwt-wcas-debug-hooks__chip">
-						<?php esc_html_e( 'Path:', 'ajax-search-for-woocommerce' ); ?>
+				<div class="psf-search-debug-hooks__chips">
+					<span class="psf-search-debug-hooks__chip">
+						<?php esc_html_e( 'Path:', 'psf-search' ); ?>
 						<code><?php echo self::esc( $masked ); ?></code>
 					</span>
-					<span class="dgwt-wcas-debug-hooks__chip">
-						<?php esc_html_e( 'Hooks:', 'ajax-search-for-woocommerce' ); ?>
+					<span class="psf-search-debug-hooks__chip">
+						<?php esc_html_e( 'Hooks:', 'psf-search' ); ?>
 						<?php echo (int) count( $hooks ); ?>
 					</span>
 				</div>
 
 				<?php if ( ! $readable ) : ?>
-					<p class="description dgwt-wcas-debug-hooks__empty">
-						<?php esc_html_e( 'File found, but it could not be read (permissions or file too large).', 'ajax-search-for-woocommerce' ); ?>
+					<p class="description psf-search-debug-hooks__empty">
+						<?php esc_html_e( 'File found, but it could not be read (permissions or file too large).', 'psf-search' ); ?>
 					</p>
 				<?php elseif ( ! empty( $hooks ) ) : ?>
 					<?php $this->render_hooks_table( $hooks ); ?>
 				<?php else : ?>
-					<p class="description dgwt-wcas-debug-hooks__empty">
-						<?php esc_html_e( 'No hooks with dgwt/wcas/* or fibosearch/* prefixes were found.', 'ajax-search-for-woocommerce' ); ?>
+					<p class="description psf-search-debug-hooks__empty">
+						<?php esc_html_e( 'No hooks with psf_search/* or psfsearch/* prefixes were found.', 'psf-search' ); ?>
 					</p>
 				<?php endif; ?>
 			</div>
@@ -303,13 +303,13 @@ if ( ! class_exists( 'DGWT_WCAS_Debug_Hooks' ) ) {
 
 		private function render_hooks_table( array $hooks ): void {
 			?>
-			<table class="widefat striped dgwt-wcas-debug-hooks__table" role="table" aria-label="<?php esc_attr_e( 'Detected hooks', 'ajax-search-for-woocommerce' ); ?>">
+			<table class="widefat striped psf-search-debug-hooks__table" role="table" aria-label="<?php esc_attr_e( 'Detected hooks', 'psf-search' ); ?>">
 				<thead>
 				<tr>
 					<th>#</th>
-					<th><?php esc_html_e( 'Hook', 'ajax-search-for-woocommerce' ); ?></th>
-					<th><?php esc_html_e( 'Call', 'ajax-search-for-woocommerce' ); ?></th>
-					<th><?php esc_html_e( 'Line', 'ajax-search-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Hook', 'psf-search' ); ?></th>
+					<th><?php esc_html_e( 'Call', 'psf-search' ); ?></th>
+					<th><?php esc_html_e( 'Line', 'psf-search' ); ?></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -390,4 +390,4 @@ if ( ! class_exists( 'DGWT_WCAS_Debug_Hooks' ) ) {
 	}
 }
 
-echo DGWT_WCAS_Debug_Hooks::render();
+echo PSF_SEARCH_Debug_Hooks::render();

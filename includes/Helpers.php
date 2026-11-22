@@ -1,11 +1,9 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
-use \DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
-use \DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use \DgoraWcas\Integrations\Solver;
-use \DgoraWcas\Admin\Troubleshooting;
+use \PsfSearch\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
+use \PsfSearch\Engines\TNTSearchMySQL\Support\Cache;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,7 +36,7 @@ class Helpers {
 			return '';
 		}
 
-		$numWords = apply_filters( 'dgwt/wcas/description/words_limit', $numWords );
+		$numWords = apply_filters( 'psf_search/description/words_limit', $numWords );
 
 		// Remove headings
 		$string = str_replace( [ '<h1><h2><h3><h4><h5><h6>' ], '<h3>', $string );
@@ -72,15 +70,15 @@ class Helpers {
 
 		$classes = [];
 
-		if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
-			$classes[] = 'dgwt-wcas-is-detail-box';
+		if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
+			$classes[] = 'psf-search-is-detail-box';
 		}
 
-		$hasSubmit = isset( $args['submit_btn'] ) ? $args['submit_btn'] : DGWT_WCAS()->settings->getOption( 'show_submit_button' );
+		$hasSubmit = isset( $args['submit_btn'] ) ? $args['submit_btn'] : PSF_SEARCH()->settings->getOption( 'show_submit_button' );
 		if ( $hasSubmit === 'on' ) {
-			$classes[] = 'dgwt-wcas-has-submit';
+			$classes[] = 'psf-search-has-submit';
 		} else {
-			$classes[] = 'dgwt-wcas-no-submit';
+			$classes[] = 'psf-search-no-submit';
 		}
 
 		if ( ! empty( $args['class'] ) ) {
@@ -89,26 +87,26 @@ class Helpers {
 
 		if ( ! empty( $args['style'] ) ) {
 			$type      = esc_html( $args['style'] );
-			$classes[] = 'dgwt-wcas-style-' . $type;
+			$classes[] = 'psf-search-style-' . $type;
 			if ( $args['style'] === 'pirx-compact' ) {
-				$classes[] = 'dgwt-wcas-style-pirx';
+				$classes[] = 'psf-search-style-pirx';
 			}
 		}
 
 		if ( ! empty( $args['layout'] ) ) {
 			$type      = esc_html( $args['layout'] );
-			$classes[] = 'js-dgwt-wcas-layout-' . $type . ' dgwt-wcas-layout-' . $type;
+			$classes[] = 'js-psf-search-layout-' . $type . ' psf-search-layout-' . $type;
 		}
 
 		if ( ! empty( $args['mobile_overlay'] ) ) {
-			$classes[] = 'js-dgwt-wcas-mobile-overlay-enabled';
+			$classes[] = 'js-psf-search-mobile-overlay-enabled';
 		} else {
-			$classes[] = 'js-dgwt-wcas-mobile-overlay-disabled';
+			$classes[] = 'js-psf-search-mobile-overlay-disabled';
 		}
 
 		if ( ! empty( $args['darken_bg'] ) ) {
-			$classes[] = 'dgwt-wcas-search-darkoverl-mounted';
-			$classes[] = 'js-dgwt-wcas-search-darkoverl-mounted';
+			$classes[] = 'psf-search-search-darkoverl-mounted';
+			$classes[] = 'js-psf-search-search-darkoverl-mounted';
 		}
 
 		return implode( ' ', $classes );
@@ -122,8 +120,8 @@ class Helpers {
 	 *
 	 * @return string
 	 */
-	public static function getMagnifierIco( $class = 'dgwt-wcas-ico-magnifier', $type = 'magnifier-thin', $color = '' ) {
-		return apply_filters( 'dgwt/wcas/form/magnifier_ico', self::getIcon( $type, $class, $color ), $class );
+	public static function getMagnifierIco( $class = 'psf-search-ico-magnifier', $type = 'magnifier-thin', $color = '' ) {
+		return apply_filters( 'psf_search/form/magnifier_ico', self::getIcon( $type, $class, $color ), $class );
 	}
 
 	/**
@@ -195,8 +193,8 @@ class Helpers {
 			case 'preloader':
 				$style = empty( $color ) ? '' : 'style="stroke: ' . esc_attr( $color ) . '"';
 				?>
-				<svg class="dgwt-wcas-loader-circular <?php echo $class; ?>" viewBox="25 25 50 50">
-					<circle class="dgwt-wcas-loader-circular-path" cx="50" cy="50" r="20" fill="none"
+				<svg class="psf-search-loader-circular <?php echo $class; ?>" viewBox="25 25 50 50">
+					<circle class="psf-search-loader-circular-path" cx="50" cy="50" r="20" fill="none"
 						<?php echo $style; ?> stroke-miterlimit="10"/>
 				</svg>
 				<?php
@@ -307,7 +305,7 @@ class Helpers {
 
 		$svg .= ob_get_clean();
 
-		return apply_filters( 'dgwt/wcas/icon', $svg, $name, $class, $color );
+		return apply_filters( 'psf_search/icon', $svg, $name, $class, $color );
 	}
 
 	/**
@@ -327,7 +325,7 @@ class Helpers {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/form/action', $url );
+		return apply_filters( 'psf_search/form/action', $url );
 	}
 
 	/**
@@ -337,7 +335,7 @@ class Helpers {
 	 */
 
 	public static function getSearchInputName() {
-		return apply_filters( 'dgwt/wcas/form/search_input/name', 's' );
+		return apply_filters( 'psf_search/form/search_input/name', 's' );
 	}
 
 	/**
@@ -352,7 +350,7 @@ class Helpers {
 
 		ob_start();
 
-		include DGWT_WCAS_DIR . 'partials/admin/how-to-use.php';
+		include PSF_SEARCH_DIR . 'partials/admin/how-to-use.php';
 
 		$html .= ob_get_clean();
 
@@ -371,7 +369,7 @@ class Helpers {
 
 		ob_start();
 
-		include DGWT_WCAS_DIR . 'partials/admin/embedding-in-theme.php';
+		include PSF_SEARCH_DIR . 'partials/admin/embedding-in-theme.php';
 
 		$html .= ob_get_clean();
 
@@ -519,7 +517,7 @@ class Helpers {
 	 */
 	public static function isSettingsPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'dgwt_wcas_settings' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_settings' ) {
 			return true;
 		}
 
@@ -533,7 +531,7 @@ class Helpers {
 	 */
 	public static function isDebugPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'dgwt_wcas_debug' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_debug' ) {
 			return true;
 		}
 
@@ -547,7 +545,7 @@ class Helpers {
 	 */
 	public static function isCheckoutPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'dgwt_wcas_settings-pricing' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_settings-pricing' ) {
 			return true;
 		}
 
@@ -560,7 +558,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function getSettingsUrl() {
-		return admin_url( 'admin.php?page=dgwt_wcas_settings' );
+		return admin_url( 'admin.php?page=psf_search_settings' );
 	}
 
 	/**
@@ -627,17 +625,17 @@ class Helpers {
 		switch ( $type ) {
 			case 'header':
 				if ( ! empty( $headerSubtitle ) ) {
-					$label = '<span class="dgwt-wcas-pro-header__subtitle">' . $label . '</span><span class="dgwt-wcas-pro-header__subtitle--text">' . $headerSubtitle . '</span>';
+					$label = '<span class="psf-search-pro-header__subtitle">' . $label . '</span><span class="psf-search-pro-header__subtitle--text">' . $headerSubtitle . '</span>';
 				}
-				$html .= '<div class="dgwt-wcas-row dgwt-wcas-pro-header"><span class="dgwt-wcas-pro-label">' . $label . '</span><span class="dgwt-wcas-pro-suffix">' . __(
+				$html .= '<div class="psf-search-row psf-search-pro-header"><span class="psf-search-pro-label">' . $label . '</span><span class="psf-search-pro-suffix">' . __(
 					'Pro',
-					'ajax-search-for-woocommerce'
+					'psf-search'
 				) . '</span></div>';
 				break;
 			case 'option-label':
-				$html .= '<div class="dgwt-wcas-row dgwt-wcas-pro-field"><span class="dgwt-wcas-pro-label">' . $label . '</span><span class="dgwt-wcas-pro-suffix">' . __(
+				$html .= '<div class="psf-search-row psf-search-pro-field"><span class="psf-search-pro-label">' . $label . '</span><span class="psf-search-pro-suffix">' . __(
 					'Pro',
-					'ajax-search-for-woocommerce'
+					'psf-search'
 				) . '</span></div>';
 				break;
 		}
@@ -791,7 +789,7 @@ class Helpers {
 			'containing_position_divisor'    => 2,
 		];
 
-		$args = apply_filters( 'dgwt/wcas/score_weights', array_merge( $default, $args ) );
+		$args = apply_filters( 'psf_search/score_weights', array_merge( $default, $args ) );
 
 		if ( $comparison['text_similarity'] > 0 ) {
 			$score = $comparison['text_similarity'] / $args['text_similarity_divisor'];
@@ -949,45 +947,7 @@ class Helpers {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/attribute_taxonomies', $taxonomies );
-	}
-
-	public static function canInstallPremium() {
-		// TODO
-	}
-
-	/**
-	 * Get indexer demo HTML
-	 *
-	 * @return string
-	 */
-	public static function indexerDemoHtml() {
-		$html = '';
-
-		ob_start();
-
-		include DGWT_WCAS_DIR . 'partials/admin/indexer-header-demo.php';
-
-		$html .= ob_get_clean();
-
-		return $html;
-	}
-
-	/**
-	 * Get features HTML
-	 *
-	 * @return string
-	 */
-	public static function featuresHtml() {
-		$html = '';
-
-		ob_start();
-
-		include DGWT_WCAS_DIR . 'partials/admin/features.php';
-
-		$html .= ob_get_clean();
-
-		return $html;
+		return apply_filters( 'psf_search/attribute_taxonomies', $taxonomies );
 	}
 
 	/**
@@ -1021,12 +981,12 @@ class Helpers {
 			'_original_id',
 		];
 
-		$excludedMetaKeys = apply_filters( 'dgwt/wcas/indexer/excluded_meta_keys', $excludedMetaKeys );
+		$excludedMetaKeys = apply_filters( 'psf_search/indexer/excluded_meta_keys', $excludedMetaKeys );
 
 		$metaKeys = [];
 
-		if ( apply_filters( 'dgwt/wcas/indexer/skip_querying_searchable_custom_fields', false ) === false ) {
-			$customFieldsTransient = $skipTransient ? false : get_transient( 'dgwt_wcas_searchable_custom_fields' );
+		if ( apply_filters( 'psf_search/indexer/skip_querying_searchable_custom_fields', false ) === false ) {
+			$customFieldsTransient = $skipTransient ? false : get_transient( 'psf_search_searchable_custom_fields' );
 
 			if ( ! is_array( $customFieldsTransient ) ) {
 				$sql = "SELECT DISTINCT meta_key
@@ -1043,7 +1003,7 @@ class Helpers {
 				//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$metaKeys = $wpdb->get_col( $sql );
 				if ( is_array( $metaKeys ) && $skipTransient === false ) {
-					set_transient( 'dgwt_wcas_searchable_custom_fields', $metaKeys, HOUR_IN_SECONDS );
+					set_transient( 'psf_search_searchable_custom_fields', $metaKeys, HOUR_IN_SECONDS );
 				}
 			} else {
 				$metaKeys = $customFieldsTransient;
@@ -1064,7 +1024,7 @@ class Helpers {
 
 		$customFields = array_reverse( $customFields );
 
-		return apply_filters( 'dgwt/wcas/indexer/searchable_custom_fields', $customFields );
+		return apply_filters( 'psf_search/indexer/searchable_custom_fields', $customFields );
 	}
 
 
@@ -1087,12 +1047,10 @@ class Helpers {
 	public static function isTableExists( $tableName ) {
 		global $wpdb;
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! self::isIndexing__premium_only() ) {
-				$cache = Cache::get( 'table_exists', 'database' );
-				if ( is_array( $cache ) ) {
-					return in_array( $tableName, $cache );
-				}
+		if ( ! self::isIndexing__premium_only() ) {
+			$cache = Cache::get( 'table_exists', 'database' );
+			if ( is_array( $cache ) ) {
+				return in_array( $tableName, $cache );
 			}
 		}
 
@@ -1103,7 +1061,7 @@ class Helpers {
 			return false;
 		}
 
-		$sql = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'dgwt_wcas_%' );
+		$sql = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'psf_search_%' );
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$result = $wpdb->get_col( $sql );
 
@@ -1111,11 +1069,9 @@ class Helpers {
 			$exist = true;
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
-			if ( ! self::isIndexing__premium_only() ) {
-				if ( is_array( $result ) && ! empty( $result ) ) {
-					Cache::set( 'table_exists', $result, 'database' );
-				}
+		if ( ! self::isIndexing__premium_only() ) {
+			if ( is_array( $result ) && ! empty( $result ) ) {
+				Cache::set( 'table_exists', $result, 'database' );
 			}
 		}
 
@@ -1137,11 +1093,11 @@ class Helpers {
 			$allow = true;
 		}
 
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_content' ) !== 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_content' ) !== 'on' ) {
 			$allow = false;
 		}
 
-		return apply_filters( 'dgwt/wcas/search_in_variable_products', $allow );
+		return apply_filters( 'psf_search/search_in_variable_products', $allow );
 	}
 
 	/**
@@ -1152,38 +1108,32 @@ class Helpers {
 	public static function removeBatchOptions__premium_only() {
 		global $wpdb;
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
 
-			/**
-			 * Searchable and readable index batch
-			 * Samples:
-			 * - wcas_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
-			 * - wcas_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
-			 */
+		/**
+		 * Searchable and readable index batch
+		 * Samples:
+		 * - psf_search_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 * - psf_search_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 */
 
-			$table  = $wpdb->options;
-			$column = 'option_name';
+		$table  = $wpdb->options;
+		$column = 'option_name';
 
-			if ( is_multisite() ) {
-				$table  = $wpdb->sitemeta;
-				$column = 'meta_key';
-			}
-
-			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query(
-				"
-			DELETE
-			FROM {$table}
-			WHERE {$column} LIKE '%_index_batch_%'
-			OR {$column} LIKE '%wcas_build_readable%'
-			OR {$column} LIKE '%wcas_build_searchable%'
-			OR {$column} LIKE '%wcas_build_variation%'
-			OR {$column} LIKE '%wcas_build_taxonomy%'
-		"
-			);
-			// phpcs:enable
-
+		if ( is_multisite() ) {
+			$table  = $wpdb->sitemeta;
+			$column = 'meta_key';
 		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query(
+			"
+		DELETE
+		FROM {$table}
+		WHERE {$column} LIKE 'psf\\_search\\_%\\_batch\\_%'
+	"
+		);
+		// phpcs:enable
+
 	}
 
 	/**
@@ -1231,7 +1181,7 @@ class Helpers {
 	public static function createTooltip( $id, $content = '', $template = '', $placement = 'right', $class = '' ) {
 
 		if ( ! empty( $template ) ) {
-			$file = DGWT_WCAS_DIR . 'partials/admin/tooltips/' . $template . '.php';
+			$file = PSF_SEARCH_DIR . 'partials/admin/tooltips/' . $template . '.php';
 			if ( file_exists( $file ) ) {
 				ob_start();
 				require $file;
@@ -1240,10 +1190,10 @@ class Helpers {
 			}
 		}
 
-		$id = 'js-dgwt-wcas-tooltip-id' . sanitize_key( $id );
+		$id = 'js-psf-search-tooltip-id' . sanitize_key( $id );
 
-		$html  = '<div class="js-dgwt-wcas-tooltip ' . $class . '" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
-		$html .= '<div class="' . $id . '" style="display:none;"><div class="dgwt-wcas-tooltip-wrapper">' . $content . '</div></div>';
+		$html  = '<div class="js-psf-search-tooltip ' . $class . '" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
+		$html .= '<div class="' . $id . '" style="display:none;"><div class="psf-search-tooltip-wrapper">' . $content . '</div></div>';
 
 		return $html;
 	}
@@ -1259,18 +1209,18 @@ class Helpers {
 	 * @return string
 	 */
 	public static function getOverrideOptionText( $theme ) {
-		$linkToShortcodesDoc = 'https://fibosearch.com/documentation/get-started/how-to-add-fibosearch-to-your-website/#add-fibosearch-with-a-shortcode';
+		$linkToShortcodesDoc = 'https://fibosearch.com/documentation/get-started/how-to-add-psfsearch-to-your-website/#add-psfsearch-with-a-shortcode';
 		$content             = '<p>' . sprintf(
 			__(
-				'This option is <b>overridden</b> by the seamless integration with the %s theme. If you want to change the value of this option, disable the integration in <br /><b>WooCommerce -> FiboSearch -> Starting (tab)</b>.',
-				'ajax-search-for-woocommerce'
+				'This option is <b>overridden</b> by the seamless integration with the %s theme. If you want to change the value of this option, disable the integration in <br /><b>WooCommerce -> PSF Search -> Starting (tab)</b>.',
+				'psf-search'
 			),
 			$theme
 		) . '</p>';
 		$content            .= '<p>' . sprintf(
 			__(
 				'Furthermore, you can override this option for a specific search bar via shortcode params. <a href="%s" target="_blank">Learn more about shortcodes parameters</a>.',
-				'ajax-search-for-woocommerce'
+				'psf-search'
 			),
 			$linkToShortcodesDoc
 		) . '</p>';
@@ -1290,7 +1240,7 @@ class Helpers {
 	 */
 	public static function createQuestionMark( $id, $content = '', $template = '', $placement = 'right' ) {
 
-		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-editor-help dgwt-wcas-questio-mark' );
+		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-editor-help psf-search-questio-mark' );
 	}
 
 	/**
@@ -1304,7 +1254,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function createOverrideTooltip( $id, $content = '', $template = '', $placement = 'right' ) {
-		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-lock dgwt-wcas-override-tooltip' );
+		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-lock psf-search-override-tooltip' );
 	}
 
 	/**
@@ -1364,33 +1314,33 @@ class Helpers {
 	 */
 	public static function getLabels() {
 
-		$noResults = DGWT_WCAS()->settings->getOption( 'search_no_results_text', __( 'No results', 'ajax-search-for-woocommerce' ) );
+		$noResults = PSF_SEARCH()->settings->getOption( 'search_no_results_text', __( 'No results', 'psf-search' ) );
 		// TODO
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		$noResults = json_encode( self::ksesNoResults( $noResults ), JSON_UNESCAPED_SLASHES );
 
-		$showMore = esc_html( DGWT_WCAS()->settings->getOption( 'search_see_all_results_text', __( 'See all products...', 'ajax-search-for-woocommerce' ) ) );
+		$showMore = esc_html( PSF_SEARCH()->settings->getOption( 'search_see_all_results_text', __( 'See all products...', 'psf-search' ) ) );
 
 		return apply_filters(
-			'dgwt/wcas/labels',
+			'psf_search/labels',
 			[
 				'product_plu'        => __( 'Products', 'woocommerce' ),
-				'vendor'             => __( 'Vendor', 'ajax-search-for-woocommerce' ),
-				'vendor_plu'         => __( 'Vendors', 'ajax-search-for-woocommerce' ),
+				'vendor'             => __( 'Vendor', 'psf-search' ),
+				'vendor_plu'         => __( 'Vendors', 'psf-search' ),
 				'sku_label'          => __( 'SKU', 'woocommerce' ) . ':',
 				'sale_badge'         => __( 'Sale', 'woocommerce' ),
 				'featured_badge'     => __( 'Featured', 'woocommerce' ),
-				'in'                 => _x( 'in', 'in categories fe. in Books > Crime stories', 'ajax-search-for-woocommerce' ),
-				'read_more'          => __( 'continue reading', 'ajax-search-for-woocommerce' ),
+				'in'                 => _x( 'in', 'in categories fe. in Books > Crime stories', 'psf-search' ),
+				'read_more'          => __( 'continue reading', 'psf-search' ),
 				'no_results'         => $noResults,
-				'no_results_default' => __( 'No results', 'ajax-search-for-woocommerce' ),
+				'no_results_default' => __( 'No results', 'psf-search' ),
 				'show_more'          => $showMore,
 				'show_more_details'  => $showMore,
-				'search_placeholder' => DGWT_WCAS()->settings->getOption( 'search_placeholder', __( 'Search for products...', 'ajax-search-for-woocommerce' ) ),
-				'submit'             => DGWT_WCAS()->settings->getOption( 'search_submit_text', '' ),
-				'search_hist'        => __( 'Your search history', 'ajax-search-for-woocommerce' ),
-				'search_hist_clear'  => __( 'Clear', 'ajax-search-for-woocommerce' ),
-				'mob_overlay_label'  => __( 'Open search in the mobile overlay', 'ajax-search-for-woocommerce' ),
+				'search_placeholder' => PSF_SEARCH()->settings->getOption( 'search_placeholder', __( 'Search for products...', 'psf-search' ) ),
+				'submit'             => PSF_SEARCH()->settings->getOption( 'search_submit_text', '' ),
+				'search_hist'        => __( 'Your search history', 'psf-search' ),
+				'search_hist_clear'  => __( 'Clear', 'psf-search' ),
+				'mob_overlay_label'  => __( 'Open search in the mobile overlay', 'psf-search' ),
 			]
 		);
 	}
@@ -1482,7 +1432,7 @@ class Helpers {
 		if (
 			! $query->is_main_query() ||
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			( isset( $query->query_vars['s'] ) && ! isset( $_GET['dgwt_wcas'] ) ) ||
+			( isset( $query->query_vars['s'] ) && ! isset( $_GET['psf_search'] ) ) ||
 			! isset( $query->query_vars['s'] ) ||
 			! $query->is_search() ||
 			( $query->get( 'post_type' ) && is_string( $query->get( 'post_type' ) ) && $query->get( 'post_type' ) !== 'product' )
@@ -1490,7 +1440,7 @@ class Helpers {
 			$enabled = false;
 		}
 
-		$enabled = apply_filters( 'dgwt/wcas/helpers/is_search_query', $enabled, $query );
+		$enabled = apply_filters( 'psf_search/helpers/is_search_query', $enabled, $query );
 
 		return $enabled;
 	}
@@ -1503,7 +1453,7 @@ class Helpers {
 	public static function isProductSearchPage() {
 		//phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if (
-			isset( $_GET['dgwt_wcas'] ) &&
+			isset( $_GET['psf_search'] ) &&
 			isset( $_GET['post_type'] ) && $_GET['post_type'] === 'product' &&
 			isset( $_GET['s'] )
 		) {
@@ -1523,11 +1473,11 @@ class Helpers {
 	 * @return mixed
 	 */
 	public static function rollbackSearchPhrase( $posts, $query ) {
-		if ( ! $query->get( 'dgwt_wcas', false ) ) {
+		if ( ! $query->get( 'psf_search', false ) ) {
 			return $posts;
 		}
 
-		$phrase = wp_unslash( $query->get( 'dgwt_wcas', '' ) );
+		$phrase = wp_unslash( $query->get( 'psf_search', '' ) );
 
 		// If phrase is URL encoded, decode it.
 		if ( preg_match( '/%[0-9A-Fa-f]{2}/', $phrase ) ) {
@@ -1548,7 +1498,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function clearSearchQuery( $search, $query ) {
-		if ( ! $query->get( 'dgwt_wcas', false ) ) {
+		if ( ! $query->get( 'psf_search', false ) ) {
 			return $search;
 		}
 
@@ -1587,21 +1537,21 @@ class Helpers {
 	 */
 	public static function getLayoutSettings() {
 
-		$layoutBreakpoint = DGWT_WCAS()->settings->getOption( 'mobile_breakpoint', 992 );
-		$layoutBreakpoint = apply_filters( 'dgwt/wcas/scripts/mobile_breakpoint', $layoutBreakpoint ); // deprecated
+		$layoutBreakpoint = PSF_SEARCH()->settings->getOption( 'mobile_breakpoint', 992 );
+		$layoutBreakpoint = apply_filters( 'psf_search/scripts/mobile_breakpoint', $layoutBreakpoint ); // deprecated
 
-		$mobileOverlayBreakpoint = DGWT_WCAS()->settings->getOption( 'mobile_overlay_breakpoint', 992 );
+		$mobileOverlayBreakpoint = PSF_SEARCH()->settings->getOption( 'mobile_overlay_breakpoint', 992 );
 
 		$layout = [
-			'style'                     => DGWT_WCAS()->settings->getOption( 'search_style', 'solaris' ),
+			'style'                     => PSF_SEARCH()->settings->getOption( 'search_style', 'solaris' ),
 			'icon'                      => 'magnifier-thin',
-			'layout'                    => DGWT_WCAS()->settings->getOption( 'search_layout', 'classic' ),
-			'layout_breakpoint'         => apply_filters( 'dgwt/wcas/scripts/layout_breakpoint', $layoutBreakpoint ),
-			'mobile_overlay'            => DGWT_WCAS()->settings->getOption( 'enable_mobile_overlay' ) === 'on' ? true : false,
-			'mobile_overlay_breakpoint' => apply_filters( 'dgwt/wcas/scripts/mobile_overlay_breakpoint', $mobileOverlayBreakpoint ),
-			'mobile_overlay_wrapper'    => apply_filters( 'dgwt/wcas/scripts/mobile_overlay_wrapper', 'body' ),
-			'darken_background'         => DGWT_WCAS()->settings->getOption( 'darken_background', 'off' ) === 'on' ? true : false,
-			'icon_color'                => DGWT_WCAS()->settings->getOption( 'search_icon_color' ),
+			'layout'                    => PSF_SEARCH()->settings->getOption( 'search_layout', 'classic' ),
+			'layout_breakpoint'         => apply_filters( 'psf_search/scripts/layout_breakpoint', $layoutBreakpoint ),
+			'mobile_overlay'            => PSF_SEARCH()->settings->getOption( 'enable_mobile_overlay' ) === 'on' ? true : false,
+			'mobile_overlay_breakpoint' => apply_filters( 'psf_search/scripts/mobile_overlay_breakpoint', $mobileOverlayBreakpoint ),
+			'mobile_overlay_wrapper'    => apply_filters( 'psf_search/scripts/mobile_overlay_wrapper', 'body' ),
+			'darken_background'         => PSF_SEARCH()->settings->getOption( 'darken_background', 'off' ) === 'on' ? true : false,
+			'icon_color'                => PSF_SEARCH()->settings->getOption( 'search_icon_color' ),
 		];
 
 		if ( in_array( $layout['style'], [ 'pirx', 'pirx-compact' ] ) ) {
@@ -1625,9 +1575,9 @@ class Helpers {
 			'ajax_search_endpoint'            => self::getEndpointUrl( 'search' ),
 			'ajax_details_endpoint'           => self::getEndpointUrl( 'details' ),
 			'ajax_prices_endpoint'            => self::getEndpointUrl( 'prices' ),
-			'action_search'                   => DGWT_WCAS_SEARCH_ACTION,
-			'action_result_details'           => DGWT_WCAS_RESULT_DETAILS_ACTION,
-			'action_get_prices'               => DGWT_WCAS_GET_PRICES_ACTION,
+			'action_search'                   => PSF_SEARCH_SEARCH_ACTION,
+			'action_result_details'           => PSF_SEARCH_RESULT_DETAILS_ACTION,
+			'action_get_prices'               => PSF_SEARCH_GET_PRICES_ACTION,
 			'min_chars'                       => 3,
 			'width'                           => 'auto',
 			'show_details_panel'              => false,
@@ -1642,31 +1592,31 @@ class Helpers {
 			'show_headings'                   => self::canGroupSuggestions(),
 			'preloader_url'                   => '',
 			'taxonomy_brands'                 => '',
-			'img_url'                         => DGWT_WCAS_URL . 'assets/img/',
-			'is_premium'                      => dgoraAsfwFs()->is_premium(),
+			'img_url'                         => PSF_SEARCH_URL . 'assets/img/',
+			'is_premium'                      => true,
 			'layout_breakpoint'               => $layout->layout_breakpoint,
 			'mobile_overlay_breakpoint'       => $layout->mobile_overlay_breakpoint,
 			'mobile_overlay_wrapper'          => $layout->mobile_overlay_wrapper,
-			'mobile_overlay_delay'            => apply_filters( 'dgwt/wcas/scripts/overlay_delay_ms', 0 ),
-			'debounce_wait_ms'                => apply_filters( 'dgwt/wcas/scripts/debounce_wait_ms', 400 ),
-			'send_ga_events'                  => apply_filters( 'dgwt/wcas/scripts/send_ga_events', true ),
-			'enable_ga_site_search_module'    => apply_filters( 'dgwt/wcas/scripts/enable_ga_site_search_module', false ),
+			'mobile_overlay_delay'            => apply_filters( 'psf_search/scripts/overlay_delay_ms', 0 ),
+			'debounce_wait_ms'                => apply_filters( 'psf_search/scripts/debounce_wait_ms', 400 ),
+			'send_ga_events'                  => apply_filters( 'psf_search/scripts/send_ga_events', true ),
+			'enable_ga_site_search_module'    => apply_filters( 'psf_search/scripts/enable_ga_site_search_module', false ),
 			'magnifier_icon'                  => self::getMagnifierIco( '' ),
 			'magnifier_icon_pirx'             => self::getMagnifierIco( '', 'magnifier-pirx' ),
 			'history_icon'                    => self::getIcon( 'history' ),
 			'close_icon'                      => self::getIcon( 'close' ),
 			'back_icon'                       => self::getIcon( 'arrow-left' ),
 			'preloader_icon'                  => self::getIcon( 'preloader' ),
-			'voice_search_inactive_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-inactive-pirx' : 'voice-search-inactive', 'dgwt-wcas-voice-search-mic-inactive' ),
-			'voice_search_active_icon'        => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-active-pirx' : 'voice-search-active', 'dgwt-wcas-voice-search-mic-active' ),
-			'voice_search_disabled_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-disabled-pirx' : 'voice-search-disabled', 'dgwt-wcas-voice-search-mic-disabled' ),
-			'custom_params'                   => (object) apply_filters( 'dgwt/wcas/scripts/custom_params', [] ),
+			'voice_search_inactive_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-inactive-pirx' : 'voice-search-inactive', 'psf-search-voice-search-mic-inactive' ),
+			'voice_search_active_icon'        => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-active-pirx' : 'voice-search-active', 'psf-search-voice-search-mic-active' ),
+			'voice_search_disabled_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-disabled-pirx' : 'voice-search-disabled', 'psf-search-voice-search-mic-disabled' ),
+			'custom_params'                   => (object) apply_filters( 'psf_search/scripts/custom_params', [] ),
 			'convert_html'                    => true, // Todo remove it in v1.27.0, because it's not used anymore.
-			'suggestions_wrapper'             => apply_filters( 'dgwt/wcas/scripts/suggestions_wrapper', 'body' ),
-			'disable_hits'                    => apply_filters( 'dgwt/wcas/scripts/disable_hits', false ),
-			'disable_submit'                  => apply_filters( 'dgwt/wcas/scripts/disable_submit', false ),
+			'suggestions_wrapper'             => apply_filters( 'psf_search/scripts/suggestions_wrapper', 'body' ),
+			'disable_hits'                    => apply_filters( 'psf_search/scripts/disable_hits', false ),
+			'disable_submit'                  => apply_filters( 'psf_search/scripts/disable_submit', false ),
 			'fixer'                           => apply_filters(
-				'dgwt/wcas/scripts/fixer',
+				'psf_search/scripts/fixer',
 				[
 					'broken_search_ui'                  => true,
 					'broken_search_ui_ajax'             => true,
@@ -1677,94 +1627,92 @@ class Helpers {
 					'force_refresh_checkout'            => true,
 				]
 			),
-			'voice_search_enabled'            => defined( 'DGWT_WCAS_VOICE_SEARCH_ENABLE' ) && DGWT_WCAS_VOICE_SEARCH_ENABLE,
-			'voice_search_lang'               => apply_filters( 'dgwt/wcas/scripts/voice_search_lang', self::getBCP47LangCode( get_bloginfo( 'language' ) ) ),
+			'voice_search_enabled'            => defined( 'PSF_SEARCH_VOICE_SEARCH_ENABLE' ) && PSF_SEARCH_VOICE_SEARCH_ENABLE,
+			'voice_search_lang'               => apply_filters( 'psf_search/scripts/voice_search_lang', self::getBCP47LangCode( get_bloginfo( 'language' ) ) ),
 			'show_recently_searched_products' => false,
 			'show_recently_searched_phrases'  => false,
 			'go_to_first_variation_on_submit' => false,
 		];
 
 		// User search history
-		if ( DGWT_WCAS()->settings->getOption( 'show_user_history' ) === 'on' ) {
-			$localize['show_recently_searched_products'] = apply_filters( 'dgwt/wcas/scripts/show_recently_searched_products', true );
-			$localize['show_recently_searched_phrases']  = apply_filters( 'dgwt/wcas/scripts/show_recently_searched_phrases', true );
+		if ( PSF_SEARCH()->settings->getOption( 'show_user_history' ) === 'on' ) {
+			$localize['show_recently_searched_products'] = apply_filters( 'psf_search/scripts/show_recently_searched_products', true );
+			$localize['show_recently_searched_phrases']  = apply_filters( 'psf_search/scripts/show_recently_searched_phrases', true );
 		}
 
 		if ( Multilingual::isMultilingual() ) {
 			$localize['current_lang'] = Multilingual::getCurrentLanguage();
 		}
 
-		if ( dgoraAsfwFs()->is__premium_only() ) {
 
-			$localize['dynamic_prices'] = Solver::shouldLoadPriceDynamically__premium_only();
+		$localize['dynamic_prices'] = defined( 'PSF_SEARCH_DYNAMIC_PRICES' ) && PSF_SEARCH_DYNAMIC_PRICES && PSF_SEARCH()->settings->getOption( 'show_product_price' ) === 'on';
 
-			$localize['debounce_wait_ms'] = apply_filters( 'dgwt/wcas/scripts/debounce_wait_ms', 100 );
+		$localize['debounce_wait_ms'] = apply_filters( 'psf_search/scripts/debounce_wait_ms', 100 );
 
-			if ( DGWT_WCAS()->brands->hasBrands() && DGWT_WCAS()->settings->getOption( 'show_product_tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ) === 'on' ) {
-				$localize['taxonomy_brands'] = DGWT_WCAS()->brands->getBrandTaxonomy();
-			}
-
-			$variationSupportModes = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'variation_support_modes' );
-			if ( is_array( $variationSupportModes ) && in_array( 'exact_match', $variationSupportModes ) && ! in_array( 'as_single_product', $variationSupportModes ) ) {
-				$localize['go_to_first_variation_on_submit'] = true;
-			}
-			$localize['go_to_first_variation_on_submit'] = apply_filters( 'dgwt/wcas/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
+		if ( PSF_SEARCH()->brands->hasBrands() && PSF_SEARCH()->settings->getOption( 'show_product_tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() ) === 'on' ) {
+			$localize['taxonomy_brands'] = PSF_SEARCH()->brands->getBrandTaxonomy();
 		}
 
+		$variationSupportModes = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'variation_support_modes' );
+		if ( is_array( $variationSupportModes ) && in_array( 'exact_match', $variationSupportModes ) && ! in_array( 'as_single_product', $variationSupportModes ) ) {
+			$localize['go_to_first_variation_on_submit'] = true;
+		}
+		$localize['go_to_first_variation_on_submit'] = apply_filters( 'psf_search/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
+
 		// Min characters
-		$min_chars = DGWT_WCAS()->settings->getOption( 'min_chars' );
+		$min_chars = PSF_SEARCH()->settings->getOption( 'min_chars' );
 		if ( ! empty( $min_chars ) && is_numeric( $min_chars ) ) {
 			$localize['min_chars'] = absint( $min_chars );
 		}
 
-		$sug_width = DGWT_WCAS()->settings->getOption( 'sug_width' );
+		$sug_width = PSF_SEARCH()->settings->getOption( 'sug_width' );
 		if ( ! empty( $sug_width ) && is_numeric( $sug_width ) && $sug_width > 100 ) {
 			$localize['sug_width'] = absint( $sug_width );
 		}
 
 		// Show/hide Details panel
-		if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
 			$localize['show_details_panel'] = true;
 		}
 
 		// Show/hide images
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_image' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_image' ) === 'on' ) {
 			$localize['show_images'] = true;
 		}
 
 		// Show/hide price
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_price' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_price' ) === 'on' ) {
 			$localize['show_price'] = true;
 		}
 
 		// Show/hide description
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_desc' ) === 'on' ) {
 			$localize['show_desc'] = true;
 		}
 
 		// Show/hide description
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_sku' ) === 'on' ) {
 			$localize['show_sku'] = true;
 		}
 
 		// Show/hide sale badge
-		if ( DGWT_WCAS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
 			$localize['show_sale_badge'] = true;
 		}
 
 		// Show/hide featured badge
-		if ( DGWT_WCAS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
 			$localize['show_featured_badge'] = true;
 		}
 
 		// Set preloader
-		if ( DGWT_WCAS()->settings->getOption( 'show_preloader' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_preloader' ) === 'on' ) {
 			$localize['show_preloader'] = true;
 
-			$localize['preloader_url'] = esc_url( trim( DGWT_WCAS()->settings->getOption( 'preloader_url' ) ) );
+			$localize['preloader_url'] = esc_url( trim( PSF_SEARCH()->settings->getOption( 'preloader_url' ) ) );
 		}
 
-		return apply_filters( 'dgwt/wcas/scripts/localize', $localize );
+		return apply_filters( 'psf_search/scripts/localize', $localize );
 	}
 
 	/**
@@ -1783,29 +1731,27 @@ class Helpers {
 
 		switch ( $type ) {
 			case 'search':
-				$url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_ACTION );
-				if ( dgoraAsfwFs()->is__premium_only() ) {
-					$url = DGWT_WCAS_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_SEARCH_ACTION );
+				$url = PSF_SEARCH_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
 
-					if (
-						( get_option( 'dgwt_wcas_alternative_endpoint_enabled' ) === '1' && defined( 'DGWT_WCAS_SEARCH_PRO_ACTION' ) ) ||
-						( defined( 'DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT' ) && DGWT_WCAS_ALTERNATIVE_SEARCH_ENDPOINT )
-					) {
-						$url = \WC_AJAX::get_endpoint( DGWT_WCAS_SEARCH_PRO_ACTION );
-					}
+				if (
+					( get_option( 'psf_search_alternative_endpoint_enabled' ) === '1' && defined( 'PSF_SEARCH_SEARCH_PRO_ACTION' ) ) ||
+					( defined( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT )
+				) {
+					$url = \WC_AJAX::get_endpoint( PSF_SEARCH_SEARCH_PRO_ACTION );
 				}
 				break;
 			case 'details':
-				$url = \WC_AJAX::get_endpoint( DGWT_WCAS_RESULT_DETAILS_ACTION );
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_RESULT_DETAILS_ACTION );
 				break;
 			case 'prices':
-				$url = \WC_AJAX::get_endpoint( DGWT_WCAS_GET_PRICES_ACTION );
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_GET_PRICES_ACTION );
 				break;
 			default:
 				break;
 		}
 
-		return apply_filters( "dgwt/wcas/endpoint/{$type}", $url );
+		return apply_filters( "psf_search/endpoint/{$type}", $url );
 	}
 
 
@@ -1890,7 +1836,7 @@ class Helpers {
 			);
 		}
 		$postIn  = [];
-		$results = DGWT_WCAS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
+		$results = PSF_SEARCH()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
 		if ( isset( $results['suggestions'] ) && is_array( $results['suggestions'] ) ) {
 			$postIn = wp_list_pluck( $results['suggestions'], 'ID' );
 		}
@@ -1943,7 +1889,7 @@ class Helpers {
 			// Non-product post types will be added in via below filter.
 		}
 
-		return apply_filters( 'dgwt/wcas/allowed_post_types', $types, $filter );
+		return apply_filters( 'psf_search/allowed_post_types', $types, $filter );
 	}
 
 	/**
@@ -1954,8 +1900,8 @@ class Helpers {
 	public static function getBasicAuthHeader() {
 		$authorization = '';
 		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		if ( defined( 'DGWT_WCAS_BA_USERNAME' ) && defined( 'DGWT_WCAS_BA_PASSWORD' ) ) {
-			$authorization = 'Basic ' . base64_encode( wp_unslash( DGWT_WCAS_BA_USERNAME ) . ':' . wp_unslash( DGWT_WCAS_BA_PASSWORD ) );
+		if ( defined( 'PSF_SEARCH_BA_USERNAME' ) && defined( 'PSF_SEARCH_BA_PASSWORD' ) ) {
+			$authorization = 'Basic ' . base64_encode( wp_unslash( PSF_SEARCH_BA_USERNAME ) . ':' . wp_unslash( PSF_SEARCH_BA_PASSWORD ) );
 
 		} elseif ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 			$authorization = 'Basic ' . base64_encode( wp_unslash( $_SERVER['PHP_AUTH_USER'] ) . ':' . wp_unslash( $_SERVER['PHP_AUTH_PW'] ) );
@@ -2025,7 +1971,7 @@ class Helpers {
 	 */
 	public static function getFilterProductsRules__premium_only() {
 		$rules      = [];
-		$savedRules = DGWT_WCAS()->settings->getOption( 'filter_products_rules' );
+		$savedRules = PSF_SEARCH()->settings->getOption( 'filter_products_rules' );
 		if ( ! is_string( $savedRules ) ) {
 			return $rules;
 		}
@@ -2056,9 +2002,9 @@ class Helpers {
 		global $wpdb;
 
 		if ( defined( 'SHORTINIT' ) && SHORTINIT ) {
-			$result = $wpdb->get_var( "SELECT option_value FROM $wpdb->options WHERE option_name = 'dgwt_wcas_db_json_support'" );
+			$result = $wpdb->get_var( "SELECT option_value FROM $wpdb->options WHERE option_name = 'psf_search_db_json_support'" );
 		} else {
-			$result = get_option( 'dgwt_wcas_db_json_support' );
+			$result = get_option( 'psf_search_db_json_support' );
 		}
 
 		return $result === 'yes';
@@ -2072,22 +2018,22 @@ class Helpers {
 	public static function isCacheEnabled__premium_only() {
 		$enabled = true;
 
-		if ( defined( 'DGWT_WCAS_SEARCH_CACHE' ) ) {
-			$enabled = (bool) DGWT_WCAS_SEARCH_CACHE;
+		if ( defined( 'PSF_SEARCH_SEARCH_CACHE' ) ) {
+			$enabled = (bool) PSF_SEARCH_SEARCH_CACHE;
 		}
 
-		return apply_filters( 'dgwt/wcas/tnt/search_cache', $enabled );
+		return apply_filters( 'psf_search/tnt/search_cache', $enabled );
 	}
 
 	/**
-	 * Get version of the FiboSearch Pro. Skips the cache.
+	 * Get version of the PSF Search. Skips the cache.
 	 *
 	 * @return string
 	 */
 	public static function getPluginVersion__premium_only() {
 		global $wpdb;
 
-		$version = $wpdb->get_var( "SELECT SQL_NO_CACHE option_value FROM $wpdb->options WHERE option_name = 'dgwt_wcas_version_pro'" );
+		$version = $wpdb->get_var( "SELECT SQL_NO_CACHE option_value FROM $wpdb->options WHERE option_name = 'psf_search_version_pro'" );
 
 		return empty( $version ) ? '' : $version;
 	}
@@ -2179,26 +2125,26 @@ class Helpers {
 		$path = '';
 
 		// Load default partials from the plugin
-		$file = DGWT_WCAS_DIR . 'partials/' . $template;
+		$file = PSF_SEARCH_DIR . 'partials/' . $template;
 		if ( file_exists( $file ) ) {
 			$path = $file;
 		}
 
 		// Load general template if the specific one is not found.
 		if ( empty( $path ) ) {
-			$file = DGWT_WCAS_DIR . 'partials/' . $generalTemplate;
+			$file = PSF_SEARCH_DIR . 'partials/' . $generalTemplate;
 			if ( file_exists( $file ) ) {
 				$path = $file;
 			}
 		}
 
 		// Load a partial if it is localized in the child-theme
-		$file = get_stylesheet_directory() . '/fibosearch/' . $template;
+		$file = get_stylesheet_directory() . '/psfsearch/' . $template;
 		if ( file_exists( $file ) ) {
 			$path = $file;
 		}
 
-		$path = apply_filters( 'dgwt/wcas/template', $path, $template, $vars, $generalTemplate );
+		$path = apply_filters( 'psf_search/template', $path, $template, $vars, $generalTemplate );
 		if ( file_exists( $path ) ) {
 			include $path;
 		}
@@ -2245,8 +2191,8 @@ class Helpers {
 			}
 		}
 
-		$charset = apply_filters( 'dgwt/wcas/db/charset', $charset, $context );
-		$collate = apply_filters( 'dgwt/wcas/db/collation', $collate, $context );
+		$charset = apply_filters( 'psf_search/db/charset', $charset, $context );
+		$collate = apply_filters( 'psf_search/db/collation', $collate, $context );
 
 		if ( ! empty( $charset ) ) {
 			$sql .= ' DEFAULT CHARACTER SET ' . $charset;
@@ -2256,7 +2202,7 @@ class Helpers {
 			$sql .= ' COLLATE ' . $collate;
 		}
 
-		return apply_filters( 'dgwt/wcas/db/collation/sql', $sql, $context );
+		return apply_filters( 'psf_search/db/collation/sql', $sql, $context );
 	}
 
 	/**
@@ -2272,7 +2218,7 @@ class Helpers {
 		$result            = false;
 
 		foreach ( $paths as $path ) {
-			if ( \DgoraWcas\Engines\TNTSearchMySQL\Config::isPluginActive( $path ) ) {
+			if ( \PsfSearch\Engines\TNTSearchMySQL\Config::isPluginActive( $path ) ) {
 				$valid_plugin_name = true;
 				break;
 			}
@@ -2310,12 +2256,12 @@ class Helpers {
 	 */
 	public static function isIndexing__premium_only() {
 		if (
-			( defined( 'DGWT_WCAS_PREPARE_BUILD_INDEX' ) && DGWT_WCAS_PREPARE_BUILD_INDEX ) ||
-			( defined( 'DGWT_WCAS_BUILD_INDEX_PROCESS' ) && DGWT_WCAS_BUILD_INDEX_PROCESS ) ||
-			( defined( 'DGWT_WCAS_SEARCHABLE_INDEX_TASK' ) && DGWT_WCAS_SEARCHABLE_INDEX_TASK ) ||
-			( defined( 'DGWT_WCAS_READABLE_INDEX_TASK' ) && DGWT_WCAS_READABLE_INDEX_TASK ) ||
-			( defined( 'DGWT_WCAS_TAXONOMY_INDEX_TASK' ) && DGWT_WCAS_TAXONOMY_INDEX_TASK ) ||
-			( defined( 'DGWT_WCAS_VENDOR_INDEX_TASK' ) && DGWT_WCAS_VENDOR_INDEX_TASK )
+			( defined( 'PSF_SEARCH_PREPARE_BUILD_INDEX' ) && PSF_SEARCH_PREPARE_BUILD_INDEX ) ||
+			( defined( 'PSF_SEARCH_BUILD_INDEX_PROCESS' ) && PSF_SEARCH_BUILD_INDEX_PROCESS ) ||
+			( defined( 'PSF_SEARCH_SEARCHABLE_INDEX_TASK' ) && PSF_SEARCH_SEARCHABLE_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_READABLE_INDEX_TASK' ) && PSF_SEARCH_READABLE_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_TAXONOMY_INDEX_TASK' ) && PSF_SEARCH_TAXONOMY_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_VENDOR_INDEX_TASK' ) && PSF_SEARCH_VENDOR_INDEX_TASK )
 		) {
 			return true;
 		}
@@ -2366,14 +2312,14 @@ class Helpers {
 	}
 
 	/**
-	 * Get names of all FiboSearch options
+	 * Get names of all PSF Search options
 	 *
 	 * @return array
 	 */
 	public static function getAllOptionNames() {
 		global $wpdb;
 		$options = [];
-		$res     = $wpdb->get_col( "SELECT SQL_NO_CACHE option_name FROM $wpdb->options WHERE option_name LIKE 'dgwt_wcas_%'" );
+		$res     = $wpdb->get_col( "SELECT SQL_NO_CACHE option_name FROM $wpdb->options WHERE option_name LIKE 'psf_search_%'" );
 
 		if ( ! empty( $res ) && is_array( $res ) ) {
 			$options = $res;
@@ -2416,7 +2362,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function shopManagerHasAccess() {
-		return defined( 'DGWT_WCAS_ALLOW_SHOP_MANAGER_ACCESS' ) && DGWT_WCAS_ALLOW_SHOP_MANAGER_ACCESS;
+		return defined( 'PSF_SEARCH_ALLOW_SHOP_MANAGER_ACCESS' ) && PSF_SEARCH_ALLOW_SHOP_MANAGER_ACCESS;
 	}
 
 	/**
@@ -2566,7 +2512,7 @@ class Helpers {
 			'y'   => 'i',
 		];
 
-		$greekLatinMap = apply_filters( 'dgwt/wcas/greeklish_map', $greekLatinMap );
+		$greekLatinMap = apply_filters( 'psf_search/greeklish_map', $greekLatinMap );
 
 		return strtr( mb_strtolower( $text ), $greekLatinMap );
 	}
@@ -2622,7 +2568,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function phraseContainsBlacklistedTerm( $phrase ) {
-		$blacklistedTerms = apply_filters( 'dgwt/wcas/blacklisted_terms', [] );
+		$blacklistedTerms = apply_filters( 'psf_search/blacklisted_terms', [] );
 		if ( is_array( $blacklistedTerms ) ) {
 			foreach ( $blacklistedTerms as $term ) {
 				if ( mb_stripos( $phrase, $term ) !== false ) {
@@ -2632,7 +2578,7 @@ class Helpers {
 		}
 
 		if (
-			apply_filters( 'dgwt/wcas/blacklisted_terms/check_js', true ) &&
+			apply_filters( 'psf_search/blacklisted_terms/check_js', true ) &&
 			self::containsJsScript( $phrase )
 		) {
 			return true;
@@ -2708,7 +2654,7 @@ class Helpers {
 	public static function secureHtmlOutput( $html, $context = '' ) {
 		$output = wp_kses_post( $html );
 
-		return apply_filters( 'dgwt/wcas/secure_html_output', $output, $context, $html );
+		return apply_filters( 'psf_search/secure_html_output', $output, $context, $html );
 	}
 
 	/**
@@ -2854,21 +2800,21 @@ AND    post_status = 'publish'
 	 */
 	public static function getVariationSupportModes__premium_only() {
 		$variationSupportModes = [];
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_sku' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_sku' ) === 'on' ) {
 			$variationSupportModes[] = 'search_in_sku';
-			$installDate             = get_option( 'dgwt_wcas_activation_date' );
+			$installDate             = get_option( 'psf_search_activation_date' );
 			if ( ! empty( $installDate ) && $installDate < strtotime( '2024-10-28' ) ) {
 				$variationSupportModes[] = 'exact_match';
 			}
 		}
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_global_unique_id' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_global_unique_id' ) === 'on' ) {
 			$variationSupportModes[] = 'search_in_global_unique_id';
-			$installDate             = get_option( 'dgwt_wcas_activation_date' );
+			$installDate             = get_option( 'psf_search_activation_date' );
 			if ( ! empty( $installDate ) && $installDate < strtotime( '2024-10-28' ) ) {
 				$variationSupportModes[] = 'exact_match';
 			}
 		}
-		$variationSupportModes = apply_filters( 'dgwt/wcas/variation_support_modes', $variationSupportModes );
+		$variationSupportModes = apply_filters( 'psf_search/variation_support_modes', $variationSupportModes );
 
 		return array_intersect(
 			$variationSupportModes,
@@ -2885,13 +2831,13 @@ AND    post_status = 'publish'
 	 * Check if autocomplete suggestions have to be grouped.
 	 * Previously, the option show_grouped_results was available, but it has been removed.
 	 * Starting from version v1.30.0, result grouping in autocomplete is enforced for all users.
-	 * Grouping can now only be disabled via the dgwt/wcas/grouped_autocomplete_suggestions filter.
+	 * Grouping can now only be disabled via the psf_search/grouped_autocomplete_suggestions filter.
 	 *
 	 * @return bool
 	 * @since 1.30.0
 	 */
 	public static function canGroupSuggestions(): bool {
-		return apply_filters( 'dgwt/wcas/grouped_autocomplete_suggestions', true );
+		return apply_filters( 'psf_search/grouped_autocomplete_suggestions', true );
 	}
 
 	/**
@@ -3034,57 +2980,57 @@ AND    post_status = 'publish'
 	}
 
 	/**
-	 * Check if "nofibosearch" mode is active
+	 * Check if "nopsfsearch" mode is active
 	 *
 	 * @return bool
 	 */
-	public static function isNoFiboSearchModeActive() {
-		return isset( $_GET['nofibosearch'] ) && $_GET['nofibosearch'] === '1' // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					|| apply_filters( 'dgwt/wcas/nofibosearch', '' ) === '1';
+	public static function isNoPsfSearchModeActive() {
+		return isset( $_GET['nopsfsearch'] ) && $_GET['nopsfsearch'] === '1' // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					|| apply_filters( 'psf_search/nopsfsearch', '' ) === '1';
 	}
 
 	/**
-	 * Check if FiboDebug mode is enabled for a specific key
+	 * Check if PsfDebug mode is enabled for a specific key
 	 *
 	 * @param string $key
 	 *
 	 * @return bool
 	 */
-	public static function isFiboDebugEnabled( string $key ): bool {
+	public static function isPsfDebugEnabled( string $key ): bool {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['fibodebug'] ) ) {
+		if ( ! isset( $_GET['psfdebug'] ) ) {
 			return false;
 		}
 
-		$debugFlags = array_map( 'trim', explode( ',', $_GET['fibodebug'] ) );
+		$debugFlags = array_map( 'trim', explode( ',', $_GET['psfdebug'] ) );
 		//phpcs:enable
 		return in_array( $key, $debugFlags, true );
 	}
 
 	/**
-	 * Maybe enable FiboDebug mode for a specific debug key (e.g. 'score', 'nofuzzy').
+	 * Maybe enable PsfDebug mode for a specific debug key (e.g. 'score', 'nofuzzy').
 	 *
 	 * This will add a hidden input field to the search form and a custom parameter to search requests.
 	 */
-	public static function maybeInjectFiboDebugFields( string $key ): void {
-		if ( ! self::isFiboDebugEnabled( $key ) ) {
+	public static function maybeInjectPsfDebugFields( string $key ): void {
+		if ( ! self::isPsfDebugEnabled( $key ) ) {
 			return;
 		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		add_action(
-			'dgwt/wcas/form',
+			'psf_search/form',
 			function () {
 				printf(
-					'<input type="hidden" name="fibodebug" value="%s"/>',
-					esc_attr( $_GET['fibodebug'] )
+					'<input type="hidden" name="psfdebug" value="%s"/>',
+					esc_attr( $_GET['psfdebug'] )
 				);
 			}
 		);
 
 		add_filter(
-			'dgwt/wcas/search_bar/custom_params',
+			'psf_search/search_bar/custom_params',
 			function ( $params ) {
-				$params['fibodebug'] = $_GET['fibodebug'];
+				$params['psfdebug'] = $_GET['psfdebug'];
 
 				return $params;
 			}
