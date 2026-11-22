@@ -36,14 +36,6 @@ class Scripts {
 		// Enqueue
 		wp_enqueue_style( 'psfs-style' );
 
-		// Don't localize script if AMP is active
-		if ( Helpers::isAMPEndpoint() ) {
-			wp_register_style( 'psfs-style-amp', apply_filters( 'psfs/scripts/css_style_amp_url', PSFS_URL . 'assets/css/style-amp' . $min . '.css' ), [], PSFS_VERSION );
-			wp_enqueue_style( 'psfs-style-amp' );
-
-			return;
-		}
-
 		$localize = Helpers::getScriptsSettings();
 
 		wp_localize_script( 'jquery-psfs', 'psfs', $localize );
