@@ -309,7 +309,7 @@ abstract class AbstractDocument {
 		$text      = Utils::appendJoinedText( $key, $text );
 		$text      = Utils::replaceSpecialCharacters( $text );
 		$text      = $this->synonymsHandler->applySynonyms( $text );
-		$stopwords = apply_filters( 'psfs/indexer/searchable/stopwords', [], $this->getType(), $this->getID(), $this->getLang() );
+		$stopwords = apply_filters( 'psf_search/indexer/searchable/stopwords', [], $this->getType(), $this->getID(), $this->getLang() );
 		$words     = $this->tokenizer->tokenize( $text, $stopwords );
 		$stems     = [];
 		foreach ( $words as $word ) {
@@ -317,7 +317,7 @@ abstract class AbstractDocument {
 				$stems[] = $this->stemmer->stem( $word );
 			}
 		}
-		if ( ! empty( $stems ) && apply_filters( 'psfs/indexer/searchable/convert_to_greeklish', true ) ) {
+		if ( ! empty( $stems ) && apply_filters( 'psf_search/indexer/searchable/convert_to_greeklish', true ) ) {
 			foreach ( $stems as $stem ) {
 				if ( Helpers::isGreekText__premium_only( $stem ) ) {
 					$greeklish = Helpers::convertToGreeklish__premium_only( Helpers::removeGreekAccents( $stem ) );

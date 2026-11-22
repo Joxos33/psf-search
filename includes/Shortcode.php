@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Shortcode {
 
 	public static function register() {
-		add_shortcode( 'psfs-search-form', [ __CLASS__, 'addBody' ] );
+		add_shortcode( 'psf-search-search-form', [ __CLASS__, 'addBody' ] );
 		add_shortcode( 'psfsearch', [ __CLASS__, 'addBody' ] );
 		add_shortcode( 'psfsearch_posts_results', [ __CLASS__, 'psfsearchPostsResultsBody__premium_only' ] );
 	}
@@ -50,7 +50,7 @@ class Shortcode {
 
 		$searchArgs['class'] .= empty( $searchArgs['class'] ) ? 'woocommerce' : ' woocommerce';
 
-		$args = apply_filters( 'psfs/shortcode/args', $searchArgs );
+		$args = apply_filters( 'psf_search/shortcode/args', $searchArgs );
 
 		return self::getForm( $args );
 	}
@@ -66,8 +66,8 @@ class Shortcode {
 	public static function getForm( $args ) {
 		// Enqueue required scripts (only if AMP is not active)
 		if ( ! Helpers::isAMPEndpoint() ) {
-			wp_enqueue_script( 'jquery-psfs' );
-			if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+			wp_enqueue_script( 'jquery-psf_search' );
+			if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
 				wp_enqueue_script( 'woocommerce-general' );
 			}
 		}
@@ -76,11 +76,11 @@ class Shortcode {
 
 		$args = self::applyCondtitionalFormArgs( $args );
 
-		$filename = apply_filters( 'psfs/form/partial_path', PSFS_DIR . 'partials/search-form.php' );
+		$filename = apply_filters( 'psf_search/form/partial_path', PSF_SEARCH_DIR . 'partials/search-form.php' );
 
 		$html = self::getTemplatePart( $filename, $args );
 
-		return apply_filters( 'psfs/form/html', $html, $args );
+		return apply_filters( 'psf_search/form/html', $html, $args );
 	}
 
 	/**
@@ -122,7 +122,7 @@ class Shortcode {
 			$shortcodeArgs['headline'] = sprintf( __( 'Search results for %s:', 'psf-search' ), $pluralPostTypeLabel );
 		}
 
-		$args = apply_filters( 'psfs/shortcode/psfsearch_posts_results/args', $shortcodeArgs );
+		$args = apply_filters( 'psf_search/shortcode/psfsearch_posts_results/args', $shortcodeArgs );
 
 		if ( ! in_array( $args['layout'], [ 'list', 'grid' ] ) ) {
 			return '';
@@ -130,7 +130,7 @@ class Shortcode {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$phrase = $_GET['s'] ?? ''; // PSF Search takes care of the security of the phrase on its side.
 
-		$results = PSFS()->searchPosts(
+		$results = PSF_SEARCH()->searchPosts(
 			$phrase,
 			[
 				'post_type' => $args['post_type'],
@@ -147,7 +147,7 @@ class Shortcode {
 
 		$args['results'] = $results;
 
-		$filename = apply_filters( 'psfs/shortcode/psfsearch_posts_results/partial_path', PSFS_DIR . 'partials/search-results-page/posts-results.php' );
+		$filename = apply_filters( 'psf_search/shortcode/psfsearch_posts_results/partial_path', PSF_SEARCH_DIR . 'partials/search-results-page/posts-results.php' );
 
 		return self::getTemplatePart( $filename, $args );
 	}

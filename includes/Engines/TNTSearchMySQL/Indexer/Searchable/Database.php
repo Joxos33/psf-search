@@ -25,18 +25,18 @@ class Database {
 	public static function registerTables() {
 		global $wpdb;
 
-		$wpdb->psfs_si_wordlist = $wpdb->prefix . Config::SEARCHABLE_INDEX_WORDLIST;
-		if ( Helpers::isTableExists( $wpdb->psfs_si_wordlist ) ) {
+		$wpdb->psf_search_si_wordlist = $wpdb->prefix . Config::SEARCHABLE_INDEX_WORDLIST;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_wordlist ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_WORDLIST;
 		}
 
-		$wpdb->psfs_si_doclist = $wpdb->prefix . Config::SEARCHABLE_INDEX_DOCLIST;
-		if ( Helpers::isTableExists( $wpdb->psfs_si_doclist ) ) {
+		$wpdb->psf_search_si_doclist = $wpdb->prefix . Config::SEARCHABLE_INDEX_DOCLIST;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_doclist ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_DOCLIST;
 		}
 
-		$wpdb->psfs_si_cache = $wpdb->prefix . Config::SEARCHABLE_INDEX_CACHE;
-		if ( Helpers::isTableExists( $wpdb->psfs_si_cache ) ) {
+		$wpdb->psf_search_si_cache = $wpdb->prefix . Config::SEARCHABLE_INDEX_CACHE;
+		if ( Helpers::isTableExists( $wpdb->psf_search_si_cache ) ) {
 			$wpdb->tables[] = Config::SEARCHABLE_INDEX_CACHE;
 		}
 	}
@@ -64,7 +64,7 @@ class Database {
 			$doclistTableName = Utils::getTableName( 'searchable_doclist', $lang ) . Config::getIndexRoleSuffix();
 			WPDB::get_instance()->query( "CREATE INDEX main_term_id_index ON $doclistTableName(term_id);" );
 			WPDB::get_instance()->query( "CREATE INDEX main_doc_id_index ON $doclistTableName(doc_id);" );
-			if ( defined( 'PSFS_INDEXER_EXTENDED_DOCLIST_INDEX' ) && PSFS_INDEXER_EXTENDED_DOCLIST_INDEX ) {
+			if ( defined( 'PSF_SEARCH_INDEXER_EXTENDED_DOCLIST_INDEX' ) && PSF_SEARCH_INDEXER_EXTENDED_DOCLIST_INDEX ) {
 				WPDB::get_instance()->query( "CREATE INDEX main_doc_id_term_id_index ON $doclistTableName(doc_id,term_id);" );
 			}
 
@@ -88,9 +88,9 @@ class Database {
 			foreach ( $tables as $table ) {
 				if (
 					(
-						strpos( $table, 'psfs_invindex_doclist' ) !== false
-						|| strpos( $table, 'psfs_invindex_wordlist' ) !== false
-						|| strpos( $table, 'psfs_invindex_cache' ) !== false
+						strpos( $table, 'psf_search_invindex_doclist' ) !== false
+						|| strpos( $table, 'psf_search_invindex_wordlist' ) !== false
+						|| strpos( $table, 'psf_search_invindex_cache' ) !== false
 					)
 					&& Helpers::endsWith( $table, $indexRoleSuffix )
 				) {

@@ -107,7 +107,7 @@ class ProductVariation extends Product {
 
 		// Let authorized users preview details regardless of public visibility.
 		if ( current_user_can( 'edit_post', $parentId ) || current_user_can( 'edit_post', $variationId ) ) {
-			return (bool) apply_filters( 'psfs/product_variation/can_show_in_details_panel', true, $this, $parent );
+			return (bool) apply_filters( 'psf_search/product_variation/can_show_in_details_panel', true, $this, $parent );
 		}
 
 		// Delegate parent visibility/permissions; stock is checked on the variation level.
@@ -122,14 +122,14 @@ class ProductVariation extends Product {
 			// Respect "exclude out of stock" setting for public users (variation-level).
 			if (
 				$canShow
-				&& PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
+				&& PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
 				&& ! $variation->is_in_stock()
 			) {
 				$canShow = false;
 			}
 		}
 
-		return (bool) apply_filters( 'psfs/product_variation/can_show_in_details_panel', $canShow, $this, $parent );
+		return (bool) apply_filters( 'psf_search/product_variation/can_show_in_details_panel', $canShow, $this, $parent );
 	}
 
 	/**
@@ -162,7 +162,7 @@ class ProductVariation extends Product {
 			}
 		}
 
-		return apply_filters( 'psfs/product/variation_attributes', $formattedAttributes );
+		return apply_filters( 'psf_search/product/variation_attributes', $formattedAttributes );
 	}
 
 	/**
@@ -193,7 +193,7 @@ class ProductVariation extends Product {
 		}
 
 		if (
-			PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
+			PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
 			&& ! $this->getWooObject()->is_in_stock()
 		) {
 			return false;

@@ -85,7 +85,7 @@ class TaxQuery {
 		//phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$taxonomies = $wpdb->get_col( "SELECT DISTINCT(taxonomy) FROM $this->taxTable" );
 
-		$this->taxonomies = apply_filters( 'psfs/tnt/search_taxonomies', $taxonomies );
+		$this->taxonomies = apply_filters( 'psf_search/tnt/search_taxonomies', $taxonomies );
 	}
 
 	/**
@@ -153,16 +153,16 @@ class TaxQuery {
 					'term_id'     => $item->term_id,
 					'taxonomy'    => $item->taxonomy,
 					'value'       => html_entity_decode( $item->term_name ),
-					'url'         => apply_filters( 'psfs/search_results/term/url', $item->term_link, $phrase, $item ),
+					'url'         => apply_filters( 'psf_search/search_results/term/url', $item->term_link, $phrase, $item ),
 					'image_src'   => $showImage && ! empty( $item->image ) ? esc_url( $item->image ) : '',
 					'breadcrumbs' => $item->breadcrumbs,
 					'count'       => $item->total_products,
 					'type'        => 'taxonomy',
-					'score'       => apply_filters( 'psfs/search_results/term/score', $score, $phrase, $item ),
+					'score'       => apply_filters( 'psf_search/search_results/term/score', $score, $phrase, $item ),
 					'meta'        => isset( $item->meta ) ? maybe_unserialize( $item->meta ) : [],
 				];
 
-				$groups[ $item->taxonomy ][] = apply_filters( 'psfs/search_results/term', $data, $phrase, $this->lang );
+				$groups[ $item->taxonomy ][] = apply_filters( 'psf_search/search_results/term', $data, $phrase, $this->lang );
 			}
 		}
 
@@ -173,6 +173,6 @@ class TaxQuery {
 			}
 		}
 
-		return apply_filters( 'psfs/tnt/search_results/taxonomies', $results, $phrase, $this->lang );
+		return apply_filters( 'psf_search/tnt/search_results/taxonomies', $results, $phrase, $this->lang );
 	}
 }

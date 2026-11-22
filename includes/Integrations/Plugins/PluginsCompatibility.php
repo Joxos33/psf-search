@@ -22,13 +22,13 @@ class PluginsCompatibility {
 
 	public function getIntegrationClasses(): array {
 		$integrationClasses = [];
-		$directories        = glob( PSFS_DIR . 'includes/Integrations/Plugins/*', GLOB_ONLYDIR );
+		$directories        = glob( PSF_SEARCH_DIR . 'includes/Integrations/Plugins/*', GLOB_ONLYDIR );
 
-		$directories = apply_filters( 'psfs/plugins_compatibility/directories', $directories );
+		$directories = apply_filters( 'psf_search/plugins_compatibility/directories', $directories );
 
 		if ( ! empty( $directories ) && is_array( $directories ) ) {
 			foreach ( $directories as $dir ) {
-				$name     = str_replace( PSFS_DIR . 'includes/Integrations/Plugins/', '', $dir );
+				$name     = str_replace( PSF_SEARCH_DIR . 'includes/Integrations/Plugins/', '', $dir );
 				$filename = $name . '.php';
 
 				$file  = $dir . '/' . $filename;

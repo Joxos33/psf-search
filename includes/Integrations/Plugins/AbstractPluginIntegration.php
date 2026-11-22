@@ -54,7 +54,7 @@ abstract class AbstractPluginIntegration {
 		}
 
 		add_filter(
-			'psfs/troubleshooting/unsupported_plugin_versions',
+			'psf_search/troubleshooting/unsupported_plugin_versions',
 			function ( $list ) use ( $currentVersion, $minVersion ) {
 				$list[] = [
 					'name'           => static::label(),

@@ -1,6 +1,6 @@
 <?php
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 ?>

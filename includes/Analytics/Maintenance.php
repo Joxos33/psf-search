@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Maintenance {
-	const HOOK                         = 'psfs_analytics_maintenance';
+	const HOOK                         = 'psf_search_analytics_maintenance';
 	const ANALYTICS_EXPIRATION_IN_DAYS = 30;
 
 	public function init() {
@@ -56,10 +56,10 @@ class Maintenance {
 		$expiration = self::ANALYTICS_EXPIRATION_IN_DAYS;
 
 		if (
-			defined( 'PSFS_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
-			intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
+			defined( 'PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
+			intval( PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
 		) {
-			$expiration = intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS );
+			$expiration = intval( PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS );
 		}
 
 		Database::wipeOldRecords( $expiration );

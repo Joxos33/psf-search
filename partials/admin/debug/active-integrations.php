@@ -3,7 +3,7 @@
 use PsfSearch\Integrations\Plugins\AbstractPluginIntegration;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
@@ -11,7 +11,7 @@ $plugins        = new \PsfSearch\Integrations\Plugins\PluginsCompatibility();
 $pluginsClasses = $plugins->getIntegrationClasses();
 ?>
 
-<div class="psfs-debug psfs-debug-active-integrations">
+<div class="psf-search-debug psf-search-debug-active-integrations">
 	<h3>Active integrations with the plugins</h3>
 
 	<table class="widefat striped">

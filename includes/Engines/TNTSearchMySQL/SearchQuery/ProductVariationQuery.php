@@ -179,7 +179,7 @@ class ProductVariationQuery {
 				'post_id'      => $this->result->post_or_parent_id,
 				'variation_id' => $this->result->post_id,
 				'value'        => $this->result->name,
-				'url'          => apply_filters( 'psfs/search_results/product_variation/url', $this->result->url, $this->phrase, $this->result ),
+				'url'          => apply_filters( 'psf_search/search_results/product_variation/url', $this->result->url, $this->phrase, $this->result ),
 				'thumb_html'   => '<img src="' . esc_url( $this->result->image ) . '">',
 				'price'        => $this->result->html_price,
 				'desc'         => $this->result->description,

@@ -53,7 +53,7 @@ class AjaxQuery extends MainQuery {
 
 		// Add "No results" suggestion if all results have been removed in earlier filters.
 		add_filter(
-			'psfs/search_results/output',
+			'psf_search/search_results/output',
 			[
 				'PsfSearch\Helpers',
 				'noResultsSuggestion',
@@ -86,12 +86,12 @@ class AjaxQuery extends MainQuery {
 		if ( $engine === 'pro' ) {
 			$output['tntTime'] = '0.0000 s';
 		}
-		$output['time'] = number_format( microtime( true ) - PSFS_SEARCH_START, 4, '.', '' );
+		$output['time'] = number_format( microtime( true ) - PSF_SEARCH_SEARCH_START, 4, '.', '' );
 
 		$output['engine'] = $engine;
 		$output['v']      = Helpers::getPluginVersion__premium_only();
 
-		echo json_encode( apply_filters( 'psfs/search_results/output', $output ) );
+		echo json_encode( apply_filters( 'psf_search/search_results/output', $output ) );
 		exit();
 	}
 
@@ -102,7 +102,7 @@ class AjaxQuery extends MainQuery {
 			'engine'  => $engine,
 		];
 
-		echo json_encode( apply_filters( 'psfs/search_results/output/product_ids_only', $output ) );
+		echo json_encode( apply_filters( 'psf_search/search_results/output/product_ids_only', $output ) );
 		exit();
 	}
 
@@ -117,7 +117,7 @@ class AjaxQuery extends MainQuery {
 		$output               = [];
 		$hits                 = 0;
 		$this->groups         = $this->searchResultsGroups();
-		$this->flexibleLimits = apply_filters( 'psfs/flexible_limits', true );
+		$this->flexibleLimits = apply_filters( 'psf_search/flexible_limits', true );
 		$this->showHeadings   = Helpers::canGroupSuggestions();
 		$totalProducts        = 0;
 
@@ -135,8 +135,8 @@ class AjaxQuery extends MainQuery {
 			if ( array_key_exists( $key, $this->groups ) && empty( $this->groups[ $key ]['full'] ) ) {
 				$limit = $this->flexibleLimits ? $this->totalLimit : $this->groups[ $key ]['limit'];
 
-				$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/taxonomy', $suggestion, $suggestion['taxonomy'] );
-				$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/' . $key, $outputData );
+				$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/taxonomy', $suggestion, $suggestion['taxonomy'] );
+				$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/' . $key, $outputData );
 
 				if ( isset( $outputData['meta'] ) ) {
 					unset( $outputData['meta'] );
@@ -170,8 +170,8 @@ class AjaxQuery extends MainQuery {
 						unset( $outputData['meta'] );
 					}
 
-					$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/' . $postType, $outputData, $suggestion );
-					$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/' . $key, $outputData, $suggestion );
+					$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/' . $postType, $outputData, $suggestion );
+					$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/' . $key, $outputData, $suggestion );
 
 					$this->groups[ $key ]['results'][] = $outputData;
 
@@ -183,7 +183,7 @@ class AjaxQuery extends MainQuery {
 		}
 
 		// Products
-		if ( apply_filters( 'psfs/search_in_products', true ) ) {
+		if ( apply_filters( 'psf_search/search_in_products', true ) ) {
 			$products      = $this->getProducts();
 			$productsSlots = $this->flexibleLimits ? $this->totalLimit : $this->groups['product']['limit'];
 
@@ -194,7 +194,7 @@ class AjaxQuery extends MainQuery {
 				$outputData = [
 					'post_id'    => $suggestion->post_id,
 					'value'      => html_entity_decode( $suggestion->name ),
-					'url'        => apply_filters( 'psfs/search_results/product/url', $suggestion->url, $this->getPhrase(), $suggestion ),
+					'url'        => apply_filters( 'psf_search/search_results/product/url', $suggestion->url, $this->getPhrase(), $suggestion ),
 					'thumb_html' => '<img src="' . esc_url( $suggestion->image ) . '">',
 					'price'      => $suggestion->html_price,
 					'desc'       => $suggestion->description,
@@ -213,7 +213,7 @@ class AjaxQuery extends MainQuery {
 					$outputData['score'] = round( $suggestion->score, 2 );
 				}
 
-				$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/product', $outputData, $suggestion );
+				$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/product', $outputData, $suggestion );
 
 				$this->groups['product']['results'][] = $outputData;
 
@@ -231,14 +231,14 @@ class AjaxQuery extends MainQuery {
 				$varQuery = new ProductVariationQuery( $this->getPhrase(), $ids, 'sku', $this->getLang() );
 
 				if ( $varQuery->hasResults() ) {
-					$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/product_variation', $varQuery->getSuggestionBody() );
+					$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/product_variation', $varQuery->getSuggestionBody() );
 					array_unshift( $this->groups['product']['results'], $outputData );
 					// phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found
 					$hits += 1;
 				} else {
 					$varQuery = new ProductVariationQuery( $this->getPhrase(), $ids, 'global_unique_id', $this->getLang() );
 					if ( $varQuery->hasResults() ) {
-						$outputData = apply_filters( 'psfs/tnt/search_results/suggestion/product_variation', $varQuery->getSuggestionBody() );
+						$outputData = apply_filters( 'psf_search/tnt/search_results/suggestion/product_variation', $varQuery->getSuggestionBody() );
 						array_unshift( $this->groups['product']['results'], $outputData );
 						// phpcs:ignore Squiz.Operators.IncrementDecrementUsage.Found
 						$hits += 1;
@@ -251,7 +251,7 @@ class AjaxQuery extends MainQuery {
 		}
 
 		// Analytics
-		do_action( 'psfs/analytics/after_searching', $this->getPhrase(), $hits, $this->getLang() );
+		do_action( 'psf_search/analytics/after_searching', $this->getPhrase(), $hits, $this->getLang() );
 
 		$this->orderGroups();
 
@@ -267,13 +267,13 @@ class AjaxQuery extends MainQuery {
 		$output['total']       = $hits;
 
 		$output['tntTime'] = number_format( $this->tntTime / 1000, 4, '.', '' ) . ' s';
-		$output['time']    = number_format( microtime( true ) - PSFS_SEARCH_START, 4, '.', '' ) . ' s';
+		$output['time']    = number_format( microtime( true ) - PSF_SEARCH_SEARCH_START, 4, '.', '' ) . ' s';
 
 		$output['engine'] = 'pro';
 		$output['v']      = Helpers::getPluginVersion__premium_only();
 
-		$output = apply_filters( 'psfs/search_results/output', $output );
-		$output = apply_filters( 'psfs/tnt/search_results/output', $output );
+		$output = apply_filters( 'psf_search/search_results/output', $output );
+		$output = apply_filters( 'psf_search/tnt/search_results/output', $output );
 
 		echo json_encode( $output );
 
@@ -295,12 +295,12 @@ class AjaxQuery extends MainQuery {
 			'total'   => $this->getTotalFound(),
 			'results' => $results,
 			'tntTime' => number_format( $this->tntTime / 1000, 4, '.', '' ) . ' s',
-			'time'    => number_format( microtime( true ) - PSFS_SEARCH_START, 4, '.', '' ) . ' s',
+			'time'    => number_format( microtime( true ) - PSF_SEARCH_SEARCH_START, 4, '.', '' ) . ' s',
 			'engine'  => 'pro',
 			'v'       => Helpers::getPluginVersion__premium_only(),
 		];
 
-		$output = apply_filters( 'psfs/search_results/output/product_ids_only', $output );
+		$output = apply_filters( 'psf_search/search_results/output/product_ids_only', $output );
 
 		echo json_encode( $output );
 		die();
@@ -335,7 +335,7 @@ class AjaxQuery extends MainQuery {
 	 * @return void
 	 */
 	private function maybeApplyMoreProductsLink( $totalProducts ) {
-		$showMoreProductsLink = apply_filters( 'psfs/search_results/show_more_products_link', false );
+		$showMoreProductsLink = apply_filters( 'psf_search/search_results/show_more_products_link', false );
 
 		if (
 			! empty( $this->groups['product']['results'] ) &&
@@ -374,7 +374,7 @@ class AjaxQuery extends MainQuery {
 		}
 
 		// Remove products headline when there are only product type suggestion
-		$alwaysShowProductHeadline = apply_filters( 'psfs/search_results/always_show_product_headline', false );
+		$alwaysShowProductHeadline = apply_filters( 'psf_search/search_results/always_show_product_headline', false );
 
 		if ( ! $alwaysShowProductHeadline && $totalHeadlines === 1 ) {
 			$i     = 0;
@@ -519,7 +519,7 @@ class AjaxQuery extends MainQuery {
 			];
 		}
 
-		$groups = apply_filters( 'psfs/search_groups', $groups );
+		$groups = apply_filters( 'psf_search/search_groups', $groups );
 
 		// Change post type keys to post_type_{$postType}.
 		$activePostTypes = Builder::getInfo( 'active_post_types' );

@@ -3,7 +3,7 @@
  * Exit if accessed directly
  */
 
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
@@ -37,8 +37,8 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 	</div>
 <?php endif; ?>
 
-<div class="js-psfs-indexer-details<?php echo $isDetails ? ' show' : ' hide'; ?>">
-	<table class="psfs-indexer-table js-psfs-indexer-table js-psfs-indexer-table">
+<div class="js-psf-search-indexer-details<?php echo $isDetails ? ' show' : ' hide'; ?>">
+	<table class="psf-search-indexer-table js-psf-search-indexer-table js-psf-search-indexer-table">
 		<tbody>
 		<tr>
 			<td><?php _e( 'Build ID', 'psf-search' ); ?></td>
@@ -69,7 +69,7 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		<tr>
 			<td><?php _e( 'Searchable', 'psf-search' ); ?></td>
 			<td>
-				<table class="psfs-indexer-table__in">
+				<table class="psf-search-indexer-table__in">
 					<tr>
 						<td><?php _e( 'Start', 'psf-search' ); ?></td>
 						<td><?php echo ! empty( $info['start_searchable_ts'] ) ? date( 'H:i:s', $info['start_searchable_ts'] ) : '-'; ?></td>
@@ -91,7 +91,7 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		<tr>
 			<td><?php _e( 'Readable', 'psf-search' ); ?></td>
 			<td>
-				<table class="psfs-indexer-table__in">
+				<table class="psf-search-indexer-table__in">
 					<tbody>
 					<tr>
 						<td><?php _e( 'Start', 'psf-search' ); ?></td>
@@ -116,7 +116,7 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 			<tr>
 				<td><?php _e( 'Taxonomies', 'psf-search' ); ?></td>
 				<td>
-					<table class="psfs-indexer-table__in">
+					<table class="psf-search-indexer-table__in">
 						<tbody>
 						<tr>
 							<td><?php _e( 'Start', 'psf-search' ); ?></td>
@@ -141,11 +141,11 @@ if ( in_array( $info['status'], [ 'building', 'done' ] ) ) : ?>
 		</tbody>
 	</table>
 
-	<div class="psfs-indexer-logs">
+	<div class="psf-search-indexer-logs">
 		<h4><?php _e( 'Logs', 'psf-search' ); ?></h4>
 		<?php
 		foreach ( $logs as $log ) {
-			$class = $log['error'] ? 'psfs-indexer-log psfs-indexer-logs__error' : 'psfs-indexer-log';
+			$class = $log['error'] ? 'psf-search-indexer-log psf-search-indexer-logs__error' : 'psf-search-indexer-log';
 			echo '<span class="' . $class . '">[' . date( 'Y-m-d H:i:s', $log['time'] ) . '] ' . $log['message'] . '</span>';
 		}
 		?>

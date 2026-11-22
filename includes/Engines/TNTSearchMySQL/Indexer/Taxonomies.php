@@ -14,20 +14,20 @@ class Taxonomies {
 	private $taxonomies;
 
 	public function init() {
-		add_filter( 'psfs/labels', [ $this, 'setTaxonomiesLabels' ], 5 );
-		add_filter( 'psfs/labels', [ $this, 'fixTaxonomiesLabels' ], PHP_INT_MAX - 5 );
-		add_filter( 'psfs/taxonomies_with_images', [ $this, 'taxonomiesWithImages' ] );
+		add_filter( 'psf_search/labels', [ $this, 'setTaxonomiesLabels' ], 5 );
+		add_filter( 'psf_search/labels', [ $this, 'fixTaxonomiesLabels' ], PHP_INT_MAX - 5 );
+		add_filter( 'psf_search/taxonomies_with_images', [ $this, 'taxonomiesWithImages' ] );
 
-		add_filter( 'psfs/settings/section=search', [ $this, 'addCustomTaxonomiesToSearchSettings' ] );
+		add_filter( 'psf_search/settings/section=search', [ $this, 'addCustomTaxonomiesToSearchSettings' ] );
 		add_filter(
-			'psfs/settings/section=autocomplete',
+			'psf_search/settings/section=autocomplete',
 			[
 				$this,
 				'addCustomTaxonomiesToAutocompleteSettings',
 			]
 		);
 
-		add_action( 'psfs/settings/option_updated', [ $this, 'listenForSettingsChange' ], 10, 1 );
+		add_action( 'psf_search/settings/option_updated', [ $this, 'listenForSettingsChange' ], 10, 1 );
 	}
 
 	/**
@@ -170,11 +170,11 @@ class Taxonomies {
 
 		// Brand. Old: 'brand', 'brand_plu'.
 		if ( isset( $labels['brand'] ) ) {
-			$labels[ 'tax_' . PSFS()->brands->getBrandTaxonomy() ] = $labels['brand'];
+			$labels[ 'tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() ] = $labels['brand'];
 			unset( $labels['brand'] );
 		}
 		if ( isset( $labels['brand_plu'] ) ) {
-			$labels[ 'tax_' . PSFS()->brands->getBrandTaxonomy() . '_plu' ] = $labels['brand_plu'];
+			$labels[ 'tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() . '_plu' ] = $labels['brand_plu'];
 			unset( $labels['brand_plu'] );
 		}
 
@@ -204,8 +204,8 @@ class Taxonomies {
 		$basePosition = 280;
 
 		$skippedTaxonomies = [ 'product_cat', 'product_tag' ];
-		if ( PSFS()->brands->hasBrands() ) {
-			$skippedTaxonomies[] = PSFS()->brands->getBrandTaxonomy();
+		if ( PSF_SEARCH()->brands->hasBrands() ) {
+			$skippedTaxonomies[] = PSF_SEARCH()->brands->getBrandTaxonomy();
 		}
 
 		foreach ( $this->getTaxonomies() as $taxonomy ) {
@@ -216,7 +216,7 @@ class Taxonomies {
 			$settingsScope[ $basePosition ] = [
 				'name'    => 'search_in_product_tax_' . $taxonomy['taxonomy'],
 				'label'   => sprintf( __( 'Search in %s', 'psf-search' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
-				'class'   => 'psfs-premium-only',
+				'class'   => 'psf-search-premium-only',
 				'type'    => 'checkbox',
 				'default' => 'off',
 			];
@@ -229,7 +229,7 @@ class Taxonomies {
 				'name'      => 'show_product_tax_product_tag_images',
 				'label'     => __( 'show images', 'psf-search' ),
 				'type'      => 'checkbox',
-				'class'     => 'js-psfs-adv-settings psfs-premium-only',
+				'class'     => 'js-psf-search-adv-settings psf-search-premium-only',
 				'default'   => 'off',
 				'desc'      => __( 'show images', 'psf-search' ),
 				'move_dest' => 'show_product_tax_product_tag',
@@ -250,8 +250,8 @@ class Taxonomies {
 		$basePosition = 1350;
 
 		$skippedTaxonomies = [ 'product_cat', 'product_tag' ];
-		if ( PSFS()->brands->hasBrands() ) {
-			$skippedTaxonomies[] = PSFS()->brands->getBrandTaxonomy();
+		if ( PSF_SEARCH()->brands->hasBrands() ) {
+			$skippedTaxonomies[] = PSF_SEARCH()->brands->getBrandTaxonomy();
 		}
 
 		foreach ( $this->getTaxonomies() as $taxonomy ) {
@@ -262,7 +262,7 @@ class Taxonomies {
 			$settingsScope[ $basePosition ] = [
 				'name'    => 'show_product_tax_' . $taxonomy['taxonomy'],
 				'label'   => sprintf( __( 'Show %s', 'psf-search' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
-				'class'   => 'psfs-premium-only' . ( $taxonomy['image_support'] ? ' js-psfs-options-toggle-sibling' : '' ),
+				'class'   => 'psf-search-premium-only' . ( $taxonomy['image_support'] ? ' js-psf-search-options-toggle-sibling' : '' ),
 				'type'    => 'checkbox',
 				'default' => 'off',
 			];
@@ -273,7 +273,7 @@ class Taxonomies {
 				$settingsScope[ $basePosition ] = [
 					'name'      => 'show_product_tax_' . $taxonomy['taxonomy'] . '_images',
 					'label'     => __( 'show images', 'psf-search' ),
-					'class'     => 'psfs-premium-only',
+					'class'     => 'psf-search-premium-only',
 					'type'      => 'checkbox',
 					'default'   => 'off',
 					'desc'      => __( 'show images', 'psf-search' ),
@@ -317,7 +317,7 @@ class Taxonomies {
 			]
 		);
 
-		$taxonomies = apply_filters( 'psfs/indexer/taxonomies', [] );
+		$taxonomies = apply_filters( 'psf_search/indexer/taxonomies', [] );
 
 		if ( is_array( $taxonomies ) && ! empty( $taxonomies ) ) {
 			foreach ( $taxonomies as $taxonomy ) {
@@ -361,8 +361,8 @@ class Taxonomies {
 			'show_images'             => false,
 		];
 
-		$taxonomy = apply_filters( 'psfs/indexer/taxonomies/register-taxonomy', $taxonomy );
-		$taxonomy = apply_filters( 'psfs/indexer/taxonomies/register_taxonomy', $taxonomy );
+		$taxonomy = apply_filters( 'psf_search/indexer/taxonomies/register-taxonomy', $taxonomy );
+		$taxonomy = apply_filters( 'psf_search/indexer/taxonomies/register_taxonomy', $taxonomy );
 
 		// Taxonomy slug
 		if ( empty( $taxonomy['taxonomy'] ) || ! taxonomy_exists( $taxonomy['taxonomy'] ) ) {
@@ -391,9 +391,9 @@ class Taxonomies {
 			$taxonomyData['image_support'] = $taxonomy['image_support'];
 		}
 
-		$taxonomyData['search_direct']           = PSFS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
-		$taxonomyData['search_related_products'] = PSFS()->settings->getOption( 'search_in_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
-		$taxonomyData['show_images']             = PSFS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] . '_images' ) === 'on';
+		$taxonomyData['search_direct']           = PSF_SEARCH()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
+		$taxonomyData['search_related_products'] = PSF_SEARCH()->settings->getOption( 'search_in_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
+		$taxonomyData['show_images']             = PSF_SEARCH()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] . '_images' ) === 'on';
 
 		// Ensure we have proper container for taxonomies
 		if ( $this->taxonomies === null ) {

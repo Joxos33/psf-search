@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Storage handler for plugin data that shouldn't be stored in the wp_options table because of length.
  *
- * Creates, updates, deletes and retrieves records from the psfs_storage table
+ * Creates, updates, deletes and retrieves records from the psf_search_storage table
  * with optional object‑cache integration.
  */
 class Storage {
 
-	public const STORAGE_DB_NAME = 'psfs_storage';
+	public const STORAGE_DB_NAME = 'psf_search_storage';
 	public const DB_VERSION      = 1;
 
 	/**
@@ -74,7 +74,7 @@ class Storage {
 	public static function registerTables(): void {
 		global $wpdb;
 
-		$wpdb->psfs_storage = self::getTableName();
+		$wpdb->psf_search_storage = self::getTableName();
 		$wpdb->tables[]          = self::STORAGE_DB_NAME;
 	}
 
@@ -87,8 +87,8 @@ class Storage {
 	 * @return void
 	 */
 	public static function maybeCreate(): void {
-		if ( get_option( 'psfs_storage_db_version' ) !== self::DB_VERSION ) {
-			update_option( 'psfs_storage_db_version', self::DB_VERSION );
+		if ( get_option( 'psf_search_storage_db_version' ) !== self::DB_VERSION ) {
+			update_option( 'psf_search_storage_db_version', self::DB_VERSION );
 			self::create();
 		}
 	}

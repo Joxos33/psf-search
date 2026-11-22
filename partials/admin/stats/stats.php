@@ -4,10 +4,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="psfs-analytics-module-critical">
+<div class="psf-search-analytics-module-critical">
 	<h3><?php _e( 'Critical searches without result', 'psf-search' ); ?></h3>
 	<?php if ( ! empty( $vars['critical-searches'] ) ) : ?>
-		<p class="psfs-analytics-subtitle">
+		<p class="psf-search-analytics-subtitle">
 			<?php
 			// TODO
 			//phpcs:ignore WordPress.WP.I18n.MissingSingularPlaceholder,WordPress.WP.I18n.MismatchedPlaceholders
@@ -19,9 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			_e( "These phrases don`t return any search results. It's time to fix it.", 'psf-search' );
 			?>
 		</p>
-		<div class="psfs-analytics-module-critical-body">
+		<div class="psf-search-analytics-module-critical-body">
 			<div>
-				<table class="widefat fixed psfs-analytics-table">
+				<table class="widefat fixed psf-search-analytics-table">
 					<thead>
 					<tr>
 						<th>#</th>
@@ -34,16 +34,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					$i = 1;
 					foreach ( $vars['critical-searches'] as $row ) {
-						require PSFS_DIR . 'partials/admin/stats/critical-searches-row.php';
+						require PSF_SEARCH_DIR . 'partials/admin/stats/critical-searches-row.php';
 						$i ++;
 					}
 
 					if ( $vars['critical-searches-more'] > 0 ) :
 						?>
-						<tr class="psfs-analytics-load-more-row">
+						<tr class="psf-search-analytics-load-more-row">
 							<td colspan="4">
 								<div>
-						<span class="js-psfs-critical-searches-load-more">
+						<span class="js-psf-search-critical-searches-load-more">
 							<span><?php printf( _n( 'load another %d phrase', 'load another %d phrases', $vars['critical-searches-more'], 'psf-search' ), $vars['critical-searches-more'] ); ?></span>
 							<span class="dashicons dashicons-arrow-down-alt2"></span>
 						</span>
@@ -56,11 +56,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</table>
 				<?php
 				if ( $vars['critical-searches-total'] > 0 ) {
-					printf( '<a class="js-psfs-analytics-export-csv" data-context="" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psfs-ajax-loader"></span>';
+					printf( '<a class="js-psf-search-analytics-export-csv" data-context="" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psf-search-ajax-loader"></span>';
 				}
 				?>
 			</div>
-			<div class="psfs-analytics-module-critical-info">
+			<div class="psf-search-analytics-module-critical-info">
 				<h4><?php _e( 'How to fix it?', 'psf-search' ); ?></h4>
 				<div>
 					<p><?php _e( 'There are several ways to solve these problems. Every phrase may require a different approach. See what methods you could use:', 'psf-search' ); ?></p>
@@ -86,52 +86,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 	<?php else : ?>
-		<p class="psfs-analytics-subtitle"><?php printf( __( "Fantastic! The PSF Search analyzer hasn't found any critical search phrases for the last %d days.", 'psf-search' ), $vars['days'] ); ?></p>
+		<p class="psf-search-analytics-subtitle"><?php printf( __( "Fantastic! The PSF Search analyzer hasn't found any critical search phrases for the last %d days.", 'psf-search' ), $vars['days'] ); ?></p>
 	<?php endif; ?>
 
 
 </div>
 
-<?php if ( ! defined( 'PSFS_ANALYTICS_ONLY_CRITICAL' ) || ! PSFS_ANALYTICS_ONLY_CRITICAL ) : ?>
-	<div class="psfs-analytics-module-tiles">
+<?php if ( ! defined( 'PSF_SEARCH_ANALYTICS_ONLY_CRITICAL' ) || ! PSF_SEARCH_ANALYTICS_ONLY_CRITICAL ) : ?>
+	<div class="psf-search-analytics-module-tiles">
 		<h3><?php printf( __( 'Searches stats (last %d days)', 'psf-search' ), $vars['days'] ); ?></h3>
 
-		<div class="psfs-analytics-tiles">
-			<div class="psfs-analytics-tile">
-				<div class="psfs-analytics-tile__values">
+		<div class="psf-search-analytics-tiles">
+			<div class="psf-search-analytics-tile">
+				<div class="psf-search-analytics-tile__values">
 					<span><?php _e( 'Total searches', 'psf-search' ); ?></span>
 					<span><?php _e( 'autocomplete', 'psf-search' ); ?></span>
 					<span><?php echo esc_html( $vars['autocomplete']['total-results'] ); ?></span>
 				</div>
-				<div class="psfs-analytics-tile__icon">
+				<div class="psf-search-analytics-tile__icon">
 					<?php echo \PsfSearch\Helpers::getIcon( 'magnifier-pirx' ); ?>
 				</div>
 			</div>
 
-			<div class="psfs-analytics-tile">
-				<div class="psfs-analytics-tile__values">
+			<div class="psf-search-analytics-tile">
+				<div class="psf-search-analytics-tile__values">
 					<span><?php _e( 'Total searches', 'psf-search' ); ?></span>
 					<span><?php _e( 'search results page', 'psf-search' ); ?></span>
 					<span><?php echo esc_html( $vars['search-page']['total-results'] ); ?></span>
 				</div>
-				<div class="psfs-analytics-tile__icon">
+				<div class="psf-search-analytics-tile__icon">
 					<?php echo \PsfSearch\Helpers::getIcon( 'magnifier-pirx' ); ?>
 				</div>
 			</div>
 
-			<div class="psfs-analytics-tile">
-				<div class="psfs-analytics-tile__values">
+			<div class="psf-search-analytics-tile">
+				<div class="psf-search-analytics-tile__values">
 					<span><?php _e( 'Searches', 'psf-search' ); ?></span>
 					<span><?php _e( 'returning results', 'psf-search' ); ?></span>
 					<span><?php echo esc_html( $vars['returning-results-percent'] ); ?>%</span>
 				</div>
-				<div class="psfs-analytics-tile__icon">
+				<div class="psf-search-analytics-tile__icon">
 					<?php
 					if ( ! empty( $vars['returning-results-percent'] ) ) {
 						if ( $vars['returning-results-percent-satisfying'] ) {
-							echo \PsfSearch\Helpers::getIcon( 'face-smile', 'psfs-stats-icon-smile' );
+							echo \PsfSearch\Helpers::getIcon( 'face-smile', 'psf-search-stats-icon-smile' );
 						} else {
-							echo \PsfSearch\Helpers::getIcon( 'face-sad', 'psfs-stats-icon-sad' );
+							echo \PsfSearch\Helpers::getIcon( 'face-sad', 'psf-search-stats-icon-sad' );
 						}
 					}
 					?>
@@ -142,12 +142,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<br/>
 
-	<div class="psfs-analytics-module-tables">
-		<div class="psfs-analytics-module-table">
+	<div class="psf-search-analytics-module-tables">
+		<div class="psf-search-analytics-module-table">
 			<h3><?php _e( 'Top searches - autocomplete', 'psf-search' ); ?></h3>
-			<p class="psfs-analytics-subtitle"><?php _e( 'The list of phrases with results is displayed to users as a drop down list with auto suggestions.', 'psf-search' ); ?></p>
+			<p class="psf-search-analytics-subtitle"><?php _e( 'The list of phrases with results is displayed to users as a drop down list with auto suggestions.', 'psf-search' ); ?></p>
 
-			<table class="widefat fixed psfs-analytics-table">
+			<table class="widefat fixed psf-search-analytics-table">
 				<thead>
 				<tr>
 					<th>#</th>
@@ -162,16 +162,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					$i = 1;
 					foreach ( $vars['autocomplete']['with-results'] as $row ) {
-						require PSFS_DIR . 'partials/admin/stats/ac-searches-row.php';
+						require PSF_SEARCH_DIR . 'partials/admin/stats/ac-searches-row.php';
 						$i ++;
 					}
 
 					if ( $vars['autocomplete']['total-with-results-uniq'] > count( $vars['autocomplete']['with-results'] ) ) :
 						?>
-						<tr class="psfs-analytics-load-more-row">
+						<tr class="psf-search-analytics-load-more-row">
 							<td colspan="3">
 								<div>
-						<span class="js-psfs-autocomplete-with-results-load-more">
+						<span class="js-psf-search-autocomplete-with-results-load-more">
 							<span><?php _e( 'show top 100 phrases', 'psf-search' ); ?></span>
 							<span class="dashicons dashicons-arrow-down-alt2"></span>
 						</span>
@@ -191,18 +191,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</table>
 			<?php
 			if ( ! empty( $vars['autocomplete']['with-results'] ) ) {
-				printf( '<a class="js-psfs-analytics-export-csv" data-context="autocomplete" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psfs-ajax-loader"></span>';
+				printf( '<a class="js-psf-search-analytics-export-csv" data-context="autocomplete" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psf-search-ajax-loader"></span>';
 			}
 			?>
 
 		</div>
-		<div class="psfs-analytics-module-table">
+		<div class="psf-search-analytics-module-table">
 
 			<h3><?php _e( 'Top searches - WooCommerce search results page', 'psf-search' ); ?></h3>
-			<p class="psfs-analytics-subtitle"><?php _e( 'Here is the list of phrases that were typed by users who followed the pattern: type the phrase into the bar → clicked “See all results” or just hit enter/return (for Mac users)', 'psf-search' ); ?></p>
+			<p class="psf-search-analytics-subtitle"><?php _e( 'Here is the list of phrases that were typed by users who followed the pattern: type the phrase into the bar → clicked “See all results” or just hit enter/return (for Mac users)', 'psf-search' ); ?></p>
 
 
-			<table class="widefat fixed psfs-analytics-table">
+			<table class="widefat fixed psf-search-analytics-table">
 				<thead>
 				<tr>
 					<th>#</th>
@@ -217,16 +217,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					$i = 1;
 					foreach ( $vars['search-page']['with-results'] as $row ) {
-						require PSFS_DIR . 'partials/admin/stats/sp-searches-row.php';
+						require PSF_SEARCH_DIR . 'partials/admin/stats/sp-searches-row.php';
 						$i ++;
 					}
 
 					if ( $vars['search-page']['total-with-results-uniq'] > count( $vars['search-page']['with-results'] ) ) :
 						?>
-						<tr class="psfs-analytics-load-more-row">
+						<tr class="psf-search-analytics-load-more-row">
 							<td colspan="3">
 								<div>
-						<span class="js-psfs-search-page-with-results-load-more">
+						<span class="js-psf-search-search-page-with-results-load-more">
 							<span><?php _e( 'show top 100 phrases', 'psf-search' ); ?></span>
 							<span class="dashicons dashicons-arrow-down-alt2"></span>
 						</span>
@@ -246,7 +246,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</table>
 			<?php
 			if ( ! empty( $vars['search-page']['with-results'] ) ) {
-				printf( '<a class="js-psfs-analytics-export-csv" data-context="search-results-page" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psfs-ajax-loader"></span>';
+				printf( '<a class="js-psf-search-analytics-export-csv" data-context="search-results-page" href="#">%s</a>', __( 'Export CSV', 'psf-search' ) ) . '<span class="psf-search-ajax-loader"></span>';
 			}
 			?>
 		</div>
@@ -255,20 +255,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php endif; ?>
 
 
-<div class="psfs-analytics-module-reset">
+<div class="psf-search-analytics-module-reset">
 	<h3><?php _e( 'Maintenance', 'psf-search' ); ?></h3>
-	<?php if ( defined( 'PSFS_ANALYTICS_ONLY_CRITICAL' ) && PSFS_ANALYTICS_ONLY_CRITICAL ) : ?>
-		<p class="psfs-analytics-subtitle">
-			<span class="psfs-analytics-red-color"><b><?php _e( 'Warning:', 'psf-search' ); ?></b> </span>
+	<?php if ( defined( 'PSF_SEARCH_ANALYTICS_ONLY_CRITICAL' ) && PSF_SEARCH_ANALYTICS_ONLY_CRITICAL ) : ?>
+		<p class="psf-search-analytics-subtitle">
+			<span class="psf-search-analytics-red-color"><b><?php _e( 'Warning:', 'psf-search' ); ?></b> </span>
 			<?php
 			/* Translators: %s PHP constant name. */
-			printf( __( "You have defined %s constant and it's set to <code>true</code>. It means only critical searches will be stored in the database. Other modules than Critical Searches are not visible in this mode.", 'psf-search' ), '<code>PSFS_ANALYTICS_ONLY_CRITICAL</code>' )
+			printf( __( "You have defined %s constant and it's set to <code>true</code>. It means only critical searches will be stored in the database. Other modules than Critical Searches are not visible in this mode.", 'psf-search' ), '<code>PSF_SEARCH_ANALYTICS_ONLY_CRITICAL</code>' )
 			?>
 		</p>
 	<?php endif; ?>
-	<p class="psfs-analytics-subtitle">
+	<p class="psf-search-analytics-subtitle">
 		<?php
-		$reset = sprintf( '<a class="js-psfs-analytics-reset" href="#">%s</a>', __( 'reset your stats', 'psf-search' ) ) . '<span class="psfs-ajax-loader"></span>';
+		$reset = sprintf( '<a class="js-psf-search-analytics-reset" href="#">%s</a>', __( 'reset your stats', 'psf-search' ) ) . '<span class="psf-search-ajax-loader"></span>';
 		$size  = $vars['autocomplete']['total-results'] > 0 ? $vars['table-info']['data'] + $vars['table-info']['index'] : 0;
 		?>
 		<?php

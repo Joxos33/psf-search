@@ -40,8 +40,8 @@
   "textdomain": "psf-search",
   "editorScript": "file:./index.js",
   "editorStyle": [
-    "psfs-style",
-    "psfs-style-personalization",
+    "psf-search-style",
+    "psf-search-style-personalization",
     "file:./index.css"
   ]
 }

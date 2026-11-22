@@ -8,21 +8,21 @@
 use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 ?>
-<div class="psfs-details-inner psfs-details-page psfs-details-cpt psfs-details-cpt-<?php echo esc_attr( $vars->postType ); ?>">
+<div class="psf-search-details-inner psf-search-details-page psf-search-details-cpt psf-search-details-cpt-<?php echo esc_attr( $vars->postType ); ?>">
 
-	<?php do_action( "psfs/details_panel/{$vars->postType}/container_before", $vars ); ?>
+	<?php do_action( "psf_search/details_panel/{$vars->postType}/container_before", $vars ); ?>
 
-	<div class="psfs-product-details">
+	<div class="psf-search-product-details">
 
-		<?php do_action( "psfs/details_panel/{$vars->postType}/image_before", $vars ); ?>
-		<a class="psfs-pd-details-post" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->title ) ); ?>">
+		<?php do_action( "psf_search/details_panel/{$vars->postType}/image_before", $vars ); ?>
+		<a class="psf-search-pd-details-post" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->title ) ); ?>">
 			<?php if ( ! empty( $vars->imageSrc ) ) : ?>
-				<div class="psfs-details-main-image">
+				<div class="psf-search-details-main-image">
 					<img
 						src="<?php echo esc_url( $vars->imageSrc ); ?>"
 						<?php echo ( ! empty( $vars->imageSrcset ) && ! empty( $vars->imageSizes ) ) ? 'srcset="' . esc_attr( $vars->imageSrcset ) . '"' : ''; ?>
@@ -32,26 +32,26 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 				</div>
 			<?php endif; ?>
 		</a>
-		<?php do_action( "psfs/details_panel/{$vars->postType}/image_after", $vars ); ?>
+		<?php do_action( "psf_search/details_panel/{$vars->postType}/image_after", $vars ); ?>
 
-		<div class="psfs-details-space">
-			<a class="psfs-details-post-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->title ) ); ?>">
+		<div class="psf-search-details-space">
+			<a class="psf-search-details-post-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->title ) ); ?>">
 				<?php echo Helpers::secureHtmlOutput( $vars->title, 'name' ); ?>
 			</a>
 
 			<?php if ( ! empty( $vars->desc ) ) : ?>
-				<div class="psfs-details-desc">
+				<div class="psf-search-details-desc">
 					<?php echo Helpers::secureHtmlOutput( $vars->desc, 'description' ); ?>
 				</div>
 			<?php endif; ?>
 
-			<div class="psfs-details-hr"></div>
+			<div class="psf-search-details-hr"></div>
 
-			<a class="psfs-product-details-readmore" href="<?php echo esc_url( $vars->link ); ?>"><?php echo Helpers::secureHtmlOutput( Helpers::getLabel( 'read_more' ), 'read_more' ); ?></a>
+			<a class="psf-search-product-details-readmore" href="<?php echo esc_url( $vars->link ); ?>"><?php echo Helpers::secureHtmlOutput( Helpers::getLabel( 'read_more' ), 'read_more' ); ?></a>
 		</div>
 
 	</div>
 
-	<?php do_action( "psfs/details_panel/{$vars->postType}/container_after", $vars ); ?>
+	<?php do_action( "psf_search/details_panel/{$vars->postType}/container_after", $vars ); ?>
 
 </div>

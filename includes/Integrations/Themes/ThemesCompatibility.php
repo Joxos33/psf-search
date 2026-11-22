@@ -47,10 +47,10 @@ class ThemesCompatibility {
 			}
 		}
 
-		$this->themeSlug = apply_filters( 'psfs/integrations/themes/current_theme_slug', $this->themeSlug );
-		$this->themeName = apply_filters( 'psfs/integrations/themes/current_theme_name', $this->themeName );
+		$this->themeSlug = apply_filters( 'psf_search/integrations/themes/current_theme_slug', $this->themeSlug );
+		$this->themeName = apply_filters( 'psf_search/integrations/themes/current_theme_name', $this->themeName );
 		if ( $this->isChildTheme() ) {
-			$this->parentThemeName = apply_filters( 'psfs/integrations/themes/current_parent_theme_name', $this->parentThemeName );
+			$this->parentThemeName = apply_filters( 'psf_search/integrations/themes/current_parent_theme_name', $this->parentThemeName );
 		}
 	}
 
@@ -84,7 +84,7 @@ class ThemesCompatibility {
 					$currentVersion = $this->themeVersion;
 					// Break if theme version is lower than required.
 					add_filter(
-						'psfs/troubleshooting/unsupported_theme_version',
+						'psf_search/troubleshooting/unsupported_theme_version',
 						function () use ( $theme, $currentVersion ) {
 							return [
 								'name'           => $theme['name'],
@@ -165,7 +165,7 @@ class ThemesCompatibility {
 	 * @return bool
 	 */
 	public function isWhiteLabel() {
-		return apply_filters( 'psfs/integrations/themes/white_label', false );
+		return apply_filters( 'psf_search/integrations/themes/white_label', false );
 	}
 
 	/**

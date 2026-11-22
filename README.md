@@ -17,9 +17,11 @@ wp psfsearch index build
 
 ## Coexisting with FiboSearch
 
-Everything is renamed so the two plugins never share data: PHP namespace `PsfSearch`,
-constants `PSFS_*`, options/tables/AJAX actions `psfs_*`, hooks `psfs/...`,
-CSS classes `psfs-*`, shortcode `[psfsearch]`, blocks `psfsearch/*`.
+Everything is renamed so the plugin never shares names with FiboSearch or with the other PSF
+plugins (PSF Shipping already owns `PSFS_*`; `psfb`, `psfc`, `psfl`, `psflh`, `psfsw` are also taken):
+PHP namespace `PsfSearch`, accessor `PSF_SEARCH()`,
+constants `PSF_SEARCH_*`, options/tables/AJAX actions `psf_search_*`, hooks `psf_search/...`,
+CSS classes `psf-search-*`, shortcode `[psfsearch]`, blocks `psfsearch/*`.
 
 Both plugins take over Flatsome's header search, so only one should be active at a time.
 

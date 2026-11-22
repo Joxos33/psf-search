@@ -19,7 +19,7 @@ class Settings {
 			$record = $wpdb->get_var(
 				"SELECT option_value
                    FROM $wpdb->options
-                   WHERE option_name = 'psfs_settings'
+                   WHERE option_name = 'psf_search_settings'
                    LIMIT 1"
 			);
 
@@ -30,7 +30,7 @@ class Settings {
 				$settings = $s;
 			}
 		} else {
-			$s = get_option( 'psfs_settings' );
+			$s = get_option( 'psf_search_settings' );
 			if ( ! empty( $s ) ) {
 				$settings = $s;
 			}

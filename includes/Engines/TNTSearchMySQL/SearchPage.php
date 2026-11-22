@@ -46,7 +46,7 @@ class SearchPage {
 		add_filter( 'the_posts', [ 'PsfSearch\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
 
 		// Return product IDs that have been found
-		add_filter( 'psfs/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
+		add_filter( 'psf_search/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class SearchPage {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'psfs', $query->query_vars['s'] );
+		$query->set( 'psf_search', $query->query_vars['s'] );
 
 		$phrase = $query->query_vars['s'];
 
@@ -101,7 +101,7 @@ class SearchPage {
 
 		$lang = Multilingual::isMultilingual() ? Multilingual::getCurrentLanguage() : '';
 		if ( ! Builder::searchableCacheExists( $lang ) ) {
-			add_filter( 'psfs/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
+			add_filter( 'psf_search/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
 		}
 
 		$search = new SearchResultsPageQuery();
@@ -118,7 +118,7 @@ class SearchPage {
 		$postIn = array_map( 'intval', wp_list_pluck( $results, 'post_id' ) );
 
 		// Analytics
-		do_action( 'psfs/analytics/after_searching', $phrase, count( $postIn ), $lang );
+		do_action( 'psf_search/analytics/after_searching', $phrase, count( $postIn ), $lang );
 
 		// Integration with FiboFilters.
 		if ( $query->get( 'fibofilters' ) ) {

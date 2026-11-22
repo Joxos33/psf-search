@@ -21,14 +21,14 @@ class Blocks {
 
 	private function registerBlocks() {
 		register_block_type(
-			PSFS_DIR . 'build/blocks/search',
+			PSF_SEARCH_DIR . 'build/blocks/search',
 			[
 				'render_callback' => [ $this, 'renderCallback' ],
 			]
 		);
 
 		register_block_type(
-			PSFS_DIR . 'build/blocks/search-nav',
+			PSF_SEARCH_DIR . 'build/blocks/search-nav',
 			[
 				'render_callback' => [ $this, 'renderCallback' ],
 			]
@@ -66,12 +66,12 @@ class Blocks {
 			if ( $isBackend ) {
 				if ( isset( $attributes['layout'] ) && $attributes['layout'] === 'icon-flexible' ) {
 					ob_start();
-					echo '<div class="psfs-show-on-preview-desktop">';
+					echo '<div class="psf-search-show-on-preview-desktop">';
 					$normalizedAttributes['layout'] = 'classic';
 					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
-					echo '<div class="psfs-show-on-preview-tablet psfs-show-on-preview-mobile">';
+					echo '<div class="psf-search-show-on-preview-tablet psf-search-show-on-preview-mobile">';
 					$normalizedAttributes['layout'] = 'icon';
 					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
@@ -80,12 +80,12 @@ class Blocks {
 				} elseif ( isset( $attributes['layout'] ) && $attributes['layout'] === 'icon-flexible-inv' ) {
 					ob_start();
 
-					echo '<div class="psfs-show-on-preview-desktop">';
+					echo '<div class="psf-search-show-on-preview-desktop">';
 					$normalizedAttributes['layout'] = 'icon';
 					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
 
-					echo '<div class="psfs-show-on-preview-tablet psfs-show-on-preview-mobile">';
+					echo '<div class="psf-search-show-on-preview-tablet psf-search-show-on-preview-mobile">';
 					$normalizedAttributes['layout'] = 'classic';
 					echo do_shortcode( '[psfsearch ' . $this->getAttributesString( $normalizedAttributes ) . ']' );
 					echo '</div>';
@@ -99,7 +99,7 @@ class Blocks {
 	}
 
 	public function hideLegacyWidgetBlock( $widgetTypes ) {
-		$widgetTypes[] = 'psfs_ajax_search';
+		$widgetTypes[] = 'psf_search_ajax_search';
 
 		return $widgetTypes;
 	}

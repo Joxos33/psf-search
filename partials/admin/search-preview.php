@@ -3,66 +3,66 @@
 use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 $submitText = Helpers::getLabel( 'submit' );
-$hasSubmit  = PSFS()->settings->getOption( 'show_submit_button' );
+$hasSubmit  = PSF_SEARCH()->settings->getOption( 'show_submit_button' );
 
 $labelSeeAll = Helpers::getLabel( 'show_more' );
 
 ?>
-<div class="psfs-preview js-psfs-preview">
+<div class="psf-search-preview js-psf-search-preview">
 
-	<div class="js-psfs-preview-inner psfs-preview-inner">
-		<div class="js-psfs-preview-head psfs-preview-head">
-			<span class="psfs-preview-header"><?php _e( 'Preview', 'psf-search' ); ?></span>
+	<div class="js-psf-search-preview-inner psf-search-preview-inner">
+		<div class="js-psf-search-preview-head psf-search-preview-head">
+			<span class="psf-search-preview-header"><?php _e( 'Preview', 'psf-search' ); ?></span>
 			<span
-				class="psfs-preview-subheader psfs-preview-subheader__sb"><?php _e( 'Search bar', 'psf-search' ); ?></span>
+				class="psf-search-preview-subheader psf-search-preview-subheader__sb"><?php _e( 'Search bar', 'psf-search' ); ?></span>
 			<span
-				class="psfs-preview-subheader psfs-preview-subheader__ac"><?php _e( 'Autocomplete', 'psf-search' ); ?></span>
+				class="psf-search-preview-subheader psf-search-preview-subheader__ac"><?php _e( 'Autocomplete', 'psf-search' ); ?></span>
 		</div>
 
-		<div class="js-psfs-preview-source psfs-preview-source">
+		<div class="js-psf-search-preview-source psf-search-preview-source">
 
-			<span class="js-psfs-preview-device-info psfs-preview-device-info psfs-hidden" data-device="desktop">
+			<span class="js-psf-search-preview-device-info psf-search-preview-device-info psf-search-hidden" data-device="desktop">
 				<span><?php _e( 'On mobile', 'psf-search' ); ?></span>
 				<span><?php _e( 'On desktop', 'psf-search' ); ?></span>
 			</span>
 			<div
-				class="js-psfs-search-wrapp js-psfs-preview-bar-example psfs-search-wrapp <?php echo Helpers::searchWrappClasses(); ?>"
-				data-psfs-context="75c2">
-				<form class="psfs-search-form" role="search" action="" method="get">
-					<div class="psfs-sf-wrapp">
-						<?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-solaris' ); ?>
-						<?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-pirx', 'magnifier-pirx' ); ?>
+				class="js-psf-search-search-wrapp js-psf-search-preview-bar-example psf-search-search-wrapp <?php echo Helpers::searchWrappClasses(); ?>"
+				data-psf-search-context="75c2">
+				<form class="psf-search-search-form" role="search" action="" method="get">
+					<div class="psf-search-sf-wrapp">
+						<?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-solaris' ); ?>
+						<?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-pirx', 'magnifier-pirx' ); ?>
 
 						<label
 							class="screen-reader-text"><?php _e( 'Products search', 'psf-search' ); ?></label>
 
 						<input
 							type="search"
-							class="js-psfs-search-input psfs-search-input"
+							class="js-psf-search-search-input psf-search-search-input"
 							name="<?php echo esc_attr( Helpers::getSearchInputName() ); ?>"
 							value="<?php echo esc_attr( get_search_query() ); ?>"
 							autocomplete="off"
 							placeholder="<?php echo esc_attr( Helpers::getLabel( 'search_placeholder' ) ); ?>"
 						/>
-						<div class="psfs-preloader"></div>
+						<div class="psf-search-preloader"></div>
 
-						<button type="submit" class="js-psfs-search-submit psfs-search-submit">
+						<button type="submit" class="js-psf-search-search-submit psf-search-search-submit">
 							<?php
-							echo '<span class="js-psfs-search-submit-l">' . esc_html( $submitText ) . '</span>';
-							echo '<span class="js-psfs-search-submit-m">';
-							echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-solaris' );
-							echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-pirx', 'magnifier-pirx' );
+							echo '<span class="js-psf-search-search-submit-l">' . esc_html( $submitText ) . '</span>';
+							echo '<span class="js-psf-search-search-submit-m">';
+							echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-solaris' );
+							echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-pirx', 'magnifier-pirx' );
 							echo '</span>';
 							?>
 						</button>
 
 						<input type="hidden" name="post_type" value="product">
-						<input type="hidden" name="psfs" value="1">
+						<input type="hidden" name="psf_search" value="1">
 
 						<input type="hidden" name="lang" value="en">
 
@@ -70,46 +70,46 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 				</form>
 			</div>
 
-			<span class="js-psfs-preview-device-info psfs-preview-device-info psfs-hidden" data-device="mobile">
+			<span class="js-psf-search-preview-device-info psf-search-preview-device-info psf-search-hidden" data-device="mobile">
 				<span><?php _e( 'On mobile', 'psf-search' ); ?></span>
 				<span><?php _e( 'On desktop', 'psf-search' ); ?></span>
 			</span>
 			<div
-				class="js-psfs-search-wrapp psfs-layout-icon-open js-psfs-preview-icon-example psfs-search-wrapp psfs-hidden <?php echo Helpers::searchWrappClasses(); ?>"
-				data-psfs-context="75c3">
+				class="js-psf-search-search-wrapp psf-search-layout-icon-open js-psf-search-preview-icon-example psf-search-search-wrapp psf-search-hidden <?php echo Helpers::searchWrappClasses(); ?>"
+				data-psf-search-context="75c3">
 				<a
-					href="#" class="psfs-search-icon js-psfs-search-icon-handler"><?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier-handler' ); ?>
+					href="#" class="psf-search-search-icon js-psf-search-search-icon-handler"><?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier-handler' ); ?>
 				</a>
-				<div class="psfs-search-icon-arrow"></div>
-				<form class="psfs-search-form" role="search" action="" method="get">
-					<div class="psfs-sf-wrapp">
-						<?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-solaris' ); ?>
-						<?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-pirx', 'magnifier-pirx' ); ?>
+				<div class="psf-search-search-icon-arrow"></div>
+				<form class="psf-search-search-form" role="search" action="" method="get">
+					<div class="psf-search-sf-wrapp">
+						<?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-solaris' ); ?>
+						<?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-pirx', 'magnifier-pirx' ); ?>
 
 						<label
 							class="screen-reader-text"><?php _e( 'Products search', 'psf-search' ); ?></label>
 						<input
 							type="search"
-							class="js-psfs-search-input psfs-search-input"
+							class="js-psf-search-search-input psf-search-search-input"
 							name="<?php echo esc_attr( Helpers::getSearchInputName() ); ?>"
 							value="<?php echo esc_attr( get_search_query() ); ?>"
 							autocomplete="off"
 							placeholder="<?php echo esc_attr( Helpers::getLabel( 'search_placeholder' ) ); ?>"
 						/>
-						<div class="psfs-preloader"></div>
+						<div class="psf-search-preloader"></div>
 
-						<button type="submit" class="js-psfs-search-submit psfs-search-submit">
+						<button type="submit" class="js-psf-search-search-submit psf-search-search-submit">
 							<?php
-							echo '<span class="js-psfs-search-submit-l">' . esc_html( $submitText ) . '</span>';
-							echo '<span class="js-psfs-search-submit-m">';
-							echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-solaris' );
-							echo Helpers::getMagnifierIco( 'psfs-ico-magnifier js-psfs-ico-magnifier-pirx', 'magnifier-pirx' );
+							echo '<span class="js-psf-search-search-submit-l">' . esc_html( $submitText ) . '</span>';
+							echo '<span class="js-psf-search-search-submit-m">';
+							echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-solaris' );
+							echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier js-psf-search-ico-magnifier-pirx', 'magnifier-pirx' );
 							echo '</span>';
 							?>
 						</button>
 
 						<input type="hidden" name="post_type" value="product">
-						<input type="hidden" name="psfs" value="1">
+						<input type="hidden" name="psf_search" value="1">
 
 						<input type="hidden" name="lang" value="en">
 
@@ -117,79 +117,79 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 				</form>
 			</div>
 
-			<div class="psfs-autocomplete">
+			<div class="psf-search-autocomplete">
 
 				<div
-					class="psfs-suggestions-wrapp js-psfs-suggestions-wrapp woocommerce psfs-has-price psfs-has-desc psfs-has-sku psfs-has-headings"
+					class="psf-search-suggestions-wrapp js-psf-search-suggestions-wrapp woocommerce psf-search-has-price psf-search-has-desc psf-search-has-sku psf-search-has-headings"
 					unselectable="on">
 
-					<div class="psfs-suggestion psfs-suggestion-headline-brand psfs-suggestion-headline">
-					<span class="psfs-st">
-						<?php echo Helpers::getLabel( 'tax_' . PSFS()->brands->getBrandTaxonomy() . '_plu' ); ?>
+					<div class="psf-search-suggestion psf-search-suggestion-headline-brand psf-search-suggestion-headline">
+					<span class="psf-search-st">
+						<?php echo Helpers::getLabel( 'tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() . '_plu' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-brand js-psfs-suggestion-brand">
-					<span class="psfs-si">
-						<img src="<?php echo PSFS_URL; ?>assets/img/product-preview.png">
+					<div class="psf-search-suggestion psf-search-suggestion-brand js-psf-search-suggestion-brand">
+					<span class="psf-search-si">
+						<img src="<?php echo PSF_SEARCH_URL; ?>assets/img/product-preview.png">
 					</span>
-						<span class="psfs-st">
+						<span class="psf-search-st">
 						<?php _e( 'Sample brand <strong>name</strong>', 'psf-search' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-headline-cat psfs-suggestion-headline">
-					<span class="psfs-st">
+					<div class="psf-search-suggestion psf-search-suggestion-headline-cat psf-search-suggestion-headline">
+					<span class="psf-search-st">
 						<?php echo Helpers::getLabel( 'tax_product_cat_plu' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-cat js-psfs-suggestion-cat">
-					<span class="psfs-si">
-						<img src="<?php echo PSFS_URL; ?>assets/img/product-preview.png">
+					<div class="psf-search-suggestion psf-search-suggestion-cat js-psf-search-suggestion-cat">
+					<span class="psf-search-si">
+						<img src="<?php echo PSF_SEARCH_URL; ?>assets/img/product-preview.png">
 					</span>
-						<span class="psfs-st">
+						<span class="psf-search-st">
 						<?php _e( 'Sample category <strong>name</strong>', 'psf-search' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-headline-tag psfs-suggestion-headline">
-					<span class="psfs-st">
+					<div class="psf-search-suggestion psf-search-suggestion-headline-tag psf-search-suggestion-headline">
+					<span class="psf-search-st">
 						<?php echo Helpers::getLabel( 'tax_product_tag_plu' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-tag">
-					<span class="psfs-st">
+					<div class="psf-search-suggestion psf-search-suggestion-tag">
+					<span class="psf-search-st">
 						<?php _e( 'Sample tag <strong>name</strong>', 'psf-search' ); ?>
 					</span>
 					</div>
 
 					<?php
 					$postTypes = [ 'post', 'page' ];
-					$postTypes = PSFS()->tntsearchMySql->postTypes->getPostTypesSlugs();
+					$postTypes = PSF_SEARCH()->tntsearchMySql->postTypes->getPostTypesSlugs();
 					foreach ( $postTypes as $postType ) {
 						$label = '';
 						if ( $postType === 'post' || $postType === 'page' ) {
 							$label = $postType;
 						} else {
-							$details = PSFS()->tntsearchMySql->postTypes->getPostTypeDetails( $postType );
+							$details = PSF_SEARCH()->tntsearchMySql->postTypes->getPostTypeDetails( $postType );
 							$label   = empty( $details['labels']['singular_name'] ) ? $postType : strtolower( $details['labels']['singular_name'] );
 						}
 						?>
 						<div
-							class="psfs-suggestion psfs-suggestion-headline-cpt psfs-suggestion-headline-<?php echo esc_attr( $postType ); ?> psfs-suggestion-headline">
-						<span class="psfs-st">
+							class="psf-search-suggestion psf-search-suggestion-headline-cpt psf-search-suggestion-headline-<?php echo esc_attr( $postType ); ?> psf-search-suggestion-headline">
+						<span class="psf-search-st">
 						<?php echo Helpers::getLabel( 'post_type_' . $postType . '_plu' ); ?>
 						</span>
 						</div>
 
 						<div
-							class="psfs-suggestion psfs-suggestion-cpt psfs-suggestion-<?php echo esc_attr( $postType ); ?> js-psfs-suggestion-<?php echo esc_attr( $postType ); ?>">
-						<span class="psfs-si">
-						<img src="<?php echo PSFS_URL; ?>assets/img/product-preview.png">
+							class="psf-search-suggestion psf-search-suggestion-cpt psf-search-suggestion-<?php echo esc_attr( $postType ); ?> js-psf-search-suggestion-<?php echo esc_attr( $postType ); ?>">
+						<span class="psf-search-si">
+						<img src="<?php echo PSF_SEARCH_URL; ?>assets/img/product-preview.png">
 						</span>
-							<span class="psfs-st">
+							<span class="psf-search-st">
 						<?php echo sprintf( __( 'Sample %s <strong>name</strong>', 'psf-search' ), $label ); ?>
 						</span>
 						</div>
@@ -197,26 +197,26 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 					}
 					?>
 
-					<div class="psfs-suggestion js-psfs-suggestion-headline psfs-suggestion-headline">
-					<span class="psfs-st">
+					<div class="psf-search-suggestion js-psf-search-suggestion-headline psf-search-suggestion-headline">
+					<span class="psf-search-st">
 						<?php echo Helpers::getLabel( 'product_plu' ); ?>
 					</span>
 					</div>
 
-					<div class="psfs-suggestion psfs-suggestion-product">
-					<span class="js-psfs-si psfs-si">
-						<img src="<?php echo PSFS_URL; ?>assets/img/product-preview.png">
+					<div class="psf-search-suggestion psf-search-suggestion-product">
+					<span class="js-psf-search-si psf-search-si">
+						<img src="<?php echo PSF_SEARCH_URL; ?>assets/img/product-preview.png">
 					</span>
-						<div class="js-psfs-content-wrapp psfs-content-wrapp">
-						<span class="psfs-st">
+						<div class="js-psf-search-content-wrapp psf-search-content-wrapp">
+						<span class="psf-search-st">
 							<span
-								class="psfs-st-title"><?php _e( 'Sample product <strong>name</strong>', 'psf-search' ); ?></span>
+								class="psf-search-st-title"><?php _e( 'Sample product <strong>name</strong>', 'psf-search' ); ?></span>
 							<span
-								class="psfs-sku js-psfs-sku">(<?php echo Helpers::getLabel( 'sku_label' ); ?> 0001)</span>
+								class="psf-search-sku js-psf-search-sku">(<?php echo Helpers::getLabel( 'sku_label' ); ?> 0001)</span>
 							<span
-								class="psfs-sd js-psfs-sd"><?php _e( 'Lorem <strong>ipsum</strong> dolor sit amet, consectetur adipiscing elit. Quisque gravida lacus nec diam porttitor pharetra. Nulla facilisi. Proin pharetra imperdiet neque, non varius.', 'psf-search' ); ?></span>
+								class="psf-search-sd js-psf-search-sd"><?php _e( 'Lorem <strong>ipsum</strong> dolor sit amet, consectetur adipiscing elit. Quisque gravida lacus nec diam porttitor pharetra. Nulla facilisi. Proin pharetra imperdiet neque, non varius.', 'psf-search' ); ?></span>
 						</span>
-							<span class="psfs-sp js-psfs-sp">
+							<span class="psf-search-sp js-psf-search-sp">
 							<?php echo wc_price( 99 ); ?>
 						</span>
 						</div>
@@ -224,43 +224,43 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 
 
 					<div
-						class="psfs-suggestion js-psfs-suggestion-more psfs-suggestion-more psfs-suggestion-no-border-bottom"
+						class="psf-search-suggestion js-psf-search-suggestion-more psf-search-suggestion-more psf-search-suggestion-no-border-bottom"
 						data-index="7">
-						<span class="psfs-st-more"><span
-								class="js-psfs-st-more-label"><?php echo esc_html( $labelSeeAll ); ?></span> (73)</span>
+						<span class="psf-search-st-more"><span
+								class="js-psf-search-st-more-label"><?php echo esc_html( $labelSeeAll ); ?></span> (73)</span>
 					</div>
 
-					<div class="psfs-suggestion-nores js-psfs-suggestion-nores psfs-hide">
+					<div class="psf-search-suggestion-nores js-psf-search-suggestion-nores psf-search-hide">
 					</div>
 
 				</div>
 
-				<div class="psfs-details-wrapp js-psfs-details-wrapp woocommerce">
+				<div class="psf-search-details-wrapp js-psf-search-details-wrapp woocommerce">
 
-					<div class="psfs-details-inner">
+					<div class="psf-search-details-inner">
 
-						<div class="psfs-product-details">
+						<div class="psf-search-product-details">
 
 							<a href="#">
-								<div class="psfs-details-main-image">
-									<img src="<?php echo PSFS_URL; ?>assets/img/product-preview.png"/>
+								<div class="psf-search-details-main-image">
+									<img src="<?php echo PSF_SEARCH_URL; ?>assets/img/product-preview.png"/>
 								</div>
 							</a>
 
-							<div class="psfs-details-space">
+							<div class="psf-search-details-space">
 
-								<a class="psfs-details-product-title" href="#">
+								<a class="psf-search-details-product-title" href="#">
 									<?php _e( 'Sample product name', 'psf-search' ); ?>
 								</a>
-								<span class="psfs-details-product-sku">0001</span>
+								<span class="psf-search-details-product-sku">0001</span>
 
-								<div class="psfs-pd-price">
+								<div class="psf-search-pd-price">
 									<?php echo wc_price( 99 ); ?>
 								</div>
 
-								<div class="psfs-details-hr"></div>
+								<div class="psf-search-details-hr"></div>
 
-								<div class="psfs-pd-desc">
+								<div class="psf-search-pd-desc">
 									<?php
 									_e(
 										'Lorem <strong>ipsum</strong> dolor sit amet, consectetur adipiscing elit. Quisque gravida lacus nec diam porttitor pharetra. Nulla facilisi. Proin pharetra imperdiet neque, non varius.',
@@ -269,15 +269,15 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 									?>
 								</div>
 
-								<div class="psfs-details-hr"></div>
+								<div class="psf-search-details-hr"></div>
 
-								<div class="psfs-pd-addtc js-psfs-pd-addtc">
-									<form class="psfs-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
+								<div class="psf-search-pd-addtc js-psf-search-pd-addtc">
+									<form class="psf-search-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
 										<div class="quantity buttons_added">
 											<input type="button" value="-" class="minus button is-form">
 											<input
 												type="number" class="input-text qty text" step="1" min="0" max="9999"
-												name="js-psfs-quantity" value="1" title="Qty" size="4"
+												name="js-psf-search-quantity" value="1" title="Qty" size="4"
 												inputmode="numeric">
 											<input type="button" value="+" class="plus button is-form">
 										</div>
@@ -304,7 +304,7 @@ $labelSeeAll = Helpers::getLabel( 'show_more' );
 
 	</div>
 
-	<div class="psfs-preview-elements psfs-hidden">
-		<div class="js-psfs-preview-elements-close"><?php echo Helpers::getIcon( 'close' ); ?></div>
+	<div class="psf-search-preview-elements psf-search-hidden">
+		<div class="js-psf-search-preview-elements-close"><?php echo Helpers::getIcon( 'close' ); ?></div>
 	</div>
 </div>

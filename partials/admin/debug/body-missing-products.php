@@ -4,7 +4,7 @@ use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
 use PsfSearch\Multilingual;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 

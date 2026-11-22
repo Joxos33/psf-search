@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Database {
 
-	const DB_NAME           = 'psfs_stats';
+	const DB_NAME           = 'psf_search_stats';
 	const DB_VERSION        = 2;
-	const DB_VERSION_OPTION = 'psfs_stats_db_version';
+	const DB_VERSION_OPTION = 'psf_search_stats_db_version';
 
 	/**
 	 * Add table names to the $wpdb object
@@ -23,7 +23,7 @@ class Database {
 	public static function registerTables() {
 		global $wpdb;
 
-		$wpdb->psfs_stats = $wpdb->prefix . self::DB_NAME;
+		$wpdb->psf_search_stats = $wpdb->prefix . self::DB_NAME;
 		$wpdb->tables[]        = self::DB_NAME;
 	}
 
@@ -63,7 +63,7 @@ class Database {
 
 			$collate = Helpers::getCollate( 'stats/main' );
 
-			$table = "CREATE TABLE $wpdb->psfs_stats (
+			$table = "CREATE TABLE $wpdb->psf_search_stats (
 				id              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 				phrase          VARCHAR(255) NOT NULL,
 				hits            INT NOT NULL,
@@ -93,7 +93,7 @@ class Database {
 	public static function exist() {
 		global $wpdb;
 
-		return Helpers::isTableExists( $wpdb->psfs_stats );
+		return Helpers::isTableExists( $wpdb->psf_search_stats );
 	}
 
 	/**
@@ -106,7 +106,7 @@ class Database {
 
 		$wpdb->hide_errors();
 
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->psfs_stats" );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->psf_search_stats" );
 		delete_option( self::DB_VERSION_OPTION );
 	}
 
@@ -132,14 +132,14 @@ class Database {
 
 		// Delete expired records.
 		$daysAgo = date( 'Y-m-d H:i:s', strtotime( "today - $daysAgo days" ) );
-		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->psfs_stats WHERE DATE(created_at) <= %s", $daysAgo ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->psf_search_stats WHERE DATE(created_at) <= %s", $daysAgo ) );
 
 		// Delete non-critical records.
 		if (
-			defined( 'PSFS_ANALYTICS_ONLY_CRITICAL' ) &&
-			PSFS_ANALYTICS_ONLY_CRITICAL
+			defined( 'PSF_SEARCH_ANALYTICS_ONLY_CRITICAL' ) &&
+			PSF_SEARCH_ANALYTICS_ONLY_CRITICAL
 		) {
-			$wpdb->query( "DELETE FROM $wpdb->psfs_stats WHERE hits > 0" );
+			$wpdb->query( "DELETE FROM $wpdb->psf_search_stats WHERE hits > 0" );
 		}
 	}
 
@@ -157,7 +157,7 @@ class Database {
 
 		$wpdb->hide_errors();
 
-		$wpdb->query( "DELETE FROM $wpdb->psfs_stats" );
+		$wpdb->query( "DELETE FROM $wpdb->psf_search_stats" );
 	}
 
 	/**
@@ -174,7 +174,7 @@ class Database {
 
 		$wpdb->hide_errors();
 
-		return intval( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->psfs_stats" ) );
+		return intval( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->psf_search_stats" ) );
 	}
 
 	/**

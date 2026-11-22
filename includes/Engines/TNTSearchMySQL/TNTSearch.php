@@ -124,7 +124,7 @@ class TNTSearch {
 			'init',
 			function () {
 
-				if ( PSFS()->engine === 'tntsearchMySql' && apply_filters( 'psfs/override_search_results_page', true ) ) {
+				if ( PSF_SEARCH()->engine === 'tntsearchMySql' && apply_filters( 'psf_search/override_search_results_page', true ) ) {
 					$this->overrideSearchPage();
 				}
 
@@ -139,12 +139,12 @@ class TNTSearch {
 			}
 		);
 
-		add_action( 'wp_ajax_psfs_build_index', [ $this, 'ajaxBuildIndex' ] );
-		add_action( 'wp_ajax_psfs_stop_build_index', [ $this, 'ajaxStopBuildIndex' ] );
-		add_action( 'wp_ajax_psfs_build_index_heartbeat', [ $this, 'ajaxBuildIndexHeartbeat' ] );
-		add_action( 'wp_ajax_psfs_index_details_toggle', [ $this, 'ajaxBuildIndexDetailsToggle' ] );
+		add_action( 'wp_ajax_psf_search_build_index', [ $this, 'ajaxBuildIndex' ] );
+		add_action( 'wp_ajax_psf_search_stop_build_index', [ $this, 'ajaxStopBuildIndex' ] );
+		add_action( 'wp_ajax_psf_search_build_index_heartbeat', [ $this, 'ajaxBuildIndexHeartbeat' ] );
+		add_action( 'wp_ajax_psf_search_index_details_toggle', [ $this, 'ajaxBuildIndexDetailsToggle' ] );
 
-		add_action( 'update_option_' . PSFS_SETTINGS_KEY, [ $this, 'buildIndexOnchangeSettings' ], 10, 2 );
+		add_action( 'update_option_' . PSF_SEARCH_SETTINGS_KEY, [ $this, 'buildIndexOnchangeSettings' ], 10, 2 );
 
 		add_action( 'admin_init', [ $this, 'maintenanceOnInit' ], 5 );
 		add_action( 'admin_init', [ $this, 'fixIndexStatus' ] );
@@ -153,19 +153,19 @@ class TNTSearch {
 		$this->pushIndexAfterPluginUpdate();
 
 		// Load dynamic prices
-		add_action( 'wc_ajax_' . PSFS_GET_PRICES_ACTION, [ $this, 'getDynamicPrices' ] );
+		add_action( 'wc_ajax_' . PSF_SEARCH_GET_PRICES_ACTION, [ $this, 'getDynamicPrices' ] );
 
 		// Alternative search endpoint
 		if (
-			get_option( 'psfs_alternative_endpoint_enabled' ) === '1' ||
-			( defined( 'PSFS_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSFS_ALTERNATIVE_SEARCH_ENDPOINT )
+			get_option( 'psf_search_alternative_endpoint_enabled' ) === '1' ||
+			( defined( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT )
 		) {
-			add_action( 'wc_ajax_' . PSFS_SEARCH_PRO_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wc_ajax_' . PSF_SEARCH_SEARCH_PRO_ACTION, [ $this, 'getSearchResults' ] );
 		}
 
-		add_action( 'psfs/indexer/build', [ $this, 'buildIndex' ] );
-		add_action( 'psfs/indexer/delete', [ $this, 'deleteSingle' ] );
-		add_action( 'psfs/indexer/update', [ $this, 'updateSingle' ] );
+		add_action( 'psf_search/indexer/build', [ $this, 'buildIndex' ] );
+		add_action( 'psf_search/indexer/delete', [ $this, 'deleteSingle' ] );
+		add_action( 'psf_search/indexer/update', [ $this, 'updateSingle' ] );
 	}
 
 
@@ -227,7 +227,7 @@ class TNTSearch {
 	/**
 	 * Build index
 	 *
-	 * Admin ajax callback for action "psfs_build_index"
+	 * Admin ajax callback for action "psf_search_build_index"
 	 *
 	 * @return void
 	 */
@@ -236,7 +236,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_build_index' );
+		check_ajax_referer( 'psf_search_build_index' );
 
 		Builder::buildIndex();
 
@@ -255,7 +255,7 @@ class TNTSearch {
 			return;
 		}
 		// Skip index rebuilding when plugin version changes, because that will be done in \PsfSearch\Admin\Install::checkVersion.
-		if ( Helpers::getPluginVersion__premium_only() !== PSFS_VERSION ) {
+		if ( Helpers::getPluginVersion__premium_only() !== PSF_SEARCH_VERSION ) {
 			return;
 		}
 
@@ -307,7 +307,7 @@ class TNTSearch {
 	/**
 	 * Stop building index
 	 *
-	 * Admin ajax callback for action "psfs_stop_build_index"
+	 * Admin ajax callback for action "psf_search_stop_build_index"
 	 *
 	 * @return void
 	 */
@@ -316,7 +316,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_stop_build_index' );
+		check_ajax_referer( 'psf_search_stop_build_index' );
 
 		Builder::addInfo( 'status', 'cancellation', Config::getIndexRole() );
 		Builder::log( 'Stop building the index. Starting the cancellation process.' );
@@ -333,7 +333,7 @@ class TNTSearch {
 	/**
 	 * Refresh index status
 	 *
-	 * Admin ajax callback for action "psfs_build_index_heartbeat"
+	 * Admin ajax callback for action "psf_search_build_index_heartbeat"
 	 *
 	 * @return void
 	 */
@@ -342,7 +342,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_build_index_heartbeat' );
+		check_ajax_referer( 'psf_search_build_index_heartbeat' );
 
 		$status       = Builder::getInfo( 'status', Config::getIndexRole() );
 		$loop         = false;
@@ -398,7 +398,7 @@ class TNTSearch {
 	/**
 	 * Show/hide indexer logs
 	 *
-	 * Admin ajax callback for action "psfs_index_details_toggle"
+	 * Admin ajax callback for action "psf_search_index_details_toggle"
 	 *
 	 * @return void
 	 */
@@ -407,7 +407,7 @@ class TNTSearch {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_index_details_toggle' );
+		check_ajax_referer( 'psf_search_index_details_toggle' );
 
 		delete_transient( Builder::DETAILS_DISPLAY_KEY );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -481,7 +481,7 @@ class TNTSearch {
 	public function buildIndexOnchangeSettings( $oldSettings, $newSettings ) {
 		wp_cache_delete( 'alloptions', 'options' );
 
-		if ( PSFS()->engine !== 'tntsearchMySql' ) {
+		if ( PSF_SEARCH()->engine !== 'tntsearchMySql' ) {
 			return;
 		};
 
@@ -500,13 +500,13 @@ class TNTSearch {
 			'search_synonyms',
 		];
 
-		$taxonomiesSlugs = PSFS()->tntsearchMySql->taxonomies->getTaxonomiesSlugs();
+		$taxonomiesSlugs = PSF_SEARCH()->tntsearchMySql->taxonomies->getTaxonomiesSlugs();
 		foreach ( $taxonomiesSlugs as $slug ) {
 			$listenKeys[] = 'search_in_product_tax_' . $slug;
 			$listenKeys[] = 'show_product_tax_' . $slug;
 		}
 
-		$postTypeSlugs = PSFS()->tntsearchMySql->postTypes->getPostTypesSlugs();
+		$postTypeSlugs = PSF_SEARCH()->tntsearchMySql->postTypes->getPostTypesSlugs();
 		foreach ( $postTypeSlugs as $slug ) {
 			$listenKeys[] = 'show_post_type_' . $slug;
 		}
@@ -574,8 +574,8 @@ class TNTSearch {
 	 */
 	public function getDynamicPrices() {
 
-		if ( ! defined( 'PSFS_AJAX' ) ) {
-			define( 'PSFS_AJAX', true );
+		if ( ! defined( 'PSF_SEARCH_AJAX' ) ) {
+			define( 'PSF_SEARCH_AJAX', true );
 		}
 
 		$prices = [];
@@ -588,7 +588,7 @@ class TNTSearch {
 			// Hard cap request size to avoid unnecessary iteration and potential abuse.
 			$rawItems = array_slice( $rawItems, 0, $maxItems );
 
-			$totalLimitSetting = PSFS()->settings->getOption( 'suggestions_limit', 7 );
+			$totalLimitSetting = PSF_SEARCH()->settings->getOption( 'suggestions_limit', 7 );
 			$totalLimit        = min( $totalLimitSetting, $maxItems );
 
 			$i = 1;
@@ -626,8 +626,8 @@ class TNTSearch {
 	 * Alternative search endpoint
 	 */
 	public function getSearchResults() {
-		define( 'PSFS_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED', true );
-		require_once PSFS_DIR . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
+		define( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT_ENABLED', true );
+		require_once PSF_SEARCH_DIR . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
 	}
 
 	/**

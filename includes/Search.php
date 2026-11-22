@@ -72,7 +72,7 @@ class Search {
 	 * @return array Array with results.
 	 */
 	private function doSearch( $phrase, $args ): array {
-		$searchResults = PSFS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
+		$searchResults = PSF_SEARCH()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
 		$results       = [];
 
 		if (
@@ -112,7 +112,7 @@ class Search {
 			return [ $results, $totalResults, $totalPages ];
 		}
 
-		$results = PSFS()->nativeSearch->getProductsData(
+		$results = PSF_SEARCH()->nativeSearch->getProductsData(
 			$results,
 			- 1,
 			[
@@ -216,19 +216,19 @@ class Search {
 		$allowedPostTypes = [ 'product' ];
 		$allowedPostTypes = Helpers::getAllowedPostTypes();
 		if ( ! in_array( $args['post_type'], $allowedPostTypes, true ) ) {
-			$error->add( 'psfs-invalid-arg-post-type', 'Invalid argument: post_type' );
+			$error->add( 'psf-search-invalid-arg-post-type', 'Invalid argument: post_type' );
 		}
 
 		if ( ! in_array( $args['fields'], [ 'all', 'ids' ], true ) ) {
-			$error->add( 'psfs-invalid-arg-fields', 'Invalid argument: fields' );
+			$error->add( 'psf-search-invalid-arg-fields', 'Invalid argument: fields' );
 		}
 
 		if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
-			$error->add( 'psfs-invalid-arg-orderby', 'Invalid argument: orderby' );
+			$error->add( 'psf-search-invalid-arg-orderby', 'Invalid argument: orderby' );
 		}
 
 		if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
-			$error->add( 'psfs-invalid-arg-order', 'Invalid argument: order' );
+			$error->add( 'psf-search-invalid-arg-order', 'Invalid argument: order' );
 		}
 
 		if ( $error->has_errors() ) {

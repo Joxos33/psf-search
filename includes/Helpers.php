@@ -36,7 +36,7 @@ class Helpers {
 			return '';
 		}
 
-		$numWords = apply_filters( 'psfs/description/words_limit', $numWords );
+		$numWords = apply_filters( 'psf_search/description/words_limit', $numWords );
 
 		// Remove headings
 		$string = str_replace( [ '<h1><h2><h3><h4><h5><h6>' ], '<h3>', $string );
@@ -70,15 +70,15 @@ class Helpers {
 
 		$classes = [];
 
-		if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
-			$classes[] = 'psfs-is-detail-box';
+		if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
+			$classes[] = 'psf-search-is-detail-box';
 		}
 
-		$hasSubmit = isset( $args['submit_btn'] ) ? $args['submit_btn'] : PSFS()->settings->getOption( 'show_submit_button' );
+		$hasSubmit = isset( $args['submit_btn'] ) ? $args['submit_btn'] : PSF_SEARCH()->settings->getOption( 'show_submit_button' );
 		if ( $hasSubmit === 'on' ) {
-			$classes[] = 'psfs-has-submit';
+			$classes[] = 'psf-search-has-submit';
 		} else {
-			$classes[] = 'psfs-no-submit';
+			$classes[] = 'psf-search-no-submit';
 		}
 
 		if ( ! empty( $args['class'] ) ) {
@@ -87,26 +87,26 @@ class Helpers {
 
 		if ( ! empty( $args['style'] ) ) {
 			$type      = esc_html( $args['style'] );
-			$classes[] = 'psfs-style-' . $type;
+			$classes[] = 'psf-search-style-' . $type;
 			if ( $args['style'] === 'pirx-compact' ) {
-				$classes[] = 'psfs-style-pirx';
+				$classes[] = 'psf-search-style-pirx';
 			}
 		}
 
 		if ( ! empty( $args['layout'] ) ) {
 			$type      = esc_html( $args['layout'] );
-			$classes[] = 'js-psfs-layout-' . $type . ' psfs-layout-' . $type;
+			$classes[] = 'js-psf-search-layout-' . $type . ' psf-search-layout-' . $type;
 		}
 
 		if ( ! empty( $args['mobile_overlay'] ) ) {
-			$classes[] = 'js-psfs-mobile-overlay-enabled';
+			$classes[] = 'js-psf-search-mobile-overlay-enabled';
 		} else {
-			$classes[] = 'js-psfs-mobile-overlay-disabled';
+			$classes[] = 'js-psf-search-mobile-overlay-disabled';
 		}
 
 		if ( ! empty( $args['darken_bg'] ) ) {
-			$classes[] = 'psfs-search-darkoverl-mounted';
-			$classes[] = 'js-psfs-search-darkoverl-mounted';
+			$classes[] = 'psf-search-search-darkoverl-mounted';
+			$classes[] = 'js-psf-search-search-darkoverl-mounted';
 		}
 
 		return implode( ' ', $classes );
@@ -120,8 +120,8 @@ class Helpers {
 	 *
 	 * @return string
 	 */
-	public static function getMagnifierIco( $class = 'psfs-ico-magnifier', $type = 'magnifier-thin', $color = '' ) {
-		return apply_filters( 'psfs/form/magnifier_ico', self::getIcon( $type, $class, $color ), $class );
+	public static function getMagnifierIco( $class = 'psf-search-ico-magnifier', $type = 'magnifier-thin', $color = '' ) {
+		return apply_filters( 'psf_search/form/magnifier_ico', self::getIcon( $type, $class, $color ), $class );
 	}
 
 	/**
@@ -193,8 +193,8 @@ class Helpers {
 			case 'preloader':
 				$style = empty( $color ) ? '' : 'style="stroke: ' . esc_attr( $color ) . '"';
 				?>
-				<svg class="psfs-loader-circular <?php echo $class; ?>" viewBox="25 25 50 50">
-					<circle class="psfs-loader-circular-path" cx="50" cy="50" r="20" fill="none"
+				<svg class="psf-search-loader-circular <?php echo $class; ?>" viewBox="25 25 50 50">
+					<circle class="psf-search-loader-circular-path" cx="50" cy="50" r="20" fill="none"
 						<?php echo $style; ?> stroke-miterlimit="10"/>
 				</svg>
 				<?php
@@ -305,7 +305,7 @@ class Helpers {
 
 		$svg .= ob_get_clean();
 
-		return apply_filters( 'psfs/icon', $svg, $name, $class, $color );
+		return apply_filters( 'psf_search/icon', $svg, $name, $class, $color );
 	}
 
 	/**
@@ -325,7 +325,7 @@ class Helpers {
 			}
 		}
 
-		return apply_filters( 'psfs/form/action', $url );
+		return apply_filters( 'psf_search/form/action', $url );
 	}
 
 	/**
@@ -335,7 +335,7 @@ class Helpers {
 	 */
 
 	public static function getSearchInputName() {
-		return apply_filters( 'psfs/form/search_input/name', 's' );
+		return apply_filters( 'psf_search/form/search_input/name', 's' );
 	}
 
 	/**
@@ -350,7 +350,7 @@ class Helpers {
 
 		ob_start();
 
-		include PSFS_DIR . 'partials/admin/how-to-use.php';
+		include PSF_SEARCH_DIR . 'partials/admin/how-to-use.php';
 
 		$html .= ob_get_clean();
 
@@ -369,7 +369,7 @@ class Helpers {
 
 		ob_start();
 
-		include PSFS_DIR . 'partials/admin/embedding-in-theme.php';
+		include PSF_SEARCH_DIR . 'partials/admin/embedding-in-theme.php';
 
 		$html .= ob_get_clean();
 
@@ -517,7 +517,7 @@ class Helpers {
 	 */
 	public static function isSettingsPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psfs_settings' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_settings' ) {
 			return true;
 		}
 
@@ -531,7 +531,7 @@ class Helpers {
 	 */
 	public static function isDebugPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psfs_debug' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_debug' ) {
 			return true;
 		}
 
@@ -545,7 +545,7 @@ class Helpers {
 	 */
 	public static function isCheckoutPage() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psfs_settings-pricing' ) {
+		if ( is_admin() && ! empty( $_GET['page'] ) && $_GET['page'] === 'psf_search_settings-pricing' ) {
 			return true;
 		}
 
@@ -558,7 +558,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function getSettingsUrl() {
-		return admin_url( 'admin.php?page=psfs_settings' );
+		return admin_url( 'admin.php?page=psf_search_settings' );
 	}
 
 	/**
@@ -625,15 +625,15 @@ class Helpers {
 		switch ( $type ) {
 			case 'header':
 				if ( ! empty( $headerSubtitle ) ) {
-					$label = '<span class="psfs-pro-header__subtitle">' . $label . '</span><span class="psfs-pro-header__subtitle--text">' . $headerSubtitle . '</span>';
+					$label = '<span class="psf-search-pro-header__subtitle">' . $label . '</span><span class="psf-search-pro-header__subtitle--text">' . $headerSubtitle . '</span>';
 				}
-				$html .= '<div class="psfs-row psfs-pro-header"><span class="psfs-pro-label">' . $label . '</span><span class="psfs-pro-suffix">' . __(
+				$html .= '<div class="psf-search-row psf-search-pro-header"><span class="psf-search-pro-label">' . $label . '</span><span class="psf-search-pro-suffix">' . __(
 					'Pro',
 					'psf-search'
 				) . '</span></div>';
 				break;
 			case 'option-label':
-				$html .= '<div class="psfs-row psfs-pro-field"><span class="psfs-pro-label">' . $label . '</span><span class="psfs-pro-suffix">' . __(
+				$html .= '<div class="psf-search-row psf-search-pro-field"><span class="psf-search-pro-label">' . $label . '</span><span class="psf-search-pro-suffix">' . __(
 					'Pro',
 					'psf-search'
 				) . '</span></div>';
@@ -789,7 +789,7 @@ class Helpers {
 			'containing_position_divisor'    => 2,
 		];
 
-		$args = apply_filters( 'psfs/score_weights', array_merge( $default, $args ) );
+		$args = apply_filters( 'psf_search/score_weights', array_merge( $default, $args ) );
 
 		if ( $comparison['text_similarity'] > 0 ) {
 			$score = $comparison['text_similarity'] / $args['text_similarity_divisor'];
@@ -947,7 +947,7 @@ class Helpers {
 			}
 		}
 
-		return apply_filters( 'psfs/attribute_taxonomies', $taxonomies );
+		return apply_filters( 'psf_search/attribute_taxonomies', $taxonomies );
 	}
 
 	/**
@@ -981,12 +981,12 @@ class Helpers {
 			'_original_id',
 		];
 
-		$excludedMetaKeys = apply_filters( 'psfs/indexer/excluded_meta_keys', $excludedMetaKeys );
+		$excludedMetaKeys = apply_filters( 'psf_search/indexer/excluded_meta_keys', $excludedMetaKeys );
 
 		$metaKeys = [];
 
-		if ( apply_filters( 'psfs/indexer/skip_querying_searchable_custom_fields', false ) === false ) {
-			$customFieldsTransient = $skipTransient ? false : get_transient( 'psfs_searchable_custom_fields' );
+		if ( apply_filters( 'psf_search/indexer/skip_querying_searchable_custom_fields', false ) === false ) {
+			$customFieldsTransient = $skipTransient ? false : get_transient( 'psf_search_searchable_custom_fields' );
 
 			if ( ! is_array( $customFieldsTransient ) ) {
 				$sql = "SELECT DISTINCT meta_key
@@ -1003,7 +1003,7 @@ class Helpers {
 				//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$metaKeys = $wpdb->get_col( $sql );
 				if ( is_array( $metaKeys ) && $skipTransient === false ) {
-					set_transient( 'psfs_searchable_custom_fields', $metaKeys, HOUR_IN_SECONDS );
+					set_transient( 'psf_search_searchable_custom_fields', $metaKeys, HOUR_IN_SECONDS );
 				}
 			} else {
 				$metaKeys = $customFieldsTransient;
@@ -1024,7 +1024,7 @@ class Helpers {
 
 		$customFields = array_reverse( $customFields );
 
-		return apply_filters( 'psfs/indexer/searchable_custom_fields', $customFields );
+		return apply_filters( 'psf_search/indexer/searchable_custom_fields', $customFields );
 	}
 
 
@@ -1061,7 +1061,7 @@ class Helpers {
 			return false;
 		}
 
-		$sql = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'psfs_%' );
+		$sql = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'psf_search_%' );
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$result = $wpdb->get_col( $sql );
 
@@ -1093,11 +1093,11 @@ class Helpers {
 			$allow = true;
 		}
 
-		if ( PSFS()->settings->getOption( 'search_in_product_content' ) !== 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_content' ) !== 'on' ) {
 			$allow = false;
 		}
 
-		return apply_filters( 'psfs/search_in_variable_products', $allow );
+		return apply_filters( 'psf_search/search_in_variable_products', $allow );
 	}
 
 	/**
@@ -1112,8 +1112,8 @@ class Helpers {
 		/**
 		 * Searchable and readable index batch
 		 * Samples:
-		 * - psfs_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
-		 * - psfs_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 * - psf_search_build_readable_index_batch_bfc6f612423866e94a9fd52889a635b8
+		 * - psf_search_build_searchable_index_batch_bfc6f612423866e94a9fd52889a635b8
 		 */
 
 		$table  = $wpdb->options;
@@ -1129,7 +1129,7 @@ class Helpers {
 			"
 		DELETE
 		FROM {$table}
-		WHERE {$column} LIKE 'psfs\\_%\\_batch\\_%'
+		WHERE {$column} LIKE 'psf\\_search\\_%\\_batch\\_%'
 	"
 		);
 		// phpcs:enable
@@ -1181,7 +1181,7 @@ class Helpers {
 	public static function createTooltip( $id, $content = '', $template = '', $placement = 'right', $class = '' ) {
 
 		if ( ! empty( $template ) ) {
-			$file = PSFS_DIR . 'partials/admin/tooltips/' . $template . '.php';
+			$file = PSF_SEARCH_DIR . 'partials/admin/tooltips/' . $template . '.php';
 			if ( file_exists( $file ) ) {
 				ob_start();
 				require $file;
@@ -1190,10 +1190,10 @@ class Helpers {
 			}
 		}
 
-		$id = 'js-psfs-tooltip-id' . sanitize_key( $id );
+		$id = 'js-psf-search-tooltip-id' . sanitize_key( $id );
 
-		$html  = '<div class="js-psfs-tooltip ' . $class . '" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
-		$html .= '<div class="' . $id . '" style="display:none;"><div class="psfs-tooltip-wrapper">' . $content . '</div></div>';
+		$html  = '<div class="js-psf-search-tooltip ' . $class . '" data-tooltip-html-el="' . $id . '" data-tooltip-placement="' . $placement . '"></div>';
+		$html .= '<div class="' . $id . '" style="display:none;"><div class="psf-search-tooltip-wrapper">' . $content . '</div></div>';
 
 		return $html;
 	}
@@ -1240,7 +1240,7 @@ class Helpers {
 	 */
 	public static function createQuestionMark( $id, $content = '', $template = '', $placement = 'right' ) {
 
-		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-editor-help psfs-questio-mark' );
+		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-editor-help psf-search-questio-mark' );
 	}
 
 	/**
@@ -1254,7 +1254,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function createOverrideTooltip( $id, $content = '', $template = '', $placement = 'right' ) {
-		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-lock psfs-override-tooltip' );
+		return self::createTooltip( $id, $content, $template, $placement, 'dashicons dashicons-lock psf-search-override-tooltip' );
 	}
 
 	/**
@@ -1314,15 +1314,15 @@ class Helpers {
 	 */
 	public static function getLabels() {
 
-		$noResults = PSFS()->settings->getOption( 'search_no_results_text', __( 'No results', 'psf-search' ) );
+		$noResults = PSF_SEARCH()->settings->getOption( 'search_no_results_text', __( 'No results', 'psf-search' ) );
 		// TODO
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		$noResults = json_encode( self::ksesNoResults( $noResults ), JSON_UNESCAPED_SLASHES );
 
-		$showMore = esc_html( PSFS()->settings->getOption( 'search_see_all_results_text', __( 'See all products...', 'psf-search' ) ) );
+		$showMore = esc_html( PSF_SEARCH()->settings->getOption( 'search_see_all_results_text', __( 'See all products...', 'psf-search' ) ) );
 
 		return apply_filters(
-			'psfs/labels',
+			'psf_search/labels',
 			[
 				'product_plu'        => __( 'Products', 'woocommerce' ),
 				'vendor'             => __( 'Vendor', 'psf-search' ),
@@ -1336,8 +1336,8 @@ class Helpers {
 				'no_results_default' => __( 'No results', 'psf-search' ),
 				'show_more'          => $showMore,
 				'show_more_details'  => $showMore,
-				'search_placeholder' => PSFS()->settings->getOption( 'search_placeholder', __( 'Search for products...', 'psf-search' ) ),
-				'submit'             => PSFS()->settings->getOption( 'search_submit_text', '' ),
+				'search_placeholder' => PSF_SEARCH()->settings->getOption( 'search_placeholder', __( 'Search for products...', 'psf-search' ) ),
+				'submit'             => PSF_SEARCH()->settings->getOption( 'search_submit_text', '' ),
 				'search_hist'        => __( 'Your search history', 'psf-search' ),
 				'search_hist_clear'  => __( 'Clear', 'psf-search' ),
 				'mob_overlay_label'  => __( 'Open search in the mobile overlay', 'psf-search' ),
@@ -1432,7 +1432,7 @@ class Helpers {
 		if (
 			! $query->is_main_query() ||
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			( isset( $query->query_vars['s'] ) && ! isset( $_GET['psfs'] ) ) ||
+			( isset( $query->query_vars['s'] ) && ! isset( $_GET['psf_search'] ) ) ||
 			! isset( $query->query_vars['s'] ) ||
 			! $query->is_search() ||
 			( $query->get( 'post_type' ) && is_string( $query->get( 'post_type' ) ) && $query->get( 'post_type' ) !== 'product' )
@@ -1440,7 +1440,7 @@ class Helpers {
 			$enabled = false;
 		}
 
-		$enabled = apply_filters( 'psfs/helpers/is_search_query', $enabled, $query );
+		$enabled = apply_filters( 'psf_search/helpers/is_search_query', $enabled, $query );
 
 		return $enabled;
 	}
@@ -1453,7 +1453,7 @@ class Helpers {
 	public static function isProductSearchPage() {
 		//phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if (
-			isset( $_GET['psfs'] ) &&
+			isset( $_GET['psf_search'] ) &&
 			isset( $_GET['post_type'] ) && $_GET['post_type'] === 'product' &&
 			isset( $_GET['s'] )
 		) {
@@ -1473,11 +1473,11 @@ class Helpers {
 	 * @return mixed
 	 */
 	public static function rollbackSearchPhrase( $posts, $query ) {
-		if ( ! $query->get( 'psfs', false ) ) {
+		if ( ! $query->get( 'psf_search', false ) ) {
 			return $posts;
 		}
 
-		$phrase = wp_unslash( $query->get( 'psfs', '' ) );
+		$phrase = wp_unslash( $query->get( 'psf_search', '' ) );
 
 		// If phrase is URL encoded, decode it.
 		if ( preg_match( '/%[0-9A-Fa-f]{2}/', $phrase ) ) {
@@ -1498,7 +1498,7 @@ class Helpers {
 	 * @return string
 	 */
 	public static function clearSearchQuery( $search, $query ) {
-		if ( ! $query->get( 'psfs', false ) ) {
+		if ( ! $query->get( 'psf_search', false ) ) {
 			return $search;
 		}
 
@@ -1537,21 +1537,21 @@ class Helpers {
 	 */
 	public static function getLayoutSettings() {
 
-		$layoutBreakpoint = PSFS()->settings->getOption( 'mobile_breakpoint', 992 );
-		$layoutBreakpoint = apply_filters( 'psfs/scripts/mobile_breakpoint', $layoutBreakpoint ); // deprecated
+		$layoutBreakpoint = PSF_SEARCH()->settings->getOption( 'mobile_breakpoint', 992 );
+		$layoutBreakpoint = apply_filters( 'psf_search/scripts/mobile_breakpoint', $layoutBreakpoint ); // deprecated
 
-		$mobileOverlayBreakpoint = PSFS()->settings->getOption( 'mobile_overlay_breakpoint', 992 );
+		$mobileOverlayBreakpoint = PSF_SEARCH()->settings->getOption( 'mobile_overlay_breakpoint', 992 );
 
 		$layout = [
-			'style'                     => PSFS()->settings->getOption( 'search_style', 'solaris' ),
+			'style'                     => PSF_SEARCH()->settings->getOption( 'search_style', 'solaris' ),
 			'icon'                      => 'magnifier-thin',
-			'layout'                    => PSFS()->settings->getOption( 'search_layout', 'classic' ),
-			'layout_breakpoint'         => apply_filters( 'psfs/scripts/layout_breakpoint', $layoutBreakpoint ),
-			'mobile_overlay'            => PSFS()->settings->getOption( 'enable_mobile_overlay' ) === 'on' ? true : false,
-			'mobile_overlay_breakpoint' => apply_filters( 'psfs/scripts/mobile_overlay_breakpoint', $mobileOverlayBreakpoint ),
-			'mobile_overlay_wrapper'    => apply_filters( 'psfs/scripts/mobile_overlay_wrapper', 'body' ),
-			'darken_background'         => PSFS()->settings->getOption( 'darken_background', 'off' ) === 'on' ? true : false,
-			'icon_color'                => PSFS()->settings->getOption( 'search_icon_color' ),
+			'layout'                    => PSF_SEARCH()->settings->getOption( 'search_layout', 'classic' ),
+			'layout_breakpoint'         => apply_filters( 'psf_search/scripts/layout_breakpoint', $layoutBreakpoint ),
+			'mobile_overlay'            => PSF_SEARCH()->settings->getOption( 'enable_mobile_overlay' ) === 'on' ? true : false,
+			'mobile_overlay_breakpoint' => apply_filters( 'psf_search/scripts/mobile_overlay_breakpoint', $mobileOverlayBreakpoint ),
+			'mobile_overlay_wrapper'    => apply_filters( 'psf_search/scripts/mobile_overlay_wrapper', 'body' ),
+			'darken_background'         => PSF_SEARCH()->settings->getOption( 'darken_background', 'off' ) === 'on' ? true : false,
+			'icon_color'                => PSF_SEARCH()->settings->getOption( 'search_icon_color' ),
 		];
 
 		if ( in_array( $layout['style'], [ 'pirx', 'pirx-compact' ] ) ) {
@@ -1575,9 +1575,9 @@ class Helpers {
 			'ajax_search_endpoint'            => self::getEndpointUrl( 'search' ),
 			'ajax_details_endpoint'           => self::getEndpointUrl( 'details' ),
 			'ajax_prices_endpoint'            => self::getEndpointUrl( 'prices' ),
-			'action_search'                   => PSFS_SEARCH_ACTION,
-			'action_result_details'           => PSFS_RESULT_DETAILS_ACTION,
-			'action_get_prices'               => PSFS_GET_PRICES_ACTION,
+			'action_search'                   => PSF_SEARCH_SEARCH_ACTION,
+			'action_result_details'           => PSF_SEARCH_RESULT_DETAILS_ACTION,
+			'action_get_prices'               => PSF_SEARCH_GET_PRICES_ACTION,
 			'min_chars'                       => 3,
 			'width'                           => 'auto',
 			'show_details_panel'              => false,
@@ -1592,31 +1592,31 @@ class Helpers {
 			'show_headings'                   => self::canGroupSuggestions(),
 			'preloader_url'                   => '',
 			'taxonomy_brands'                 => '',
-			'img_url'                         => PSFS_URL . 'assets/img/',
+			'img_url'                         => PSF_SEARCH_URL . 'assets/img/',
 			'is_premium'                      => true,
 			'layout_breakpoint'               => $layout->layout_breakpoint,
 			'mobile_overlay_breakpoint'       => $layout->mobile_overlay_breakpoint,
 			'mobile_overlay_wrapper'          => $layout->mobile_overlay_wrapper,
-			'mobile_overlay_delay'            => apply_filters( 'psfs/scripts/overlay_delay_ms', 0 ),
-			'debounce_wait_ms'                => apply_filters( 'psfs/scripts/debounce_wait_ms', 400 ),
-			'send_ga_events'                  => apply_filters( 'psfs/scripts/send_ga_events', true ),
-			'enable_ga_site_search_module'    => apply_filters( 'psfs/scripts/enable_ga_site_search_module', false ),
+			'mobile_overlay_delay'            => apply_filters( 'psf_search/scripts/overlay_delay_ms', 0 ),
+			'debounce_wait_ms'                => apply_filters( 'psf_search/scripts/debounce_wait_ms', 400 ),
+			'send_ga_events'                  => apply_filters( 'psf_search/scripts/send_ga_events', true ),
+			'enable_ga_site_search_module'    => apply_filters( 'psf_search/scripts/enable_ga_site_search_module', false ),
 			'magnifier_icon'                  => self::getMagnifierIco( '' ),
 			'magnifier_icon_pirx'             => self::getMagnifierIco( '', 'magnifier-pirx' ),
 			'history_icon'                    => self::getIcon( 'history' ),
 			'close_icon'                      => self::getIcon( 'close' ),
 			'back_icon'                       => self::getIcon( 'arrow-left' ),
 			'preloader_icon'                  => self::getIcon( 'preloader' ),
-			'voice_search_inactive_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-inactive-pirx' : 'voice-search-inactive', 'psfs-voice-search-mic-inactive' ),
-			'voice_search_active_icon'        => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-active-pirx' : 'voice-search-active', 'psfs-voice-search-mic-active' ),
-			'voice_search_disabled_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-disabled-pirx' : 'voice-search-disabled', 'psfs-voice-search-mic-disabled' ),
-			'custom_params'                   => (object) apply_filters( 'psfs/scripts/custom_params', [] ),
+			'voice_search_inactive_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-inactive-pirx' : 'voice-search-inactive', 'psf-search-voice-search-mic-inactive' ),
+			'voice_search_active_icon'        => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-active-pirx' : 'voice-search-active', 'psf-search-voice-search-mic-active' ),
+			'voice_search_disabled_icon'      => self::getIcon( in_array( $layout->style, [ 'pirx', 'pirx-compact' ] ) ? 'voice-search-disabled-pirx' : 'voice-search-disabled', 'psf-search-voice-search-mic-disabled' ),
+			'custom_params'                   => (object) apply_filters( 'psf_search/scripts/custom_params', [] ),
 			'convert_html'                    => true, // Todo remove it in v1.27.0, because it's not used anymore.
-			'suggestions_wrapper'             => apply_filters( 'psfs/scripts/suggestions_wrapper', 'body' ),
-			'disable_hits'                    => apply_filters( 'psfs/scripts/disable_hits', false ),
-			'disable_submit'                  => apply_filters( 'psfs/scripts/disable_submit', false ),
+			'suggestions_wrapper'             => apply_filters( 'psf_search/scripts/suggestions_wrapper', 'body' ),
+			'disable_hits'                    => apply_filters( 'psf_search/scripts/disable_hits', false ),
+			'disable_submit'                  => apply_filters( 'psf_search/scripts/disable_submit', false ),
 			'fixer'                           => apply_filters(
-				'psfs/scripts/fixer',
+				'psf_search/scripts/fixer',
 				[
 					'broken_search_ui'                  => true,
 					'broken_search_ui_ajax'             => true,
@@ -1627,17 +1627,17 @@ class Helpers {
 					'force_refresh_checkout'            => true,
 				]
 			),
-			'voice_search_enabled'            => defined( 'PSFS_VOICE_SEARCH_ENABLE' ) && PSFS_VOICE_SEARCH_ENABLE,
-			'voice_search_lang'               => apply_filters( 'psfs/scripts/voice_search_lang', self::getBCP47LangCode( get_bloginfo( 'language' ) ) ),
+			'voice_search_enabled'            => defined( 'PSF_SEARCH_VOICE_SEARCH_ENABLE' ) && PSF_SEARCH_VOICE_SEARCH_ENABLE,
+			'voice_search_lang'               => apply_filters( 'psf_search/scripts/voice_search_lang', self::getBCP47LangCode( get_bloginfo( 'language' ) ) ),
 			'show_recently_searched_products' => false,
 			'show_recently_searched_phrases'  => false,
 			'go_to_first_variation_on_submit' => false,
 		];
 
 		// User search history
-		if ( PSFS()->settings->getOption( 'show_user_history' ) === 'on' ) {
-			$localize['show_recently_searched_products'] = apply_filters( 'psfs/scripts/show_recently_searched_products', true );
-			$localize['show_recently_searched_phrases']  = apply_filters( 'psfs/scripts/show_recently_searched_phrases', true );
+		if ( PSF_SEARCH()->settings->getOption( 'show_user_history' ) === 'on' ) {
+			$localize['show_recently_searched_products'] = apply_filters( 'psf_search/scripts/show_recently_searched_products', true );
+			$localize['show_recently_searched_phrases']  = apply_filters( 'psf_search/scripts/show_recently_searched_phrases', true );
 		}
 
 		if ( Multilingual::isMultilingual() ) {
@@ -1645,74 +1645,74 @@ class Helpers {
 		}
 
 
-		$localize['dynamic_prices'] = defined( 'PSFS_DYNAMIC_PRICES' ) && PSFS_DYNAMIC_PRICES && PSFS()->settings->getOption( 'show_product_price' ) === 'on';
+		$localize['dynamic_prices'] = defined( 'PSF_SEARCH_DYNAMIC_PRICES' ) && PSF_SEARCH_DYNAMIC_PRICES && PSF_SEARCH()->settings->getOption( 'show_product_price' ) === 'on';
 
-		$localize['debounce_wait_ms'] = apply_filters( 'psfs/scripts/debounce_wait_ms', 100 );
+		$localize['debounce_wait_ms'] = apply_filters( 'psf_search/scripts/debounce_wait_ms', 100 );
 
-		if ( PSFS()->brands->hasBrands() && PSFS()->settings->getOption( 'show_product_tax_' . PSFS()->brands->getBrandTaxonomy() ) === 'on' ) {
-			$localize['taxonomy_brands'] = PSFS()->brands->getBrandTaxonomy();
+		if ( PSF_SEARCH()->brands->hasBrands() && PSF_SEARCH()->settings->getOption( 'show_product_tax_' . PSF_SEARCH()->brands->getBrandTaxonomy() ) === 'on' ) {
+			$localize['taxonomy_brands'] = PSF_SEARCH()->brands->getBrandTaxonomy();
 		}
 
 		$variationSupportModes = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'variation_support_modes' );
 		if ( is_array( $variationSupportModes ) && in_array( 'exact_match', $variationSupportModes ) && ! in_array( 'as_single_product', $variationSupportModes ) ) {
 			$localize['go_to_first_variation_on_submit'] = true;
 		}
-		$localize['go_to_first_variation_on_submit'] = apply_filters( 'psfs/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
+		$localize['go_to_first_variation_on_submit'] = apply_filters( 'psf_search/scripts/go_to_first_variation_on_submit', $localize['go_to_first_variation_on_submit'] );
 
 		// Min characters
-		$min_chars = PSFS()->settings->getOption( 'min_chars' );
+		$min_chars = PSF_SEARCH()->settings->getOption( 'min_chars' );
 		if ( ! empty( $min_chars ) && is_numeric( $min_chars ) ) {
 			$localize['min_chars'] = absint( $min_chars );
 		}
 
-		$sug_width = PSFS()->settings->getOption( 'sug_width' );
+		$sug_width = PSF_SEARCH()->settings->getOption( 'sug_width' );
 		if ( ! empty( $sug_width ) && is_numeric( $sug_width ) && $sug_width > 100 ) {
 			$localize['sug_width'] = absint( $sug_width );
 		}
 
 		// Show/hide Details panel
-		if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
 			$localize['show_details_panel'] = true;
 		}
 
 		// Show/hide images
-		if ( PSFS()->settings->getOption( 'show_product_image' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_image' ) === 'on' ) {
 			$localize['show_images'] = true;
 		}
 
 		// Show/hide price
-		if ( PSFS()->settings->getOption( 'show_product_price' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_price' ) === 'on' ) {
 			$localize['show_price'] = true;
 		}
 
 		// Show/hide description
-		if ( PSFS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_desc' ) === 'on' ) {
 			$localize['show_desc'] = true;
 		}
 
 		// Show/hide description
-		if ( PSFS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_sku' ) === 'on' ) {
 			$localize['show_sku'] = true;
 		}
 
 		// Show/hide sale badge
-		if ( PSFS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
 			$localize['show_sale_badge'] = true;
 		}
 
 		// Show/hide featured badge
-		if ( PSFS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
 			$localize['show_featured_badge'] = true;
 		}
 
 		// Set preloader
-		if ( PSFS()->settings->getOption( 'show_preloader' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_preloader' ) === 'on' ) {
 			$localize['show_preloader'] = true;
 
-			$localize['preloader_url'] = esc_url( trim( PSFS()->settings->getOption( 'preloader_url' ) ) );
+			$localize['preloader_url'] = esc_url( trim( PSF_SEARCH()->settings->getOption( 'preloader_url' ) ) );
 		}
 
-		return apply_filters( 'psfs/scripts/localize', $localize );
+		return apply_filters( 'psf_search/scripts/localize', $localize );
 	}
 
 	/**
@@ -1731,27 +1731,27 @@ class Helpers {
 
 		switch ( $type ) {
 			case 'search':
-				$url = \WC_AJAX::get_endpoint( PSFS_SEARCH_ACTION );
-				$url = PSFS_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_SEARCH_ACTION );
+				$url = PSF_SEARCH_URL . 'includes/Engines/TNTSearchMySQL/Endpoints/search.php';
 
 				if (
-					( get_option( 'psfs_alternative_endpoint_enabled' ) === '1' && defined( 'PSFS_SEARCH_PRO_ACTION' ) ) ||
-					( defined( 'PSFS_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSFS_ALTERNATIVE_SEARCH_ENDPOINT )
+					( get_option( 'psf_search_alternative_endpoint_enabled' ) === '1' && defined( 'PSF_SEARCH_SEARCH_PRO_ACTION' ) ) ||
+					( defined( 'PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT' ) && PSF_SEARCH_ALTERNATIVE_SEARCH_ENDPOINT )
 				) {
-					$url = \WC_AJAX::get_endpoint( PSFS_SEARCH_PRO_ACTION );
+					$url = \WC_AJAX::get_endpoint( PSF_SEARCH_SEARCH_PRO_ACTION );
 				}
 				break;
 			case 'details':
-				$url = \WC_AJAX::get_endpoint( PSFS_RESULT_DETAILS_ACTION );
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_RESULT_DETAILS_ACTION );
 				break;
 			case 'prices':
-				$url = \WC_AJAX::get_endpoint( PSFS_GET_PRICES_ACTION );
+				$url = \WC_AJAX::get_endpoint( PSF_SEARCH_GET_PRICES_ACTION );
 				break;
 			default:
 				break;
 		}
 
-		return apply_filters( "psfs/endpoint/{$type}", $url );
+		return apply_filters( "psf_search/endpoint/{$type}", $url );
 	}
 
 
@@ -1836,7 +1836,7 @@ class Helpers {
 			);
 		}
 		$postIn  = [];
-		$results = PSFS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
+		$results = PSF_SEARCH()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
 		if ( isset( $results['suggestions'] ) && is_array( $results['suggestions'] ) ) {
 			$postIn = wp_list_pluck( $results['suggestions'], 'ID' );
 		}
@@ -1889,7 +1889,7 @@ class Helpers {
 			// Non-product post types will be added in via below filter.
 		}
 
-		return apply_filters( 'psfs/allowed_post_types', $types, $filter );
+		return apply_filters( 'psf_search/allowed_post_types', $types, $filter );
 	}
 
 	/**
@@ -1900,8 +1900,8 @@ class Helpers {
 	public static function getBasicAuthHeader() {
 		$authorization = '';
 		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		if ( defined( 'PSFS_BA_USERNAME' ) && defined( 'PSFS_BA_PASSWORD' ) ) {
-			$authorization = 'Basic ' . base64_encode( wp_unslash( PSFS_BA_USERNAME ) . ':' . wp_unslash( PSFS_BA_PASSWORD ) );
+		if ( defined( 'PSF_SEARCH_BA_USERNAME' ) && defined( 'PSF_SEARCH_BA_PASSWORD' ) ) {
+			$authorization = 'Basic ' . base64_encode( wp_unslash( PSF_SEARCH_BA_USERNAME ) . ':' . wp_unslash( PSF_SEARCH_BA_PASSWORD ) );
 
 		} elseif ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 			$authorization = 'Basic ' . base64_encode( wp_unslash( $_SERVER['PHP_AUTH_USER'] ) . ':' . wp_unslash( $_SERVER['PHP_AUTH_PW'] ) );
@@ -1971,7 +1971,7 @@ class Helpers {
 	 */
 	public static function getFilterProductsRules__premium_only() {
 		$rules      = [];
-		$savedRules = PSFS()->settings->getOption( 'filter_products_rules' );
+		$savedRules = PSF_SEARCH()->settings->getOption( 'filter_products_rules' );
 		if ( ! is_string( $savedRules ) ) {
 			return $rules;
 		}
@@ -2002,9 +2002,9 @@ class Helpers {
 		global $wpdb;
 
 		if ( defined( 'SHORTINIT' ) && SHORTINIT ) {
-			$result = $wpdb->get_var( "SELECT option_value FROM $wpdb->options WHERE option_name = 'psfs_db_json_support'" );
+			$result = $wpdb->get_var( "SELECT option_value FROM $wpdb->options WHERE option_name = 'psf_search_db_json_support'" );
 		} else {
-			$result = get_option( 'psfs_db_json_support' );
+			$result = get_option( 'psf_search_db_json_support' );
 		}
 
 		return $result === 'yes';
@@ -2018,11 +2018,11 @@ class Helpers {
 	public static function isCacheEnabled__premium_only() {
 		$enabled = true;
 
-		if ( defined( 'PSFS_SEARCH_CACHE' ) ) {
-			$enabled = (bool) PSFS_SEARCH_CACHE;
+		if ( defined( 'PSF_SEARCH_SEARCH_CACHE' ) ) {
+			$enabled = (bool) PSF_SEARCH_SEARCH_CACHE;
 		}
 
-		return apply_filters( 'psfs/tnt/search_cache', $enabled );
+		return apply_filters( 'psf_search/tnt/search_cache', $enabled );
 	}
 
 	/**
@@ -2033,7 +2033,7 @@ class Helpers {
 	public static function getPluginVersion__premium_only() {
 		global $wpdb;
 
-		$version = $wpdb->get_var( "SELECT SQL_NO_CACHE option_value FROM $wpdb->options WHERE option_name = 'psfs_version_pro'" );
+		$version = $wpdb->get_var( "SELECT SQL_NO_CACHE option_value FROM $wpdb->options WHERE option_name = 'psf_search_version_pro'" );
 
 		return empty( $version ) ? '' : $version;
 	}
@@ -2125,14 +2125,14 @@ class Helpers {
 		$path = '';
 
 		// Load default partials from the plugin
-		$file = PSFS_DIR . 'partials/' . $template;
+		$file = PSF_SEARCH_DIR . 'partials/' . $template;
 		if ( file_exists( $file ) ) {
 			$path = $file;
 		}
 
 		// Load general template if the specific one is not found.
 		if ( empty( $path ) ) {
-			$file = PSFS_DIR . 'partials/' . $generalTemplate;
+			$file = PSF_SEARCH_DIR . 'partials/' . $generalTemplate;
 			if ( file_exists( $file ) ) {
 				$path = $file;
 			}
@@ -2144,7 +2144,7 @@ class Helpers {
 			$path = $file;
 		}
 
-		$path = apply_filters( 'psfs/template', $path, $template, $vars, $generalTemplate );
+		$path = apply_filters( 'psf_search/template', $path, $template, $vars, $generalTemplate );
 		if ( file_exists( $path ) ) {
 			include $path;
 		}
@@ -2191,8 +2191,8 @@ class Helpers {
 			}
 		}
 
-		$charset = apply_filters( 'psfs/db/charset', $charset, $context );
-		$collate = apply_filters( 'psfs/db/collation', $collate, $context );
+		$charset = apply_filters( 'psf_search/db/charset', $charset, $context );
+		$collate = apply_filters( 'psf_search/db/collation', $collate, $context );
 
 		if ( ! empty( $charset ) ) {
 			$sql .= ' DEFAULT CHARACTER SET ' . $charset;
@@ -2202,7 +2202,7 @@ class Helpers {
 			$sql .= ' COLLATE ' . $collate;
 		}
 
-		return apply_filters( 'psfs/db/collation/sql', $sql, $context );
+		return apply_filters( 'psf_search/db/collation/sql', $sql, $context );
 	}
 
 	/**
@@ -2256,12 +2256,12 @@ class Helpers {
 	 */
 	public static function isIndexing__premium_only() {
 		if (
-			( defined( 'PSFS_PREPARE_BUILD_INDEX' ) && PSFS_PREPARE_BUILD_INDEX ) ||
-			( defined( 'PSFS_BUILD_INDEX_PROCESS' ) && PSFS_BUILD_INDEX_PROCESS ) ||
-			( defined( 'PSFS_SEARCHABLE_INDEX_TASK' ) && PSFS_SEARCHABLE_INDEX_TASK ) ||
-			( defined( 'PSFS_READABLE_INDEX_TASK' ) && PSFS_READABLE_INDEX_TASK ) ||
-			( defined( 'PSFS_TAXONOMY_INDEX_TASK' ) && PSFS_TAXONOMY_INDEX_TASK ) ||
-			( defined( 'PSFS_VENDOR_INDEX_TASK' ) && PSFS_VENDOR_INDEX_TASK )
+			( defined( 'PSF_SEARCH_PREPARE_BUILD_INDEX' ) && PSF_SEARCH_PREPARE_BUILD_INDEX ) ||
+			( defined( 'PSF_SEARCH_BUILD_INDEX_PROCESS' ) && PSF_SEARCH_BUILD_INDEX_PROCESS ) ||
+			( defined( 'PSF_SEARCH_SEARCHABLE_INDEX_TASK' ) && PSF_SEARCH_SEARCHABLE_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_READABLE_INDEX_TASK' ) && PSF_SEARCH_READABLE_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_TAXONOMY_INDEX_TASK' ) && PSF_SEARCH_TAXONOMY_INDEX_TASK ) ||
+			( defined( 'PSF_SEARCH_VENDOR_INDEX_TASK' ) && PSF_SEARCH_VENDOR_INDEX_TASK )
 		) {
 			return true;
 		}
@@ -2319,7 +2319,7 @@ class Helpers {
 	public static function getAllOptionNames() {
 		global $wpdb;
 		$options = [];
-		$res     = $wpdb->get_col( "SELECT SQL_NO_CACHE option_name FROM $wpdb->options WHERE option_name LIKE 'psfs_%'" );
+		$res     = $wpdb->get_col( "SELECT SQL_NO_CACHE option_name FROM $wpdb->options WHERE option_name LIKE 'psf_search_%'" );
 
 		if ( ! empty( $res ) && is_array( $res ) ) {
 			$options = $res;
@@ -2362,7 +2362,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function shopManagerHasAccess() {
-		return defined( 'PSFS_ALLOW_SHOP_MANAGER_ACCESS' ) && PSFS_ALLOW_SHOP_MANAGER_ACCESS;
+		return defined( 'PSF_SEARCH_ALLOW_SHOP_MANAGER_ACCESS' ) && PSF_SEARCH_ALLOW_SHOP_MANAGER_ACCESS;
 	}
 
 	/**
@@ -2512,7 +2512,7 @@ class Helpers {
 			'y'   => 'i',
 		];
 
-		$greekLatinMap = apply_filters( 'psfs/greeklish_map', $greekLatinMap );
+		$greekLatinMap = apply_filters( 'psf_search/greeklish_map', $greekLatinMap );
 
 		return strtr( mb_strtolower( $text ), $greekLatinMap );
 	}
@@ -2568,7 +2568,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function phraseContainsBlacklistedTerm( $phrase ) {
-		$blacklistedTerms = apply_filters( 'psfs/blacklisted_terms', [] );
+		$blacklistedTerms = apply_filters( 'psf_search/blacklisted_terms', [] );
 		if ( is_array( $blacklistedTerms ) ) {
 			foreach ( $blacklistedTerms as $term ) {
 				if ( mb_stripos( $phrase, $term ) !== false ) {
@@ -2578,7 +2578,7 @@ class Helpers {
 		}
 
 		if (
-			apply_filters( 'psfs/blacklisted_terms/check_js', true ) &&
+			apply_filters( 'psf_search/blacklisted_terms/check_js', true ) &&
 			self::containsJsScript( $phrase )
 		) {
 			return true;
@@ -2654,7 +2654,7 @@ class Helpers {
 	public static function secureHtmlOutput( $html, $context = '' ) {
 		$output = wp_kses_post( $html );
 
-		return apply_filters( 'psfs/secure_html_output', $output, $context, $html );
+		return apply_filters( 'psf_search/secure_html_output', $output, $context, $html );
 	}
 
 	/**
@@ -2800,21 +2800,21 @@ AND    post_status = 'publish'
 	 */
 	public static function getVariationSupportModes__premium_only() {
 		$variationSupportModes = [];
-		if ( PSFS()->settings->getOption( 'search_in_product_sku' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_sku' ) === 'on' ) {
 			$variationSupportModes[] = 'search_in_sku';
-			$installDate             = get_option( 'psfs_activation_date' );
+			$installDate             = get_option( 'psf_search_activation_date' );
 			if ( ! empty( $installDate ) && $installDate < strtotime( '2024-10-28' ) ) {
 				$variationSupportModes[] = 'exact_match';
 			}
 		}
-		if ( PSFS()->settings->getOption( 'search_in_product_global_unique_id' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_global_unique_id' ) === 'on' ) {
 			$variationSupportModes[] = 'search_in_global_unique_id';
-			$installDate             = get_option( 'psfs_activation_date' );
+			$installDate             = get_option( 'psf_search_activation_date' );
 			if ( ! empty( $installDate ) && $installDate < strtotime( '2024-10-28' ) ) {
 				$variationSupportModes[] = 'exact_match';
 			}
 		}
-		$variationSupportModes = apply_filters( 'psfs/variation_support_modes', $variationSupportModes );
+		$variationSupportModes = apply_filters( 'psf_search/variation_support_modes', $variationSupportModes );
 
 		return array_intersect(
 			$variationSupportModes,
@@ -2831,13 +2831,13 @@ AND    post_status = 'publish'
 	 * Check if autocomplete suggestions have to be grouped.
 	 * Previously, the option show_grouped_results was available, but it has been removed.
 	 * Starting from version v1.30.0, result grouping in autocomplete is enforced for all users.
-	 * Grouping can now only be disabled via the psfs/grouped_autocomplete_suggestions filter.
+	 * Grouping can now only be disabled via the psf_search/grouped_autocomplete_suggestions filter.
 	 *
 	 * @return bool
 	 * @since 1.30.0
 	 */
 	public static function canGroupSuggestions(): bool {
-		return apply_filters( 'psfs/grouped_autocomplete_suggestions', true );
+		return apply_filters( 'psf_search/grouped_autocomplete_suggestions', true );
 	}
 
 	/**
@@ -2986,7 +2986,7 @@ AND    post_status = 'publish'
 	 */
 	public static function isNoPsfSearchModeActive() {
 		return isset( $_GET['nopsfsearch'] ) && $_GET['nopsfsearch'] === '1' // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					|| apply_filters( 'psfs/nopsfsearch', '' ) === '1';
+					|| apply_filters( 'psf_search/nopsfsearch', '' ) === '1';
 	}
 
 	/**
@@ -3018,7 +3018,7 @@ AND    post_status = 'publish'
 		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		add_action(
-			'psfs/form',
+			'psf_search/form',
 			function () {
 				printf(
 					'<input type="hidden" name="psfdebug" value="%s"/>',
@@ -3028,7 +3028,7 @@ AND    post_status = 'publish'
 		);
 
 		add_filter(
-			'psfs/search_bar/custom_params',
+			'psf_search/search_bar/custom_params',
 			function ( $params ) {
 				$params['psfdebug'] = $_GET['psfdebug'];
 

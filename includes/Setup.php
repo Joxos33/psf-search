@@ -34,10 +34,10 @@ class Setup {
 	 * @return void
 	 */
 	public function setThumbnailSize() {
-		$this->thumbnailSize = apply_filters( 'psfs/setup/thumbnail_size', 'psfs-product-suggestion' );
+		$this->thumbnailSize = apply_filters( 'psf_search/setup/thumbnail_size', 'psf-search-product-suggestion' );
 
-		if ( $this->thumbnailSize === 'psfs-product-suggestion' ) {
-			add_image_size( 'psfs-product-suggestion', 64, 0, false );
+		if ( $this->thumbnailSize === 'psf-search-product-suggestion' ) {
+			add_image_size( 'psf-search-product-suggestion', 64, 0, false );
 		}
 	}
 

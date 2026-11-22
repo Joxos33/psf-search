@@ -1,12 +1,12 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 if ( ! empty( $notices ) ) : ?>
-	<div class="psfs-indexing-notices">
+	<div class="psf-search-indexing-notices">
 		<?php
 		foreach ( $notices as $type => $message ) :
 			$dashicon = '';
@@ -16,7 +16,7 @@ if ( ! empty( $notices ) ) : ?>
 					break;
 			}
 			?>
-			<div class="psfs-indexing-notice psfs-indexing-notice--<?php echo $type; ?>">
+			<div class="psf-search-indexing-notice psf-search-indexing-notice--<?php echo $type; ?>">
 				<div><?php echo $dashicon; ?></div>
 				<div><?php echo $message; ?></div>
 			</div>

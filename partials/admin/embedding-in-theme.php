@@ -2,19 +2,19 @@
 
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-if ( PSFS()->themeCompatibility->isCurrentThemeSupported() ) :
+if ( PSF_SEARCH()->themeCompatibility->isCurrentThemeSupported() ) :
 
-	if ( ! PSFS()->themeCompatibility->isWhiteLabel() ) :
+	if ( ! PSF_SEARCH()->themeCompatibility->isWhiteLabel() ) :
 
-		$name        = PSFS()->themeCompatibility->getThemeName();
+		$name        = PSF_SEARCH()->themeCompatibility->getThemeName();
 		$parentLabel = '';
 
-		if ( PSFS()->themeCompatibility->isChildTheme() ) {
-			$parentLabel = ', ' . sprintf( __( 'child theme of <b>%s</b>', 'psf-search' ), PSFS()->themeCompatibility->getParentThemeName() );
+		if ( PSF_SEARCH()->themeCompatibility->isChildTheme() ) {
+			$parentLabel = ', ' . sprintf( __( 'child theme of <b>%s</b>', 'psf-search' ), PSF_SEARCH()->themeCompatibility->getParentThemeName() );
 		}
 
 		?>

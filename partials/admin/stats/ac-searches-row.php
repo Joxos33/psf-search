@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<tr class="js-psfs-autocomplete-row">
+<tr class="js-psf-search-autocomplete-row">
 	<td><?php echo $i; ?></td>
 	<td><?php echo esc_html( $row['phrase'] ); ?></td>
 	<td><?php echo esc_html( $row['qty'] ); ?></td>

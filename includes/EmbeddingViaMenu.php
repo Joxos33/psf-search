@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class EmbeddingViaMenu {
-	const SEARCH_PLACEHOLDER = 'psfs_search_box';
+	const SEARCH_PLACEHOLDER = 'psf_search_search_box';
 
 	public function init() {
 		if ( is_admin() ) {
@@ -57,7 +57,7 @@ class EmbeddingViaMenu {
 	 */
 	public function addNavMenuMetaBoxes() {
 		add_meta_box(
-			'psfs_endpoints_nav_link',
+			'psf_search_endpoints_nav_link',
 			__( 'PSF Search bar', 'psf-search' ),
 			[ $this, 'navMenuLinks' ],
 			'nav-menus',
@@ -73,16 +73,16 @@ class EmbeddingViaMenu {
 		if ( $item->post_title !== self::SEARCH_PLACEHOLDER ) {
 			return;
 		}
-		$layout = get_post_meta( $item_id, '_menu_item_psfs_layout', true );
+		$layout = get_post_meta( $item_id, '_menu_item_psf_search_layout', true );
 		if ( empty( $layout ) ) {
 			$layout = 'default';
 		}
-		$searchIconColor = get_post_meta( $item_id, '_menu_item_psfs_search_icon_color', true );
+		$searchIconColor = get_post_meta( $item_id, '_menu_item_psf_search_search_icon_color', true );
 		?>
-		<p class="description description-wide psfs-description">
-			<label for="edit-menu-item-psfs-layout-<?php echo $item_id; ?>">
+		<p class="description description-wide psf-search-description">
+			<label for="edit-menu-item-psf-search-layout-<?php echo $item_id; ?>">
 				<?php _e( 'Layout', 'psf-search' ); ?>
-				<select id="edit-menu-item-psfs-layout-<?php echo $item_id; ?>" name="menu-item-psfs-layout[<?php echo $item_id; ?>]" class="psfs-layout-select">
+				<select id="edit-menu-item-psf-search-layout-<?php echo $item_id; ?>" name="menu-item-psf-search-layout[<?php echo $item_id; ?>]" class="psf-search-layout-select">
 					<?php
 					foreach ( $this->getLayoutOptions() as $value => $name ) {
 						$selected = selected( $value, $layout, false );
@@ -92,12 +92,12 @@ class EmbeddingViaMenu {
 				</select>
 			</label>
 		</p>
-		<p class="description description-wide psfs-description">
+		<p class="description description-wide psf-search-description">
 			<?php _e( 'Search icon color', 'psf-search' ); ?><br/>
 			<input
 				type="text"
 				class="widefat wp-color-picker-field dwgt-wcas-color-picker"
-				name="menu-item-psfs-search-icon-color[<?php echo $item_id; ?>]"
+				name="menu-item-psf-search-search-icon-color[<?php echo $item_id; ?>]"
 				value="<?php echo esc_attr( $searchIconColor ); ?>"/>
 		</p>
 		<?php
@@ -114,11 +114,11 @@ class EmbeddingViaMenu {
 		}
 		// TODO
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$layout = isset( $_POST['menu-item-psfs-layout'][ $menu_item_db_id ] ) ? sanitize_key( $_POST['menu-item-psfs-layout'][ $menu_item_db_id ] ) : '';
-		update_post_meta( $menu_item_db_id, '_menu_item_psfs_layout', $layout );
+		$layout = isset( $_POST['menu-item-psf-search-layout'][ $menu_item_db_id ] ) ? sanitize_key( $_POST['menu-item-psf-search-layout'][ $menu_item_db_id ] ) : '';
+		update_post_meta( $menu_item_db_id, '_menu_item_psf_search_layout', $layout );
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$searchIconColor = isset( $_POST['menu-item-psfs-search-icon-color'][ $menu_item_db_id ] ) ? sanitize_hex_color( $_POST['menu-item-psfs-search-icon-color'][ $menu_item_db_id ] ) : '';
-		update_post_meta( $menu_item_db_id, '_menu_item_psfs_search_icon_color', $searchIconColor );
+		$searchIconColor = isset( $_POST['menu-item-psf-search-search-icon-color'][ $menu_item_db_id ] ) ? sanitize_hex_color( $_POST['menu-item-psf-search-search-icon-color'][ $menu_item_db_id ] ) : '';
+		update_post_meta( $menu_item_db_id, '_menu_item_psf_search_search_icon_color', $searchIconColor );
 	}
 
 	/**
@@ -137,14 +137,14 @@ class EmbeddingViaMenu {
 		) {
 			$args   = '';
 			$style  = '';
-			$layout = get_post_meta( $item->ID, '_menu_item_psfs_layout', true );
+			$layout = get_post_meta( $item->ID, '_menu_item_psf_search_layout', true );
 			if ( in_array( $layout, [ 'classic', 'icon', 'icon-flexible', 'icon-flexible-inv' ] ) ) {
 				$args .= 'layout="' . $layout . '" ';
 			}
-			$searchIconColor = get_post_meta( $item->ID, '_menu_item_psfs_search_icon_color', true );
+			$searchIconColor = get_post_meta( $item->ID, '_menu_item_psf_search_search_icon_color', true );
 			if ( in_array( $layout, [ 'icon', 'icon-flexible', 'icon-flexible-inv' ] ) && ! empty( $searchIconColor ) ) {
-				$args .= 'class="psfs-menu-item-' . $item->ID . ' " ';
-				$style = sprintf( '<style>.psfs-menu-item-%d .psfs-ico-magnifier-handler path {fill: %s;}</style>', $item->ID, esc_attr( $searchIconColor ) );
+				$args .= 'class="psf-search-menu-item-' . $item->ID . ' " ';
+				$style = sprintf( '<style>.psf-search-menu-item-%d .psf-search-ico-magnifier-handler path {fill: %s;}</style>', $item->ID, esc_attr( $searchIconColor ) );
 			}
 			$itemOutput = do_shortcode( sprintf( '[psfsearch %s]', $args ) ) . $style;
 		}
@@ -159,10 +159,10 @@ class EmbeddingViaMenu {
 	 */
 	public function navMenuLinks() {
 		?>
-		<div id="posttype-psfs-endpoints" class="posttypediv">
+		<div id="posttype-psf-search-endpoints" class="posttypediv">
 			<p><?php _e( 'Add PSF Search as a menu item.', 'psf-search' ); ?></p>
-			<div id="tabs-panel-psfs-endpoints" class="tabs-panel tabs-panel-active">
-				<ul id="psfs-endpoints-checklist" class="categorychecklist form-no-clear">
+			<div id="tabs-panel-psf-search-endpoints" class="tabs-panel tabs-panel-active">
+				<ul id="psf-search-endpoints-checklist" class="categorychecklist form-no-clear">
 					<li>
 						<label class="menu-item-title">
 							<input
@@ -178,7 +178,7 @@ class EmbeddingViaMenu {
 			<p class="button-controls">
 				<span class="add-to-menu">
 					<button type="submit" class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'woocommerce' ); ?>"
-							name="add-post-type-menu-item" id="submit-posttype-psfs-endpoints"><?php esc_html_e( 'Add to menu', 'woocommerce' ); ?></button>
+							name="add-post-type-menu-item" id="submit-posttype-psf-search-endpoints"><?php esc_html_e( 'Add to menu', 'woocommerce' ); ?></button>
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -187,8 +187,8 @@ class EmbeddingViaMenu {
 	}
 
 	public function getDescription() {
-		$html  = '<div class="psfs-admin-menu-item-desc js-psfs-admin-menu-item-desc">';
-		$html .= '<img class="" src="' . PSFS_URL . 'assets/img/logo-for-review.png" width="32" height="32" />';
+		$html  = '<div class="psf-search-admin-menu-item-desc js-psf-search-admin-menu-item-desc">';
+		$html .= '<img class="" src="' . PSF_SEARCH_URL . 'assets/img/logo-for-review.png" width="32" height="32" />';
 		$html .= '<span>' . __( 'PSF Search bar will be displayed here.', 'psf-search' ) . '</span>';
 		$html .= '</div>';
 
@@ -215,20 +215,20 @@ class EmbeddingViaMenu {
 
 		?>
 		<style>
-			.psfs-admin-menu-item-desc {
+			.psf-search-admin-menu-item-desc {
 				display: flex;
 				flex-direction: row;
 				justify-content: left;
 				align-items: center;
 			}
 
-			.psfs-admin-menu-item-desc img {
+			.psf-search-admin-menu-item-desc img {
 				display: block;
 				margin-right: 15px;
 				border-radius: 4px;
 			}
 
-			.psfs-description select {
+			.psf-search-description select {
 				width: 100%;
 			}
 		</style>
@@ -264,7 +264,7 @@ class EmbeddingViaMenu {
 								$menuItem.find('.field-url').hide();
 
 
-								if ($menuItem.find('.js-psfs-admin-menu-item-desc').length == 0) {
+								if ($menuItem.find('.js-psf-search-admin-menu-item-desc').length == 0) {
 									$menuItem.find('.menu-item-settings').prepend('<?php echo $this->getDescription(); ?>');
 								}
 							}
@@ -282,14 +282,14 @@ class EmbeddingViaMenu {
 				function toggleColorPicker(el) {
 					var layout = el.val();
 					if (layout === 'default' || layout === 'classic') {
-						el.closest('.psfs-description').next().slideUp();
+						el.closest('.psf-search-description').next().slideUp();
 					} else {
-						el.closest('.psfs-description').next().slideDown();
+						el.closest('.psf-search-description').next().slideDown();
 					}
 				}
 
 				function syncColorPickersWithSelects() {
-					var layoutSelects = $('.psfs-layout-select');
+					var layoutSelects = $('.psf-search-layout-select');
 					if (layoutSelects.length > 0) {
 						layoutSelects.each(function (i, el) {
 							toggleColorPicker($(el));
@@ -305,7 +305,7 @@ class EmbeddingViaMenu {
 
 				});
 
-				$(document).on('change', '.psfs-layout-select', function (e) {
+				$(document).on('change', '.psf-search-layout-select', function (e) {
 					toggleColorPicker($(this))
 				});
 
@@ -315,7 +315,7 @@ class EmbeddingViaMenu {
 						typeof settings != 'undefined'
 						&& typeof settings.data == 'string'
 						&& settings.data.indexOf('action=add-menu-item') !== -1
-						&& settings.data.indexOf('psfs_search_box') !== -1
+						&& settings.data.indexOf('psf_search_search_box') !== -1
 					) {
 						replaceLabels();
 						colorPickers();
@@ -341,7 +341,7 @@ class EmbeddingViaMenu {
 	public function addNavMenuItemCustomFieldsTemplate() {
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction
 		?>
-		<# if ( data.title === 'psfs_search_box' ) { #>
+		<# if ( data.title === 'psf_search_search_box' ) { #>
 		<fieldset class="nav_menu_role_display_mode">
 			<legend class="customize-control-title"><?php _e( 'PSF Search bar', 'psf-search' ); ?></legend>
 			<?php printf( __( 'Go to <a href="%s">Appearance -> Menus</a> to configure the PSF Search bar.', 'psf-search' ), esc_url( admin_url( 'nav-menus.php' ) ) ); ?>

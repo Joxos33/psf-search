@@ -14,14 +14,14 @@ class PostTypes {
 	private $postTypes = null;
 
 	public function init() {
-		add_filter( 'psfs/labels', [ $this, 'setPostTypeLabels' ], 5 );
-		add_filter( 'psfs/labels', [ $this, 'fixPostTypeLabels' ], PHP_INT_MAX - 5 );
+		add_filter( 'psf_search/labels', [ $this, 'setPostTypeLabels' ], 5 );
+		add_filter( 'psf_search/labels', [ $this, 'fixPostTypeLabels' ], PHP_INT_MAX - 5 );
 
-		add_filter( 'psfs/allowed_post_types', [ $this, 'addAllowedPostTypes' ], 10, 2 );
+		add_filter( 'psf_search/allowed_post_types', [ $this, 'addAllowedPostTypes' ], 10, 2 );
 
-		add_filter( 'psfs/settings/section=autocomplete', [ $this, 'addPostTypesToAutocompleteSettings' ] );
+		add_filter( 'psf_search/settings/section=autocomplete', [ $this, 'addPostTypesToAutocompleteSettings' ] );
 
-		add_filter( 'psfs/indexer/readable/post_types_with_images', [ $this, 'postTypesWithImages' ], 5 );
+		add_filter( 'psf_search/indexer/readable/post_types_with_images', [ $this, 'postTypesWithImages' ], 5 );
 	}
 
 	/**
@@ -194,7 +194,7 @@ class PostTypes {
 			$settingsScope[ $basePosition ] = [
 				'name'       => 'show_post_type_' . $postType['post_type'],
 				'label'      => sprintf( __( 'Show %s', 'psf-search' ), mb_strtolower( $postType['labels']['name'] ) ),
-				'class'      => 'js-psfs-adv-settings psfs-premium-only' . ( $postType['image_support'] ? ' js-psfs-options-toggle-sibling' : '' ),
+				'class'      => 'js-psf-search-adv-settings psf-search-premium-only' . ( $postType['image_support'] ? ' js-psf-search-options-toggle-sibling' : '' ),
 				'type'       => 'checkbox',
 				'default'    => 'off',
 				'input_data' => 'data-option-trigger="show_matching_post_type" data-post-type="' . $postType['post_type'] . '"',
@@ -206,7 +206,7 @@ class PostTypes {
 				$settingsScope[ $basePosition ] = [
 					'name'       => 'show_post_type_' . $postType['post_type'] . '_images',
 					'label'      => __( 'show images', 'psf-search' ),
-					'class'      => 'js-psfs-adv-settings psfs-premium-only',
+					'class'      => 'js-psf-search-adv-settings psf-search-premium-only',
 					'type'       => 'checkbox',
 					'default'    => 'off',
 					'desc'       => __( 'show images', 'psf-search' ),
@@ -249,7 +249,7 @@ class PostTypes {
 			]
 		);
 
-		$postTypes = apply_filters( 'psfs/indexer/post_types', [] );
+		$postTypes = apply_filters( 'psf_search/indexer/post_types', [] );
 
 		if ( is_array( $postTypes ) && ! empty( $postTypes ) ) {
 			foreach ( $postTypes as $postType ) {
@@ -292,7 +292,7 @@ class PostTypes {
 			'show_images'   => false,
 		];
 
-		$postType = apply_filters( 'psfs/indexer/post_types/register_post_type', $postType );
+		$postType = apply_filters( 'psf_search/indexer/post_types/register_post_type', $postType );
 
 		// Post type.
 		if ( empty( $postType['post_type'] ) || ! post_type_exists( $postType['post_type'] ) ) {
@@ -320,11 +320,11 @@ class PostTypes {
 		$postTypeData['image_support'] = post_type_supports( $postTypeData['post_type'], 'thumbnail' );
 
 		if ( in_array( $postType['post_type'], [ 'post', 'page' ] ) ) {
-			$postTypeData['search_direct'] = PSFS()->settings->getOption( 'show_matching_' . $postType['post_type'] . 's' ) === 'on';
+			$postTypeData['search_direct'] = PSF_SEARCH()->settings->getOption( 'show_matching_' . $postType['post_type'] . 's' ) === 'on';
 		} else {
-			$postTypeData['search_direct'] = PSFS()->settings->getOption( 'show_post_type_' . $postType['post_type'] ) === 'on';
+			$postTypeData['search_direct'] = PSF_SEARCH()->settings->getOption( 'show_post_type_' . $postType['post_type'] ) === 'on';
 		}
-		$postTypeData['show_images'] = PSFS()->settings->getOption( 'show_post_type_' . $postType['post_type'] . '_images' ) === 'on';
+		$postTypeData['show_images'] = PSF_SEARCH()->settings->getOption( 'show_post_type_' . $postType['post_type'] . '_images' ) === 'on';
 
 		// Ensure we have proper container for post types.
 		if ( $this->postTypes === null ) {

@@ -103,7 +103,7 @@ abstract class WPBackgroundProcess extends WPAsyncRequest {
 		}
 
 		// Wait 15s and redispatch process if queue is not empty and process is not running
-		$redispatchProcess = apply_filters( 'psfs/indexer/redispatch-not-running-process', true );
+		$redispatchProcess = apply_filters( 'psf_search/indexer/redispatch-not-running-process', true );
 		if ( $redispatchProcess ) {
 			for ( $i = 1; $i <= 10; $i ++ ) {
 				$sleep = $i <= 5 ? 1 : 2;

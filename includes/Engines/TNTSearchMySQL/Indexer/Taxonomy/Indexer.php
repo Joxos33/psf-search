@@ -98,7 +98,7 @@ class Indexer {
 		$success      = false;
 		$dataFiltered = [];
 
-		if ( ! Helpers::isTableExists( $wpdb->psfs_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ) ) ) {
+		if ( ! Helpers::isTableExists( $wpdb->psf_search_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ) ) ) {
 			return $success;
 		}
 
@@ -118,7 +118,7 @@ class Indexer {
 		$data = [];
 
 		$termObj              = new Term( $term );
-		$taxonomiesWithImages = apply_filters( 'psfs/taxonomies_with_images', [] );
+		$taxonomiesWithImages = apply_filters( 'psf_search/taxonomies_with_images', [] );
 
 		if ( is_object( $term ) && ! is_wp_error( $term ) ) {
 
@@ -144,14 +144,14 @@ class Indexer {
 				$data['breadcrumbs'] = $breadcrumbs;
 			}
 
-			$dataFiltered = apply_filters( 'psfs/indexer/taxonomy/insert', $data, $termID, $taxonomy );
+			$dataFiltered = apply_filters( 'psf_search/indexer/taxonomy/insert', $data, $termID, $taxonomy );
 
 			if ( isset( $dataFiltered['meta'] ) ) {
 				$dataFiltered['meta'] = maybe_serialize( $dataFiltered['meta'] );
 			}
 
 			$rows = WPDB::get_instance()->insert(
-				$wpdb->psfs_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ),
+				$wpdb->psf_search_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ),
 				$dataFiltered,
 				[
 					'%d',
@@ -177,7 +177,7 @@ class Indexer {
 				'lang'      => Multilingual::isMultilingual() ? $termLang : '',
 			];
 
-			$documentData = apply_filters( 'psfs/indexer/taxonomy/document_data', $documentData, $term );
+			$documentData = apply_filters( 'psf_search/indexer/taxonomy/document_data', $documentData, $term );
 
 			$document = $this->getDocument( $documentData );
 
@@ -199,7 +199,7 @@ class Indexer {
 			}
 		}
 
-		do_action( 'psfs/taxonomy_index/after_insert', $dataFiltered, $termID, $taxonomy, $success, $this );
+		do_action( 'psf_search/taxonomy_index/after_insert', $dataFiltered, $termID, $taxonomy, $success, $this );
 
 		return $success;
 	}
@@ -235,9 +235,9 @@ class Indexer {
 	public function delete( $termID, $taxonomy ) {
 		global $wpdb;
 
-		if ( Helpers::isTableExists( $wpdb->psfs_tax_index ) ) {
+		if ( Helpers::isTableExists( $wpdb->psf_search_tax_index ) ) {
 			WPDB::get_instance()->delete(
-				$wpdb->psfs_tax_index,
+				$wpdb->psf_search_tax_index,
 				[ 'term_id' => $termID ],
 				[ '%d' ]
 			);
@@ -288,7 +288,7 @@ class Indexer {
 
 		$wpdb->hide_errors();
 
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->psfs_tax_index" );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->psf_search_tax_index" );
 	}
 
 	/**

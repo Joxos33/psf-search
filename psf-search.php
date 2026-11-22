@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PSF Search
  * Description: Live product search for Puget Sound Firearms. Private fork of PSF Search 1.34.3 (GPLv2), stripped and tailored for PSF's Flatsome/WooCommerce store.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Puget Sound Firearms
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -188,7 +188,7 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 				return false;
 			}
 
-			if ( ! file_exists( PSFS_DIR . 'autoload.php' ) ) {
+			if ( ! file_exists( PSF_SEARCH_DIR . 'autoload.php' ) ) {
 				add_action( 'admin_notices', [ $this, 'adminNoticeNoVendor' ] );
 
 				return false;
@@ -209,7 +209,7 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 			}
 
 			?>
-			<div class="notice notice-error psfs-notice">
+			<div class="notice notice-error psf-search-notice">
 				<p>
 					<?php
 					printf(
@@ -217,7 +217,7 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 							'%1$s: You need PHP version at least 7.0 to run this plugin. You are currently using PHP version %2$s.',
 							'psf-search'
 						),
-						'<b>' . PSFS_NAME . '</b>',
+						'<b>' . PSF_SEARCH_NAME . '</b>',
 						PHP_VERSION
 					);
 					?>
@@ -233,12 +233,12 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 		 */
 		public function adminNoticeNoWoocommerce() {
 			?>
-			<div class="notice notice-error psfs-notice">
+			<div class="notice notice-error psf-search-notice">
 				<p>
 					<?php
 					printf(
 						__( '%1$s is enabled but not effective. It requires %2$s in order to work.', 'psf-search' ),
-						'<b>' . PSFS_FULL_NAME . '</b>',
+						'<b>' . PSF_SEARCH_FULL_NAME . '</b>',
 						'<a href="https://wordpress.org/plugins/woocommerce/"  target="_blank">WooCommerce</a>'
 					);
 					?>
@@ -254,12 +254,12 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 		 */
 		public function adminNoticeNoVendor() {
 			?>
-			<div class="notice notice-error psfs-notice">
+			<div class="notice notice-error psf-search-notice">
 				<p>
 					<?php
 					printf(
 						__( '%s is enabled but not effective. It is missing core files. Please reinstall the plugin.', 'psf-search' ),
-						'<b>' . PSFS_FULL_NAME . '</b>'
+						'<b>' . PSF_SEARCH_FULL_NAME . '</b>'
 					);
 					?>
 				</p>
@@ -276,27 +276,29 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 
 			$v = get_file_data( __FILE__, [ 'Version' => 'Version' ], 'plugin' );
 
-			$this->define( 'PSFS_NAME', 'PSF Search' );
-			$this->define( 'PSFS_FULL_NAME', 'PSF Search' );
+			$this->define( 'PSF_SEARCH_NAME', 'PSF Search' );
+			$this->define( 'PSF_SEARCH_FULL_NAME', 'PSF Search' );
 
-			$this->define( 'PSFS_VERSION', $v['Version'] );
-			$this->define( 'PSFS_FILE', __FILE__ );
-			$this->define( 'PSFS_DIR', plugin_dir_path( __FILE__ ) );
-			$this->define( 'PSFS_URL', plugin_dir_url( __FILE__ ) );
+			$this->define( 'PSF_SEARCH_VERSION', $v['Version'] );
+			$this->define( 'PSF_SEARCH_FILE', __FILE__ );
+			$this->define( 'PSF_SEARCH_DIR', plugin_dir_path( __FILE__ ) );
+			$this->define( 'PSF_SEARCH_URL', plugin_dir_url( __FILE__ ) );
 
-			$this->define( 'PSFS_SETTINGS_KEY', 'psfs_settings' );
+			$this->define( 'PSF_SEARCH_SETTINGS_KEY', 'psf_search_settings' );
 
-			$this->define( 'PSFS_SEARCH_ACTION', 'psfs_ajax_search' );
-			$this->define( 'PSFS_RESULT_DETAILS_ACTION', 'psfs_result_details' );
-			$this->define( 'PSFS_GET_PRICES_ACTION', 'psfs_get_prices' );
-			$this->define( 'PSFS_SEARCH_PRO_ACTION', 'psfs_ajax_search_pro' );
+			$this->define( 'PSF_SEARCH_SEARCH_ACTION', 'psf_search_ajax_search' );
+			$this->define( 'PSF_SEARCH_RESULT_DETAILS_ACTION', 'psf_search_result_details' );
+			$this->define( 'PSF_SEARCH_GET_PRICES_ACTION', 'psf_search_get_prices' );
+			$this->define( 'PSF_SEARCH_SEARCH_PRO_ACTION', 'psf_search_ajax_search_pro' );
 
-			$this->define( 'PSFS_WC_AJAX_ENDPOINT', true );
+			$this->define( 'PSF_SEARCH_WC_AJAX_ENDPOINT', true );
 
 		}
 
 		/**
-		 * Define constant if not already set
+		 * Define a constant. If another plugin already defined it with a different value,
+		 * keep theirs but show an admin notice: a silently borrowed path or URL breaks
+		 * this plugin in confusing ways.
 		 *
 		 * @param  string $name
 		 * @param  string|bool $value
@@ -306,6 +308,20 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 		private function define( $name, $value ) {
 			if ( ! defined( $name ) ) {
 				define( $name, $value );
+
+				return;
+			}
+
+			if ( constant( $name ) !== $value ) {
+				add_action(
+					'admin_notices',
+					function () use ( $name ) {
+						printf(
+							'<div class="notice notice-error"><p><b>PSF Search:</b> the constant <code>%s</code> is already defined by another plugin. PSF Search will not work correctly until the conflict is resolved.</p></div>',
+							esc_html( $name )
+						);
+					}
+				);
 			}
 		}
 
@@ -315,8 +331,8 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 		 * @return void
 		 */
 		public function autoload() {
-			require_once PSFS_DIR . 'autoload.php';
-			require_once PSFS_DIR . 'widget.php';
+			require_once PSF_SEARCH_DIR . 'autoload.php';
+			require_once PSF_SEARCH_DIR . 'widget.php';
 		}
 
 		/**
@@ -344,24 +360,24 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 
 			// Register CSS
 			wp_register_style(
-				'psfs-admin-style',
-				PSFS_URL . 'assets/css/admin-style' . $min . '.css',
+				'psf-search-admin-style',
+				PSF_SEARCH_URL . 'assets/css/admin-style' . $min . '.css',
 				[],
-				PSFS_VERSION
+				PSF_SEARCH_VERSION
 			);
 			// Register front styles for block editor
-			wp_register_style( 'psfs-style', apply_filters( 'psfs/scripts/css_style_url', PSFS_URL . 'assets/css/style' . $min . '.css' ), [], PSFS_VERSION );
+			wp_register_style( 'psf-search-style', apply_filters( 'psf_search/scripts/css_style_url', PSF_SEARCH_URL . 'assets/css/style' . $min . '.css' ), [], PSF_SEARCH_VERSION );
 
 			// Register JS
 			//phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 			wp_register_script(
-				'psfs-admin-js',
-				PSFS_URL . 'assets/js/admin' . $min . '.js',
+				'psf-search-admin-js',
+				PSF_SEARCH_URL . 'assets/js/admin' . $min . '.js',
 				[
 					'jquery',
 					'wp-url',
 				],
-				PSFS_VERSION
+				PSF_SEARCH_VERSION
 			);
 
 			if ( \PsfSearch\Helpers::isSettingsPage() ) {
@@ -372,14 +388,14 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 						'preview' => __( 'No interaction! This is only a preview.', 'psf-search' ),
 					],
 					'nonces'      => [
-						'build_index'             => wp_create_nonce( 'psfs_build_index' ),
-						'stop_build_index'        => wp_create_nonce( 'psfs_stop_build_index' ),
-						'build_index_heartbeat'   => wp_create_nonce( 'psfs_build_index_heartbeat' ),
-						'advanced_options_switch' => wp_create_nonce( 'psfs_advanced_options_switch' ),
-						'index_details_toggle'    => wp_create_nonce( 'psfs_index_details_toggle' ),
+						'build_index'             => wp_create_nonce( 'psf_search_build_index' ),
+						'stop_build_index'        => wp_create_nonce( 'psf_search_stop_build_index' ),
+						'build_index_heartbeat'   => wp_create_nonce( 'psf_search_build_index_heartbeat' ),
+						'advanced_options_switch' => wp_create_nonce( 'psf_search_advanced_options_switch' ),
+						'index_details_toggle'    => wp_create_nonce( 'psf_search_index_details_toggle' ),
 					],
 					'images'      => [
-						'admin_preloader_url' => PSFS_URL . 'assets/img/preloader.gif',
+						'admin_preloader_url' => PSF_SEARCH_URL . 'assets/img/preloader.gif',
 					],
 					'postTypes'   => [ 'post', 'page' ],
 				];
@@ -387,37 +403,37 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 				$localize['postTypes']  = $this->tntsearchMySql->postTypes->getPostTypesSlugs();
 				//phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
 				$localize['adminLabels']['custom_fields_loading_error'] = __( 'Error loading custom fields.', 'psf-search' ) . ' ' . '<a target="_blank" href="https://fibosearch.com/documentation/troubleshooting/unable-to-select-custom-fields-in-psfsearch-settings/">' . __( 'Learn more', 'psf-search' ) . '.</a>';
-				$localize = apply_filters( 'psfs/scripts/admin/localize', $localize );
-				wp_localize_script( 'psfs-admin-js', 'psfs', $localize );
+				$localize = apply_filters( 'psf_search/scripts/admin/localize', $localize );
+				wp_localize_script( 'psf-search-admin-js', 'psf_search', $localize );
 
 				// Enqueue CSS
-				wp_enqueue_style( 'psfs-admin-style' );
+				wp_enqueue_style( 'psf-search-admin-style' );
 
 				if ( ! false ) {
 					add_thickbox();
 					wp_enqueue_style( 'wp-color-picker' );
-					wp_enqueue_script( 'psfs-admin-js' );
+					wp_enqueue_script( 'psf-search-admin-js' );
 					wp_enqueue_script( 'wp-color-picker' );
 					// TODO
 					//phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter
-					wp_enqueue_script( 'psfs-admin-popper-js', PSFS_URL . 'assets/js/popper.min.js', [ 'jquery' ], PSFS_VERSION );
-					wp_enqueue_script( 'psfs-admin-tooltip-js', PSFS_URL . 'assets/js/tooltip.min.js', [ 'jquery' ], PSFS_VERSION );
-					wp_enqueue_style( 'psfs-style', apply_filters( 'psfs/scripts/css_style_url', PSFS_URL . 'assets/css/style' . $min . '.css' ), [], PSFS_VERSION );
+					wp_enqueue_script( 'psf-search-admin-popper-js', PSF_SEARCH_URL . 'assets/js/popper.min.js', [ 'jquery' ], PSF_SEARCH_VERSION );
+					wp_enqueue_script( 'psf-search-admin-tooltip-js', PSF_SEARCH_URL . 'assets/js/tooltip.min.js', [ 'jquery' ], PSF_SEARCH_VERSION );
+					wp_enqueue_style( 'psf-search-style', apply_filters( 'psf_search/scripts/css_style_url', PSF_SEARCH_URL . 'assets/css/style' . $min . '.css' ), [], PSF_SEARCH_VERSION );
 
-					wp_enqueue_style( 'psfs-admin-selectize', PSFS_URL . 'assets/css/selectize' . $min . '.css', [], PSFS_VERSION );
-					wp_enqueue_script( 'psfs-admin-selectize-js', PSFS_URL . 'assets/js/selectize.min.js', [ 'jquery' ], PSFS_VERSION );
-					wp_enqueue_script( 'psfs-admin-vue', PSFS_URL . 'assets/js/vue' . $min . '.js', [], PSFS_VERSION );
-					wp_enqueue_script( 'psfs-admin-vue-selectize', PSFS_URL . 'assets/js/vue2-selectize.js', [ 'psfs-admin-selectize-js' ], PSFS_VERSION );
+					wp_enqueue_style( 'psf-search-admin-selectize', PSF_SEARCH_URL . 'assets/css/selectize' . $min . '.css', [], PSF_SEARCH_VERSION );
+					wp_enqueue_script( 'psf-search-admin-selectize-js', PSF_SEARCH_URL . 'assets/js/selectize.min.js', [ 'jquery' ], PSF_SEARCH_VERSION );
+					wp_enqueue_script( 'psf-search-admin-vue', PSF_SEARCH_URL . 'assets/js/vue' . $min . '.js', [], PSF_SEARCH_VERSION );
+					wp_enqueue_script( 'psf-search-admin-vue-selectize', PSF_SEARCH_URL . 'assets/js/vue2-selectize.js', [ 'psf-search-admin-selectize-js' ], PSF_SEARCH_VERSION );
 					//phpcs:enable
 				}
 			}
 
 			if ( \PsfSearch\Helpers::isCheckoutPage() ) {
-				wp_enqueue_style( 'psfs-admin-style' );
+				wp_enqueue_style( 'psf-search-admin-style' );
 			}
 
 			if ( \PsfSearch\Helpers::isDebugPage() ) {
-				wp_enqueue_style( 'psfs-admin-style' );
+				wp_enqueue_style( 'psf-search-admin-style' );
 			}
 		}
 
@@ -427,7 +443,7 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 		 * @return void
 		 */
 		private function loadTextdomain() {
-			$lang_dir = dirname( plugin_basename( PSFS_FILE ) ) . '/languages/';
+			$lang_dir = dirname( plugin_basename( PSF_SEARCH_FILE ) ) . '/languages/';
 			load_plugin_textdomain( 'psf-search', false, $lang_dir );
 		}
 
@@ -455,9 +471,9 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 	}
 
 	// Init the plugin
-	function PSFS() {
+	function PSF_SEARCH() {
 		return PSF_Search::getInstance();
 	}
 
-	add_action( 'plugins_loaded', 'PSFS', 15 );
+	add_action( 'plugins_loaded', 'PSF_SEARCH', 15 );
 }

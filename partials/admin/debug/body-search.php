@@ -6,7 +6,7 @@ use PsfSearch\Engines\TNTSearchMySQL\Debug\Debugger;
 use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
@@ -16,23 +16,23 @@ Debugger::wipeLogs( 'search-resutls' );
 $searchPhrase = ! empty( $_GET['s'] ) ? $_GET['s'] : '';
 $lang         = ! empty( $_GET['lang'] ) ? $_GET['lang'] : '';
 
-$toTokenize   = ! empty( $_GET['psfs-to-tokenize'] ) ? $_GET['psfs-to-tokenize'] : '';
-$tokenizerCtx = ! empty( $_GET['psfs-debug-tokenizer-ctx'] ) ? $_GET['psfs-debug-tokenizer-ctx'] : 'indexer';
+$toTokenize   = ! empty( $_GET['psf-search-to-tokenize'] ) ? $_GET['psf-search-to-tokenize'] : '';
+$tokenizerCtx = ! empty( $_GET['psf-search-debug-tokenizer-ctx'] ) ? $_GET['psf-search-debug-tokenizer-ctx'] : 'indexer';
 //phpcs:enable
 ?>
 
 <h3>Search flow</h3>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_search', '_wpnonce', false ); ?>
-	<label for="psfs-debug-search"></label>
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_search', '_wpnonce', false ); ?>
+	<label for="psf-search-debug-search"></label>
 	<input
-		type="text" class="regular-text" id="psfs-debug-search" name="s"
+		type="text" class="regular-text" id="psf-search-debug-search" name="s"
 		value="<?php echo esc_html( $searchPhrase ); ?>" placeholder="search phrase">
 	<input
 		type="text"
 		class="small-text"
-		id="psfs-debug-search-lang"
+		id="psf-search-debug-search-lang"
 		name="lang"
 		value="<?php echo esc_html( $lang ); ?>"
 		placeholder="lang">
@@ -42,17 +42,17 @@ $tokenizerCtx = ! empty( $_GET['psfs-debug-tokenizer-ctx'] ) ? $_GET['psfs-debug
 <hr/>
 <h3>Tokenizer</h3>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_search', '_wpnonce', false ); ?>
-	<label for="psfs-debug-tokenizer"></label>
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_search', '_wpnonce', false ); ?>
+	<label for="psf-search-debug-tokenizer"></label>
 	<input
 		type="text"
 		class="regular-text"
-		id="psfs-debug-tokenizer"
-		name="psfs-to-tokenize"
+		id="psf-search-debug-tokenizer"
+		name="psf-search-to-tokenize"
 		value="<?php echo esc_html( $toTokenize ); ?>"
 		placeholder="To tokenize"">
-	<select name="psfs-debug-tokenizer-ctx">
+	<select name="psf-search-debug-tokenizer-ctx">
 		<option <?php echo $tokenizerCtx === 'search' ? 'selected="selected"' : ''; ?>>search</option>
 		<option <?php echo $tokenizerCtx === 'indexer' ? 'selected="selected"' : ''; ?>>indexer</option>
 	</select>
@@ -63,18 +63,18 @@ $tokenizerCtx = ! empty( $_GET['psfs-debug-tokenizer-ctx'] ) ? $_GET['psfs-debug
 if (
 	! empty( $searchPhrase ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_search' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_search' )
 ) {
 
-	define( 'PSFS_SEARCH_START', microtime( true ) );
+	define( 'PSF_SEARCH_SEARCH_START', microtime( true ) );
 
 	$lang = empty( $_GET['lang'] ) ? $_GET['lang'] : '';
 	if ( ! Builder::searchableCacheExists( $lang ) ) {
-		add_filter( 'psfs/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
+		add_filter( 'psf_search/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
 	}
 
 	add_filter(
-		'psfs/tnt/search_results/suggestion/product',
+		'psf_search/tnt/search_results/suggestion/product',
 		function ( $p, $suggestion ) {
 			if ( ! empty( $suggestion->score ) ) {
 				$p['score'] = $suggestion->score;
@@ -109,16 +109,16 @@ if (
 if (
 	! empty( $toTokenize ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_search' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_search' )
 ) {
 	$tokenizer = new Tokenizer();
 	$tokenizer->setContext( $tokenizerCtx );
 
 	$stopwords = [];
 	if ( $tokenizerCtx === 'search' ) {
-		$stopwords = apply_filters( 'psfs/search/stopwords', [], ! empty( $_GET['lang'] ) ? $_GET['lang'] : '' );
+		$stopwords = apply_filters( 'psf_search/search/stopwords', [], ! empty( $_GET['lang'] ) ? $_GET['lang'] : '' );
 	} elseif ( $tokenizerCtx === 'indexer' ) {
-		$stopwords = apply_filters( 'psfs/indexer/searchable/stopwords', [], 'product', 0, ! empty( $_GET['lang'] ) ? $_GET['lang'] : '' );
+		$stopwords = apply_filters( 'psf_search/indexer/searchable/stopwords', [], 'product', 0, ! empty( $_GET['lang'] ) ? $_GET['lang'] : '' );
 	}
 
 	// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_var_export

@@ -30,14 +30,14 @@ class Scripts {
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		// Register
-		wp_register_style( 'psfs-style', apply_filters( 'psfs/scripts/css_style_url', PSFS_URL . 'assets/css/style' . $min . '.css' ), [], PSFS_VERSION );
-		wp_register_script( 'jquery-psfs', apply_filters( 'psfs/scripts/js_url', PSFS_URL . 'assets/js/search' . $min . '.js' ), [ 'jquery' ], PSFS_VERSION, true );
+		wp_register_style( 'psf-search-style', apply_filters( 'psf_search/scripts/css_style_url', PSF_SEARCH_URL . 'assets/css/style' . $min . '.css' ), [], PSF_SEARCH_VERSION );
+		wp_register_script( 'jquery-psf_search', apply_filters( 'psf_search/scripts/js_url', PSF_SEARCH_URL . 'assets/js/search' . $min . '.js' ), [ 'jquery' ], PSF_SEARCH_VERSION, true );
 
 		// Enqueue
-		wp_enqueue_style( 'psfs-style' );
+		wp_enqueue_style( 'psf-search-style' );
 
 		$localize = Helpers::getScriptsSettings();
 
-		wp_localize_script( 'jquery-psfs', 'psfs', $localize );
+		wp_localize_script( 'jquery-psf_search', 'psf_search', $localize );
 	}
 }

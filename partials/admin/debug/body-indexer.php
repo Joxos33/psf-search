@@ -6,7 +6,7 @@ use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
 use PsfSearch\Multilingual;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 ?>
@@ -14,88 +14,88 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 
 <h2>Maintenance</h2>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_indexer', '_wpnonce', false ); ?>
-	<input type="submit" name="psfs-debug-delete-db-tables" class="button" value="Delete DB tables">
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_indexer', '_wpnonce', false ); ?>
+	<input type="submit" name="psf-search-debug-delete-db-tables" class="button" value="Delete DB tables">
 	<input
-		type="submit" name="psfs-debug-delete-indexer-options" class="button"
+		type="submit" name="psf-search-debug-delete-indexer-options" class="button"
 		value="Delete Indexer options">
 	<input
-		type="submit" name="psfs-debug-delete-searchable-custom-fields-transient" class="button"
+		type="submit" name="psf-search-debug-delete-searchable-custom-fields-transient" class="button"
 		value="Delete transient with list of searchable custom fields">
 
 	<?php if ( is_multisite() ) : ?>
 		<br/><br/>
 		<input
-			type="submit" name="psfs-debug-delete-db-tables-ms" class="button"
+			type="submit" name="psf-search-debug-delete-db-tables-ms" class="button"
 			value="Delete DB tables (Network)">
 		<input
-			type="submit" name="psfs-debug-delete-indexer-options-ms" class="button"
+			type="submit" name="psf-search-debug-delete-indexer-options-ms" class="button"
 			value="Delete Indexer options (Network)">
 	<?php endif; ?>
 </form>
 <?php
 
 if (
-	! empty( $_GET['psfs-debug-delete-db-tables'] ) &&
+	! empty( $_GET['psf-search-debug-delete-db-tables'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer' )
 ) {
 	Builder::deleteDatabaseTables();
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Tables deleted</p>
 	</div>
 	<?php
 }
 
 if (
-	! empty( $_GET['psfs-debug-delete-indexer-options'] ) &&
+	! empty( $_GET['psf-search-debug-delete-indexer-options'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer' )
 ) {
 	Builder::deleteIndexOptions();
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Settings deleted</p>
 	</div>
 	<?php
 }
 
 if (
-	! empty( $_GET['psfs-debug-delete-searchable-custom-fields-transient'] ) &&
+	! empty( $_GET['psf-search-debug-delete-searchable-custom-fields-transient'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer' )
 ) {
-	delete_transient( 'psfs_searchable_custom_fields' );
+	delete_transient( 'psf_search_searchable_custom_fields' );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Transient deleted</p>
 	</div>
 	<?php
 }
 
 if (
-	! empty( $_GET['psfs-debug-delete-db-tables-ms'] ) &&
+	! empty( $_GET['psf-search-debug-delete-db-tables-ms'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer' )
 ) {
 	Builder::deleteDatabaseTables( true );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Tables deleted (ms)</p>
 	</div>
 	<?php
 }
 
 if (
-	! empty( $_GET['psfs-debug-delete-indexer-options-ms'] ) &&
+	! empty( $_GET['psf-search-debug-delete-indexer-options-ms'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer' )
 ) {
 	Builder::deleteIndexOptions( true );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Settings deleted (ms)</p>
 	</div>
 	<?php
@@ -106,58 +106,58 @@ if (
 <h2>Extended indexer debug logs</h2>
 <?php
 if (
-	! empty( $_GET['psfs-debug-enable-indexer-debug'] ) &&
+	! empty( $_GET['psf-search-debug-enable-indexer-debug'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_logs' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_logs' )
 ) {
 	set_transient( Builder::INDEXER_DEBUG_TRANSIENT_KEY, true, 12 * HOUR_IN_SECONDS );
 	set_transient( Builder::INDEXER_DEBUG_SCOPE_TRANSIENT_KEY, [ 'all' ], 12 * HOUR_IN_SECONDS );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Indexer debug is now enabled with scope: all</p>
 	</div>
 	<?php
 }
 if (
-	! empty( $_GET['psfs-debug-disable-indexer-debug'] ) &&
+	! empty( $_GET['psf-search-debug-disable-indexer-debug'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_logs' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_logs' )
 ) {
 	delete_transient( Builder::INDEXER_DEBUG_TRANSIENT_KEY );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Indexer debug is now disabled</p>
 	</div>
 	<?php
 }
 if (
-	! empty( $_GET['psfs-debug-save-indexer-debug-scope'] ) &&
-	! empty( $_GET['psfs-debug-indexer-debug-scope'] ) &&
+	! empty( $_GET['psf-search-debug-save-indexer-debug-scope'] ) &&
+	! empty( $_GET['psf-search-debug-indexer-debug-scope'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_logs' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_logs' )
 ) {
 	set_transient( Builder::INDEXER_DEBUG_TRANSIENT_KEY, true, 12 * HOUR_IN_SECONDS );
-	set_transient( Builder::INDEXER_DEBUG_SCOPE_TRANSIENT_KEY, $_GET['psfs-debug-indexer-debug-scope'], 12 * HOUR_IN_SECONDS );
+	set_transient( Builder::INDEXER_DEBUG_SCOPE_TRANSIENT_KEY, $_GET['psf-search-debug-indexer-debug-scope'], 12 * HOUR_IN_SECONDS );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Indexer debug scope saved</p>
 	</div>
 	<?php
 }
 ?>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_logs', '_wpnonce', false ); ?>
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_logs', '_wpnonce', false ); ?>
 
 	<strong>
 		Debug state: <?php echo Builder::isDebug() ? 'enabled' : 'disabled'; ?>
-		<?php echo defined( 'PSFS_INDEXER_DEBUG' ) ? ( '(via PSFS_INDEXER_DEBUG)' ) : ''; ?>
+		<?php echo defined( 'PSF_SEARCH_INDEXER_DEBUG' ) ? ( '(via PSF_SEARCH_INDEXER_DEBUG)' ) : ''; ?>
 	</strong>
 	<br/>
 	<br/>
 	<strong>
 		Scope
-		<?php echo defined( 'PSFS_INDEXER_DEBUG_SCOPE' ) ? ( '(via PSFS_INDEXER_DEBUG_SCOPE)' ) : ''; ?>
+		<?php echo defined( 'PSF_SEARCH_INDEXER_DEBUG_SCOPE' ) ? ( '(via PSF_SEARCH_INDEXER_DEBUG_SCOPE)' ) : ''; ?>
 	</strong>
 	<br/>
 	<?php
@@ -169,29 +169,29 @@ if (
 		<label for="indexer-debug-scope-<?php echo $scope; ?>">
 			<input
 				id="indexer-debug-scope-<?php echo $scope; ?>" type="checkbox"
-				name="psfs-debug-indexer-debug-scope[]"
+				name="psf-search-debug-indexer-debug-scope[]"
 				value="<?php echo $scope; ?>" <?php checked( Builder::isDebugScopeActive( $scope ) ); ?>
-				<?php disabled( defined( 'PSFS_INDEXER_DEBUG_SCOPE' ) ); ?>>
+				<?php disabled( defined( 'PSF_SEARCH_INDEXER_DEBUG_SCOPE' ) ); ?>>
 			<?php echo $scope; ?>
 		</label>
 		<br/>
 	<?php } ?>
 	<br/>
 	<input
-		type="submit" name="psfs-debug-enable-indexer-debug" class="button"
-		value="Enable debug with scope: all" <?php disabled( defined( 'PSFS_INDEXER_DEBUG' ) ); ?>>
+		type="submit" name="psf-search-debug-enable-indexer-debug" class="button"
+		value="Enable debug with scope: all" <?php disabled( defined( 'PSF_SEARCH_INDEXER_DEBUG' ) ); ?>>
 	<input
-		type="submit" name="psfs-debug-save-indexer-debug-scope" class="button"
-		value="Enable debug with selected scope" <?php disabled( defined( 'PSFS_INDEXER_DEBUG_SCOPE' ) ); ?>>
+		type="submit" name="psf-search-debug-save-indexer-debug-scope" class="button"
+		value="Enable debug with selected scope" <?php disabled( defined( 'PSF_SEARCH_INDEXER_DEBUG_SCOPE' ) ); ?>>
 	<input
-		type="submit" name="psfs-debug-disable-indexer-debug" class="button"
-		value="Disable debug" <?php disabled( defined( 'PSFS_INDEXER_DEBUG' ) ); ?>>
+		type="submit" name="psf-search-debug-disable-indexer-debug" class="button"
+		value="Disable debug" <?php disabled( defined( 'PSF_SEARCH_INDEXER_DEBUG' ) ); ?>>
 </form>
 
 <h2>Most common words in index</h2>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_indexer_most_common_words', '_wpnonce', false ); ?>
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_indexer_most_common_words', '_wpnonce', false ); ?>
 	<?php
 	if ( Multilingual::isMultilingual() ) {
 		?>
@@ -205,13 +205,13 @@ if (
 		<?php
 	}
 	?>
-	<input type="submit" name="psfs-debug-get-most-common-words" class="button" value="Get list">
+	<input type="submit" name="psf-search-debug-get-most-common-words" class="button" value="Get list">
 </form>
 <?php
 if (
-	! empty( $_GET['psfs-debug-get-most-common-words'] ) &&
+	! empty( $_GET['psf-search-debug-get-most-common-words'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_indexer_most_common_words' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_indexer_most_common_words' )
 ) {
 	global $wpdb;
 
@@ -243,32 +243,32 @@ if (
 
 <h2>Failure reports</h2>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_reset_failure_reports', '_wpnonce', false ); ?>
-	<input type="submit" name="psfs-reset-dismiss-failure-reports" class="button" value="Reset dismiss failure notifications">
-	<input type="submit" name="psfs-reset-auto-send-failure-reports" class="button" value="Reset auto send failure reports">
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_reset_failure_reports', '_wpnonce', false ); ?>
+	<input type="submit" name="psf-search-reset-dismiss-failure-reports" class="button" value="Reset dismiss failure notifications">
+	<input type="submit" name="psf-search-reset-auto-send-failure-reports" class="button" value="Reset auto send failure reports">
 </form>
 <?php
 if (
-	! empty( $_GET['psfs-reset-dismiss-failure-reports'] ) &&
+	! empty( $_GET['psf-search-reset-dismiss-failure-reports'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_reset_failure_reports' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_reset_failure_reports' )
 ) {
-	PSFS()->tntsearchMySql->failureReports->setDismissNotices( false );
+	PSF_SEARCH()->tntsearchMySql->failureReports->setDismissNotices( false );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Success!</p>
 	</div>
 	<?php
 }
 if (
-	! empty( $_GET['psfs-reset-auto-send-failure-reports'] ) &&
+	! empty( $_GET['psf-search-reset-auto-send-failure-reports'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_reset_failure_reports' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_reset_failure_reports' )
 ) {
-	PSFS()->tntsearchMySql->failureReports->setAutoSend( false );
+	PSF_SEARCH()->tntsearchMySql->failureReports->setAutoSend( false );
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>Success!</p>
 	</div>
 	<?php
@@ -277,21 +277,21 @@ if (
 
 <h2>Queue of variable products to update (their variations)</h2>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_variations_updater_queue', '_wpnonce', false ); ?>
-	<input type="submit" name="psfs-show-variations-updater-queue" class="button" value="Show queue content">
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_variations_updater_queue', '_wpnonce', false ); ?>
+	<input type="submit" name="psf-search-show-variations-updater-queue" class="button" value="Show queue content">
 </form>
 <?php
 if (
-	! empty( $_GET['psfs-show-variations-updater-queue'] ) &&
+	! empty( $_GET['psf-search-show-variations-updater-queue'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_variations_updater_queue' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_variations_updater_queue' )
 ) {
 	?>
 	<pre>
 		<?php
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
-		var_export( get_option( 'psfs_variable_products_to_update', [] ) );
+		var_export( get_option( 'psf_search_variable_products_to_update', [] ) );
 		?>
 	</pre>
 	<?php

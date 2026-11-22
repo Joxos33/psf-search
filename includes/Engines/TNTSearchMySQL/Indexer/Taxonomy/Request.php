@@ -19,15 +19,15 @@ class Request {
 		Builder::addInfo( 'start_taxonomies_ts', time() );
 		Builder::log( '[Taxonomy index] Building...' );
 
-		$activeTaxonomies = PSFS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' );
+		$activeTaxonomies = PSF_SEARCH()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' );
 		foreach ( $activeTaxonomies as $taxonomy ) {
 			self::buildForTaxonomy( $taxonomy );
 		}
 
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			PSFS()->tntsearchMySql->asynchBuildIndexT->complete();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->complete();
 		} else {
-			PSFS()->tntsearchMySql->asynchBuildIndexT->save()->maybe_dispatch();
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->save()->maybe_dispatch();
 		}
 	}
 
@@ -40,14 +40,14 @@ class Request {
 			'taxonomy'   => $taxonomy,
 			'hide_empty' => true,
 		];
-		$args = apply_filters( 'psfs/search/' . $taxonomy . '/args', $args );
+		$args = apply_filters( 'psf_search/search/' . $taxonomy . '/args', $args );
 
 		$langsWithoutDefault = [];
 		if ( Multilingual::isMultilingual() ) {
 			$terms               = Multilingual::getTermsInAllLangs( $taxonomy );
 			$langsWithoutDefault = array_values( array_diff( Multilingual::getLanguages(), [ Multilingual::getDefaultLanguage() ] ) );
 		} else {
-			$terms = get_terms( apply_filters( 'psfs/search/' . $taxonomy . '/args', $args ) );
+			$terms = get_terms( apply_filters( 'psf_search/search/' . $taxonomy . '/args', $args ) );
 		}
 
 		if ( empty( $terms ) ) {
@@ -55,7 +55,7 @@ class Request {
 		}
 
 		// Exclude terms matched by user choice from "Exclude/include products" option
-		$filterMode = PSFS()->settings->getOption( 'filter_products_mode', 'exclude' );
+		$filterMode = PSF_SEARCH()->settings->getOption( 'filter_products_mode', 'exclude' );
 		$rules      = Helpers::getFilterProductsRules__premium_only();
 		if ( $filterMode === 'exclude' && ! empty( $rules ) && isset( $rules[ $taxonomy ] ) ) {
 			$excluded = array_map( 'intval', $rules[ $taxonomy ] );
@@ -91,18 +91,18 @@ class Request {
 		);
 
 		$termsSet      = [];
-		$termsSetCount = apply_filters( 'psfs/indexer/taxonomy-set-items-count', Builder::TAXONOMY_SET_ITEMS_COUNT );
-		$termsSetCount = apply_filters( 'psfs/indexer/taxonomy_set_items_count', $termsSetCount );
+		$termsSetCount = apply_filters( 'psf_search/indexer/taxonomy-set-items-count', Builder::TAXONOMY_SET_ITEMS_COUNT );
+		$termsSetCount = apply_filters( 'psf_search/indexer/taxonomy_set_items_count', $termsSetCount );
 
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			PSFS()->tntsearchMySql->asynchBuildIndexT->task( $terms );
+			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->task( $terms );
 		} else {
 			$i = 0;
 			foreach ( $terms as $term ) {
 				$termsSet[] = $term;
 
 				if ( count( $termsSet ) === $termsSetCount || $i + 1 === count( $terms ) ) {
-					PSFS()->tntsearchMySql->asynchBuildIndexT->push_to_queue( $termsSet );
+					PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->push_to_queue( $termsSet );
 					$termsSet = [];
 				}
 

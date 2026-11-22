@@ -27,13 +27,13 @@ class AdminMenu {
 
 		$menuSuffix = '';
 		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-			$menuSuffix = '<span class="psfs-menu-warning-icon">!</span>';
+			$menuSuffix = '<span class="psf-search-menu-warning-icon">!</span>';
 			add_action(
 				'admin_print_styles',
 				function () {
 					?>
 				<style>
-					.psfs-menu-warning-icon {
+					.psf-search-menu-warning-icon {
 						display: inline-block;
 						vertical-align: top;
 						box-sizing: border-box;
@@ -61,7 +61,7 @@ class AdminMenu {
 				function () {
 					?>
 				<style>
-					#adminmenu > .toplevel_page_psfs_settings {
+					#adminmenu > .toplevel_page_psf_search_settings {
 						display: none;
 					}
 				</style>
@@ -75,7 +75,7 @@ class AdminMenu {
 			__( 'PSF Search', 'psf-search' ),
 			__( 'PSF Search', 'psf-search' ) . $menuSuffix,
 			Helpers::shopManagerHasAccess() ? 'manage_woocommerce' : 'manage_options',
-			'psfs_settings',
+			'psf_search_settings',
 			[ $this, 'settingsPage' ]
 		);
 
@@ -85,7 +85,7 @@ class AdminMenu {
 				'PSF Search Debug',
 				sprintf( '<span class="fs-submenu-item fs-sub">%s</span>', 'Debug' ),
 				'manage_options',
-				'psfs_debug',
+				'psf_search_debug',
 				[ $this, 'debugPage' ]
 			);
 		}
@@ -106,6 +106,6 @@ class AdminMenu {
 	 * @return void
 	 */
 	public function debugPage() {
-		include_once PSFS_DIR . 'partials/admin/debug/debug.php';
+		include_once PSF_SEARCH_DIR . 'partials/admin/debug/debug.php';
 	}
 }

@@ -16,7 +16,7 @@ class AsyncRebuildIndex extends WPAsyncRequestWithCron {
 	 *
 	 * @var string
 	 */
-	protected $prefix = 'psfs';
+	protected $prefix = 'psf_search';
 
 	/**
 	 * @var string

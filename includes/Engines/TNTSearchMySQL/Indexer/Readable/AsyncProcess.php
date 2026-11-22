@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class AsyncProcess extends WPBackgroundProcess {
 
-	const CANCELING_PROCESS_TRANSIENT = 'psfs_canceling_r_index_build';
+	const CANCELING_PROCESS_TRANSIENT = 'psf_search_canceling_r_index_build';
 
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'psfs';
+	protected $prefix = 'psf_search';
 
 	/**
 	 * @var string
@@ -44,13 +44,13 @@ class AsyncProcess extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $itemsSet ) {
-		if ( ! defined( 'PSFS_READABLE_INDEX_TASK' ) ) {
-			define( 'PSFS_READABLE_INDEX_TASK', true );
+		if ( ! defined( 'PSF_SEARCH_READABLE_INDEX_TASK' ) ) {
+			define( 'PSF_SEARCH_READABLE_INDEX_TASK', true );
 		}
 
 		Builder::log( '[Readable index] Starting async task. Items set count: ' . count( $itemsSet ), 'debug', 'file', 'readable' );
 
-		do_action( 'psfs/readable_index/bg_processing/before_task' );
+		do_action( 'psf_search/readable_index/bg_processing/before_task' );
 
 		register_shutdown_function(
 			function () {

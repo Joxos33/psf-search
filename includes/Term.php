@@ -67,7 +67,7 @@ class Term {
 	 */
 	public function getThumbnailSrc( $size = '' ) {
 		$src  = '';
-		$size = empty( $size ) ? PSFS()->setup->getThumbnailSize() : $size;
+		$size = empty( $size ) ? PSF_SEARCH()->setup->getThumbnailSize() : $size;
 
 		if ( ! $this->isValid() ) {
 			return $src;
@@ -87,6 +87,6 @@ class Term {
 			$src = wc_placeholder_img_src( $size );
 		}
 
-		return apply_filters( 'psfs/term/thumbnail_src', $src, $this->getID(), $size, $this );
+		return apply_filters( 'psf_search/term/thumbnail_src', $src, $this->getID(), $size, $this );
 	}
 }

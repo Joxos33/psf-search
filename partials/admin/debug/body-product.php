@@ -3,11 +3,11 @@
 use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-$nonceValid = ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_product' );
+$nonceValid = ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_product' );
 $productID  = $nonceValid && ! empty( $_GET['product_id'] ) ? $_GET['product_id'] : '';
 $lang       = ! empty( $_GET['lang'] ) ? $_GET['lang'] : '';
 
@@ -24,13 +24,13 @@ if ( ! empty( $productID ) ) {
 <h3>Product debug</h3>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
 	<input
-		type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_product', '_wpnonce', false ); ?>
+		type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_product', '_wpnonce', false ); ?>
 	<input
-		type="text" class="regular-text" id="psfs-debug-product" name="product_id"
+		type="text" class="regular-text" id="psf-search-debug-product" name="product_id"
 		value="<?php echo esc_html( $productID ); ?>" placeholder="Product ID">
 	<input
-		type="text" class="small-text" id="psfs-debug-search-lang" name="lang"
+		type="text" class="small-text" id="psf-search-debug-search-lang" name="lang"
 		value="<?php echo esc_html( $lang ); ?>" placeholder="lang">
 	<button class="button" type="submit">Debug</button>
 </form>
@@ -186,7 +186,7 @@ if ( ! empty( $productID ) && $p->product->isValid() ) :
 
 		<tr>
 			<td><b>Wordlist: </b></td>
-			<td class="psfs-table-wordlist">
+			<td class="psf-search-table-wordlist">
 				<p>
 					<?php foreach ( $wordlist as $term ) : ?>
 						<?php echo $term . '<br />'; ?>

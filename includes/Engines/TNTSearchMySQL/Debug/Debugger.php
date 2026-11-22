@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Debugger {
-	const DEBUG_SEARCH_LOGS_KEY = 'psfs_debug_search_logs';
+	const DEBUG_SEARCH_LOGS_KEY = 'psf_search_debug_search_logs';
 
 	/**
 	 * Save log for the search
@@ -102,14 +102,14 @@ class Debugger {
 	public static function printLogs( $title = '', $context = 'common' ) {
 		$title = ! empty( $title ) ? $title : $context;
 
-		$html  = '<div class="psfs-indexer-logs">';
+		$html  = '<div class="psf-search-indexer-logs">';
 		$html .= '<h4>' . $title . '</h4>';
 
 		$logs = self::getLogs( $context );
 
 		if ( ! empty( $logs ) ) {
 			foreach ( $logs as $log ) {
-				$html .= '<span class="psfs-indexer-log">';
+				$html .= '<span class="psf-search-indexer-log">';
 				$html .= Helpers::stripScripts( $log );
 				$html .= '</span>';
 			}

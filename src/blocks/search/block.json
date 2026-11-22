@@ -31,5 +31,5 @@
 	},
 	"textdomain": "psf-search",
 	"editorScript": "file:./index.js",
-	"editorStyle": [ "psfs-style", "psfs-style-personalization", "file:./index.css" ]
+	"editorStyle": [ "psf-search-style", "psf-search-style-personalization", "file:./index.css" ]
 }

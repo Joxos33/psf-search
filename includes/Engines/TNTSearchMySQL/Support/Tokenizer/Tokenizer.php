@@ -63,7 +63,7 @@ class Tokenizer implements TokenizerInterface {
 		}
 
 		if ( $this->context === 'search' ) {
-			$tokensLimit = apply_filters( 'psfs/tokenizer/tokens_limit', 10 );
+			$tokensLimit = apply_filters( 'psf_search/tokenizer/tokens_limit', 10 );
 			// Limit the number of tokens
 			$tokens = array_splice( $tokens, 0, $tokensLimit );
 		}
@@ -77,7 +77,7 @@ class Tokenizer implements TokenizerInterface {
 			);
 		}
 
-		$tokens = apply_filters( 'psfs/tokenizer/tokens', $tokens, $text, $this->context );
+		$tokens = apply_filters( 'psf_search/tokenizer/tokens', $tokens, $text, $this->context );
 
 		return array_filter( array_unique( $tokens ) );
 	}
@@ -93,7 +93,7 @@ class Tokenizer implements TokenizerInterface {
 			$chars = [];
 		}
 
-		return apply_filters( 'psfs/tokenizer/special_chars', $chars, $this->context );
+		return apply_filters( 'psf_search/tokenizer/special_chars', $chars, $this->context );
 	}
 
 	/**

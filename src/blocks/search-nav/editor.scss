@@ -10,19 +10,19 @@
 
 .wp-block-psfsearch-search-nav {
 	&__device-preview-desktop {
-		.psfs-show-on-preview-desktop {
+		.psf-search-show-on-preview-desktop {
 			display: block;
 		}
-		.psfs-show-on-preview-tablet, .psfs-show-on-preview-mobile {
+		.psf-search-show-on-preview-tablet, .psf-search-show-on-preview-mobile {
 			display: none;
 		}
 	}
 
 	&__device-preview-tablet, &__device-preview-mobile {
-		.psfs-show-on-preview-desktop {
+		.psf-search-show-on-preview-desktop {
 			display: none;
 		}
-		.psfs-show-on-preview-tablet, .psfs-show-on-preview-mobile {
+		.psf-search-show-on-preview-tablet, .psf-search-show-on-preview-mobile {
 			display: block;
 		}
 	}

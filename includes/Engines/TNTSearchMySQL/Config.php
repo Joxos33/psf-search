@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Config {
 
-	const READABLE_INDEX     = 'psfs_index';
-	const READABLE_TAX_INDEX = 'psfs_tax_index';
-	const VARIATIONS_INDEX   = 'psfs_var_index';
+	const READABLE_INDEX     = 'psf_search_index';
+	const READABLE_TAX_INDEX = 'psf_search_tax_index';
+	const VARIATIONS_INDEX   = 'psf_search_var_index';
 
 	// Inverted index for searching purpose
-	const SEARCHABLE_INDEX_WORDLIST = 'psfs_invindex_wordlist';
-	const SEARCHABLE_INDEX_DOCLIST  = 'psfs_invindex_doclist';
-	const SEARCHABLE_INDEX_CACHE    = 'psfs_invindex_cache';
+	const SEARCHABLE_INDEX_WORDLIST = 'psf_search_invindex_wordlist';
+	const SEARCHABLE_INDEX_DOCLIST  = 'psf_search_invindex_doclist';
+	const SEARCHABLE_INDEX_CACHE    = 'psf_search_invindex_cache';
 
 	private static $indexerMode     = null;
 	private static $indexRole       = null;
@@ -42,11 +42,11 @@ class Config {
 
 		self::$indexerMode = $modes[0];
 
-		if ( defined( 'PSFS_INDEXER_MODE' ) && in_array( PSFS_INDEXER_MODE, $modes ) ) {
-			self::$indexerMode = PSFS_INDEXER_MODE;
+		if ( defined( 'PSF_SEARCH_INDEXER_MODE' ) && in_array( PSF_SEARCH_INDEXER_MODE, $modes ) ) {
+			self::$indexerMode = PSF_SEARCH_INDEXER_MODE;
 		}
 
-		$filteredMode = apply_filters( 'psfs/tnt/indexer_mode', self::$indexerMode );
+		$filteredMode = apply_filters( 'psf_search/tnt/indexer_mode', self::$indexerMode );
 		if ( in_array( $filteredMode, $modes ) ) {
 			self::$indexerMode = $filteredMode;
 		}
@@ -70,7 +70,7 @@ class Config {
 	public static function isParallelBuildingEnabled() {
 		$parallel = true;
 
-		if ( defined( 'PSFS_PARALLEL_INDEX_BUILD' ) && ! PSFS_PARALLEL_INDEX_BUILD ) {
+		if ( defined( 'PSF_SEARCH_PARALLEL_INDEX_BUILD' ) && ! PSF_SEARCH_PARALLEL_INDEX_BUILD ) {
 			$parallel = false;
 		}
 

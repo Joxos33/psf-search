@@ -3,16 +3,16 @@
  * Exit if accessed directly
  */
 
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 ?>
-<div class="psfs-indexing-header">
-	<span class="psfs-indexing-header__title" style="color:<?php echo $statusColor; ?>"><?php echo $text; ?></span>
+<div class="psf-search-indexing-header">
+	<span class="psf-search-indexing-header__title" style="color:<?php echo $statusColor; ?>"><?php echo $text; ?></span>
 
 	<?php if ( ! empty( $lastDate ) ) : ?>
-		<span class="psfs-indexing-header__subtitle">
+		<span class="psf-search-indexing-header__subtitle">
 
 		<?php if ( ! empty( $totalProducts ) ) : ?>
 			<?php echo sprintf( __( 'Indexed <strong>100%%</strong>, <strong>%d products</strong>.', 'psf-search' ), $totalProducts ); ?>
@@ -40,13 +40,13 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 		 */
 		$linkToDocs = 'https://fibosearch.com/documentation/troubleshooting/the-search-index-could-not-be-built/';
 		?>
-		<div class="psfs-indexing-header__troubleshooting">
+		<div class="psf-search-indexing-header__troubleshooting">
 			<h3><?php _e( 'Troubleshooting', 'psf-search' ); ?></h3>
 
 			<?php if ( ! empty( $lastErrorMessage ) ) : ?>
 				<p><?php _e( 'The following error caused the index to be canceled:', 'psf-search' ); ?></p>
 				<?php if ( ! empty( $lastErrorCode ) ) : ?>
-					<span class="psfs-indexing-header__error-code">
+					<span class="psf-search-indexing-header__error-code">
 					<?php
 					printf(
 						__( 'Error code %s', 'psf-search' ),
@@ -55,7 +55,7 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 					?>
 							</span>
 				<?php endif; ?>
-				<p class="psfs-indexing-header__log"><?php echo $lastErrorMessage; ?></p>
+				<p class="psf-search-indexing-header__log"><?php echo $lastErrorMessage; ?></p>
 			<?php endif; ?>
 			<ol>
 
@@ -66,7 +66,7 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 					<li>
 						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin.', 'psf-search' ); ?>
 						<br/>
-						<pre>add_filter( 'psfs/indexer/searchable_set_items_count', function ( $count ) {
+						<pre>add_filter( 'psf_search/indexer/searchable_set_items_count', function ( $count ) {
 	return 10;
 } );</pre>
 					</li>
@@ -80,16 +80,16 @@ if ( ! defined( 'PSFS_FILE' ) ) {
 					<li>
 						<?php _e( 'Add below code to your child theme’s <em>functions.php</em> file or via a plugin that allows custom functions to be added, such as the <a href="https://wordpress.org/plugins/code-snippets/" target="_blank">Code snippets</a> plugin. Please don’t add custom code directly to your parent theme’s functions.php file as this will be wiped entirely when you update the theme.', 'psf-search' ); ?>
 						<br/>
-<pre>add_filter( 'psfs/indexer/searchable_set_items_count', function ( $count ) {
+<pre>add_filter( 'psf_search/indexer/searchable_set_items_count', function ( $count ) {
 	return 10;
 } );
-add_filter( 'psfs/indexer/readable_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/readable_set_items_count', function ( $count ) {
 	return 5;
 } );
-add_filter( 'psfs/indexer/taxonomy_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/taxonomy_set_items_count', function ( $count ) {
 	return 10;
 } );
-add_filter( 'psfs/indexer/variations_set_items_count', function ( $count ) {
+add_filter( 'psf_search/indexer/variations_set_items_count', function ( $count ) {
 	return 5;
 } );</pre>
 					</li>
@@ -102,7 +102,7 @@ add_filter( 'psfs/indexer/variations_set_items_count', function ( $count ) {
 					?>
 							</li>
 				<?php else : ?>
-					<li><?php printf( __( "If the indexer still doesn't work, add a constant <code>define('PSFS_INDEXER_MODE', 'sync');</code> to your <code>wp-config.php</code> file and try to rebuild the search index again", 'psf-search' ), 'js-ajax-build-index' ); ?></li>
+					<li><?php printf( __( "If the indexer still doesn't work, add a constant <code>define('PSF_SEARCH_INDEXER_MODE', 'sync');</code> to your <code>wp-config.php</code> file and try to rebuild the search index again", 'psf-search' ), 'js-ajax-build-index' ); ?></li>
 				<?php endif; ?>
 
 
@@ -110,12 +110,12 @@ add_filter( 'psfs/indexer/variations_set_items_count', function ( $count ) {
 		</div>
 	<?php endif; ?>
 
-	<div class="psfs-indexing-header__actions">
+	<div class="psf-search-indexing-header__actions">
 		<?php echo $actionButton; ?>
 
 		<?php if ( ! in_array( $status, [ 'building', 'cancellation' ] ) ) : ?>
-			<a href="#" class="<?php echo $isDetails ? 'hide' : 'show'; ?> psfs-indexing-details-trigger js-psfs-indexing-details-trigger js-psfs-indexing__showd"><?php _e( 'Show details', 'psf-search' ); ?></a>
-			<a href="#" class="<?php echo $isDetails ? 'show' : 'hide'; ?> psfs-indexing-details-trigger js-psfs-indexing-details-trigger js-psfs-indexing__hided"><?php _e( 'Hide details', 'psf-search' ); ?></a>
+			<a href="#" class="<?php echo $isDetails ? 'hide' : 'show'; ?> psf-search-indexing-details-trigger js-psf-search-indexing-details-trigger js-psf-search-indexing__showd"><?php _e( 'Show details', 'psf-search' ); ?></a>
+			<a href="#" class="<?php echo $isDetails ? 'show' : 'hide'; ?> psf-search-indexing-details-trigger js-psf-search-indexing-details-trigger js-psf-search-indexing__hided"><?php _e( 'Hide details', 'psf-search' ); ?></a>
 		<?php endif; ?>
 	</div>
 

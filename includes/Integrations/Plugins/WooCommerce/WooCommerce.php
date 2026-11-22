@@ -51,12 +51,12 @@ class WooCommerce extends AbstractPluginIntegration {
 		if ( get_option( 'woocommerce_hide_out_of_stock_items' ) === 'yes' ) {
 			// Hide "Exclude “out of stock” products" option
 			add_filter(
-				'psfs/settings',
+				'psf_search/settings',
 				function ( $settingsFields ) {
-					if ( is_array( $settingsFields['psfs_search'] ) ) {
-						foreach ( $settingsFields['psfs_search'] as $index => $field ) {
+					if ( is_array( $settingsFields['psf_search_search'] ) ) {
+						foreach ( $settingsFields['psf_search_search'] as $index => $field ) {
 							if ( $field['name'] === 'exclude_out_of_stock' ) {
-								unset( $settingsFields['psfs_search'][ $index ] );
+								unset( $settingsFields['psf_search_search'][ $index ] );
 								break;
 							}
 						}
@@ -69,7 +69,7 @@ class WooCommerce extends AbstractPluginIntegration {
 
 			// Force value of "Exclude “out of stock” products" option as "on"
 			add_filter(
-				'psfs/settings/load_value/key=exclude_out_of_stock',
+				'psf_search/settings/load_value/key=exclude_out_of_stock',
 				function ( $value ) {
 					return 'on';
 				},
@@ -79,14 +79,14 @@ class WooCommerce extends AbstractPluginIntegration {
 	}
 
 	/**
-	 * Add &psfs=1 to the link
+	 * Add &psf_search=1 to the link
 	 *
 	 * @return string
 	 */
 	public function add_search_param_to_link( $link ) {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['s'] ) ) {
-			$link = add_query_arg( [ 'psfs' => '1' ], $link );
+			$link = add_query_arg( [ 'psf_search' => '1' ], $link );
 		}
 
 		return $link;
@@ -104,7 +104,7 @@ class WooCommerce extends AbstractPluginIntegration {
 			return $sql;
 		}
 
-		$post_ids = apply_filters( 'psfs/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$sql .= ' AND product_id IN(' . implode( ',', $post_ids ) . ')';
@@ -128,7 +128,7 @@ class WooCommerce extends AbstractPluginIntegration {
 			return $args;
 		}
 
-		$post_ids = apply_filters( 'psfs/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$args['object_ids'] = $post_ids;
@@ -147,7 +147,7 @@ class WooCommerce extends AbstractPluginIntegration {
 	public function filter_counts_query( $query ) {
 		global $wpdb;
 
-		$post_ids = apply_filters( 'psfs/search_page/result_post_ids', [] );
+		$post_ids = apply_filters( 'psf_search/search_page/result_post_ids', [] );
 
 		if ( $post_ids ) {
 			$query['where'] .= " AND $wpdb->posts.ID IN(" . implode( ',', $post_ids ) . ')';
@@ -164,7 +164,7 @@ class WooCommerce extends AbstractPluginIntegration {
 	public function declare_compatibility() {
 		// https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book#declaring-extension-incompatibility
 		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PSFS_FILE, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', PSF_SEARCH_FILE, true );
 		}
 	}
 
@@ -217,7 +217,7 @@ class WooCommerce extends AbstractPluginIntegration {
 		}
 
 		add_filter(
-			'psfs/indexer/taxonomies',
+			'psf_search/indexer/taxonomies',
 			function ( $taxonomies ) {
 				$taxonomies[] = [
 					'taxonomy'      => 'product_brand',

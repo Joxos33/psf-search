@@ -227,7 +227,7 @@ class SettingsAPI {
 	 */
 	public function callback_head( $args ) {
 
-		echo '<span class="psfs-settings-hr"></span>';
+		echo '<span class="psf-search-settings-hr"></span>';
 	}
 
 	/**
@@ -236,14 +236,14 @@ class SettingsAPI {
 	 * @param array $args settings field args
 	 */
 	public function callback_text( $args ) {
-		$value     = apply_filters( 'psfs/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
+		$value     = apply_filters( 'psf_search/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
 		$size      = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 		$type      = isset( $args['type'] ) ? $args['type'] : 'text';
 		$disabled  = ! empty( $args['disabled'] ) ? 'disabled' : '';
 		$numberMin = isset( $args['number_min'] ) ? ' min="' . $args['number_min'] . '"' : '';
 		$numberMax = isset( $args['number_max'] ) ? ' min="' . $args['number_max'] . '"' : '';
 
-		$html  = '<fieldset class="psfs-fieldset">';
+		$html  = '<fieldset class="psf-search-fieldset">';
 		$html .= sprintf( '<input type="%1$s" class="%2$s-text" id="%3$s[%4$s]" name="%3$s[%4$s]" value="%5$s" %6$s %7$s %8$s/>', $type, $size, $this->name, $args['id'], $value, $disabled, $numberMin, $numberMax );
 		$html .= $this->get_field_description( $args );
 		$html .= '</fieldset>';
@@ -276,10 +276,10 @@ class SettingsAPI {
 	 */
 	public function callback_checkbox( $args ) {
 
-		$value    = apply_filters( 'psfs/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
+		$value    = apply_filters( 'psf_search/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
 		$disabled = ! empty( $args['disabled'] ) ? 'disabled' : '';
 
-		$moveDest = empty( $args['move_dest'] ) ? '' : sprintf( 'data-move-dest="%1$s[%2$s]" class="%3$s"', $this->name, $args['move_dest'], 'js-psfs-move-option' );
+		$moveDest = empty( $args['move_dest'] ) ? '' : sprintf( 'data-move-dest="%1$s[%2$s]" class="%3$s"', $this->name, $args['move_dest'], 'js-psf-search-move-option' );
 		$html     = '<fieldset>';
 		$html    .= sprintf( '<label %3$s for="%1$s[%2$s]">', $this->name, $args['id'], $moveDest );
 		$html    .= sprintf( '<input type="hidden" name="%1$s[%2$s]" value="off" />', $this->name, $args['id'] );
@@ -297,7 +297,7 @@ class SettingsAPI {
 	 */
 	public function callback_multicheck( $args ) {
 
-		$value = apply_filters( 'psfs/settings/option_value', $this->get_option( $args['id'], $args['std'] ), $args['std'], $args );
+		$value = apply_filters( 'psf_search/settings/option_value', $this->get_option( $args['id'], $args['std'] ), $args['std'], $args );
 
 		$html = '<fieldset>';
 		foreach ( $args['options'] as $key => $label ) {
@@ -319,7 +319,7 @@ class SettingsAPI {
 	 */
 	public function callback_radio( $args ) {
 
-		$value = apply_filters( 'psfs/settings/option_value', $this->get_option( $args['id'], $args['std'], false ), $args['std'], $args );
+		$value = apply_filters( 'psf_search/settings/option_value', $this->get_option( $args['id'], $args['std'], false ), $args['std'], $args );
 
 		$html = '<fieldset>';
 		foreach ( $args['options'] as $key => $label ) {
@@ -340,7 +340,7 @@ class SettingsAPI {
 	 */
 	public function callback_select( $args ) {
 
-		$value    = apply_filters( 'psfs/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
+		$value    = apply_filters( 'psf_search/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
 		$disabled = ! empty( $args['disabled'] ) ? 'disabled="disabled"' : '';
 
 		$size = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
@@ -362,14 +362,14 @@ class SettingsAPI {
 	 */
 	public function callback_selectize( $args ) {
 
-		$value = apply_filters( 'psfs/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
+		$value = apply_filters( 'psf_search/settings/option_value', esc_attr( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
 
 		$options = ! empty( $args['options'] ) && is_array( $args['options'] ) ? $args['options'] : [];
 
-		$nonce              = wp_create_nonce( 'psfs_get_custom_fields' );
+		$nonce              = wp_create_nonce( 'psf_search_get_custom_fields' );
 		$disabled           = disabled( ( ( $args['disabled_before_init'] ?? false ) || ( $args['disabled'] ?? false ) ), true, false );
 		$disabledBeforeInit = empty( $args['disabled_before_init'] ) ? '' : 'data-disabled-before-init="1"';
-		$class              = 'psfs-selectize';
+		$class              = 'psf-search-selectize';
 		if ( ! empty( $disabledBeforeInit ) ) {
 			$class .= ' loading';
 		}
@@ -387,7 +387,7 @@ class SettingsAPI {
 	 */
 	public function callback_textarea( $args ) {
 
-		$value = apply_filters( 'psfs/settings/option_value', esc_textarea( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
+		$value = apply_filters( 'psf_search/settings/option_value', esc_textarea( $this->get_option( $args['id'], $args['std'] ) ), $args['std'], $args );
 
 		$size = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 
@@ -509,7 +509,7 @@ class SettingsAPI {
 
 		$html = '';
 		if ( isset( $args['desc'] ) && ! empty( $args['desc'] ) ) {
-			$html .= '<div class="psfs-settings-info">';
+			$html .= '<div class="psf-search-settings-info">';
 			$html .= $args['desc'];
 			$html .= '</div>';
 		}
@@ -541,7 +541,7 @@ class SettingsAPI {
 	public function callback_filters_rules_plug( $args ) {
 		ob_start();
 		?>
-		<div id="psfs-settings-filters-rules">
+		<div id="psf-search-settings-filters-rules">
 			<div>
 				<p><?php _e( 'No rules', 'psf-search' ); ?></p><br>
 			</div>
@@ -560,7 +560,7 @@ class SettingsAPI {
 	 */
 	public function callback_filters_rules__premium_only( $args ) {
 		$valueRaw = $this->get_option( $args['id'], $args['std'] );
-		$value    = apply_filters( 'psfs/settings/option_value', esc_attr( $valueRaw ), $args['std'], $args );
+		$value    = apply_filters( 'psf_search/settings/option_value', esc_attr( $valueRaw ), $args['std'], $args );
 
 		$attributeTaxonomies = wc_get_attribute_taxonomies();
 
@@ -596,11 +596,11 @@ class SettingsAPI {
 
 		ob_start();
 		?>
-		<script>var psfs_filters_rules_selected_options = <?php echo wp_json_encode( $selectedOptions ); ?></script>
-		<script type="text/x-template" id="psfs-settings-filters-rules-rule">
-			<div class="psfs-settings-filters-rules-container">
+		<script>var psf_search_filters_rules_selected_options = <?php echo wp_json_encode( $selectedOptions ); ?></script>
+		<script type="text/x-template" id="psf-search-settings-filters-rules-rule">
+			<div class="psf-search-settings-filters-rules-container">
 				<selectize
-					class="psfs-select-group" v-model="rule.group"
+					class="psf-search-select-group" v-model="rule.group"
 					:settings="{persist: false, maxItems: 1, placeholder: '<?php esc_attr_e( 'Select filter type', 'psf-search' ); ?>'}"
 				>
 					<option value="product_cat"><?php _e( 'Product categories', 'psf-search' ); ?>
@@ -624,19 +624,19 @@ class SettingsAPI {
 					:settings="getSelectizeSettings(rule.group)"
 				>
 				</selectize>
-				<span class="psfs-delete-rule psfs-settings-filters-rules-item" @click="deleteRule(index)">
+				<span class="psf-search-delete-rule psf-search-settings-filters-rules-item" @click="deleteRule(index)">
 					<?php echo Helpers::getIcon( 'close' ); ?>
 				</span>
 			</div>
 		</script>
 
-		<div id="psfs-settings-filters-rules">
+		<div id="psf-search-settings-filters-rules">
 			<?php
-			$nonce = wp_create_nonce( 'psfs_get_filter_terms' );
-			printf( '<input type="hidden" name="%s[%s]" ref="psfs-settings-filters-rules-ref" value="%s"/>', $this->name, $args['id'], $value );
+			$nonce = wp_create_nonce( 'psf_search_get_filter_terms' );
+			printf( '<input type="hidden" name="%s[%s]" ref="psf-search-settings-filters-rules-ref" value="%s"/>', $this->name, $args['id'], $value );
 			?>
 			<div v-if="rules.length > 0">
-				<psfs-rule
+				<psf-search-rule
 					v-for="(rule, index) in rules"
 					:key="rule.key"
 					:index="index"
@@ -647,7 +647,7 @@ class SettingsAPI {
 					v-on:update:rule="updateInput"
 					v-on:change:group="changeGroup"
 				>
-				</psfs-rule>
+				</psf-search-rule>
 			</div>
 			<div v-else>
 				<p><?php _e( 'No rules', 'psf-search' ); ?></p><br>
@@ -884,7 +884,7 @@ class SettingsAPI {
 			}
 		}
 
-		return apply_filters( 'psfs/settings/load_value/key=' . $option, $value );
+		return apply_filters( 'psf_search/settings/load_value/key=' . $option, $value );
 	}
 
 	/**
@@ -915,7 +915,7 @@ class SettingsAPI {
 	public function show_forms() {
 		?>
 		<div class="metabox-holder">
-			<form class="psfs-eq-settings-form" method="post" action="options.php">
+			<form class="psf-search-eq-settings-form" method="post" action="options.php">
 				<?php foreach ( $this->settings_sections as $form ) { ?>
 					<div
 						id="<?php echo $form['id']; ?>" class="<?php echo $this->prefix; ?>group"
@@ -951,19 +951,19 @@ class SettingsAPI {
 		<script>
 			jQuery(document).ready(function ($) {
 				const tabHrefs = [
-					{'old': '#psfs_basic', 'new': '#starting'},
-					{'old': '#psfs_form_body', 'new': '#search_bar'},
-					{'old': '#psfs_autocomplete', 'new': '#autocomplete'},
-					{'old': '#psfs_search', 'new': '#search_config'},
-					{'old': '#psfs_analytics', 'new': '#analytics'},
-					{'old': '#psfs_performance', 'new': '#indexer'},
-					{'old': '#psfs_performance', 'new': '#indexer'},
-					{'old': '#psfs_troubleshooting', 'new': '#troubleshooting'},
+					{'old': '#psf_search_basic', 'new': '#starting'},
+					{'old': '#psf_search_form_body', 'new': '#search_bar'},
+					{'old': '#psf_search_autocomplete', 'new': '#autocomplete'},
+					{'old': '#psf_search_search', 'new': '#search_config'},
+					{'old': '#psf_search_analytics', 'new': '#analytics'},
+					{'old': '#psf_search_performance', 'new': '#indexer'},
+					{'old': '#psf_search_performance', 'new': '#indexer'},
+					{'old': '#psf_search_troubleshooting', 'new': '#troubleshooting'},
 				];
 
 				// A tab href reaches jQuery's $(); only allow "#id" selectors so a forged tab
 				// (e.g. injected into an admin notice) cannot smuggle an HTML string into $().
-				function psfsIsSafeTabHref(href) {
+				function psfSearchIsSafeTabHref(href) {
 					return typeof href === 'string' && /^#[A-Za-z0-9_-]+$/.test(href);
 				}
 
@@ -988,12 +988,12 @@ class SettingsAPI {
 				}
 
 				function markActiveGroup($group) {
-					var name = $group.attr('id').replace('psfs_', '');
+					var name = $group.attr('id').replace('psf_search_', '');
 
-					$group.addClass('psfs-group-active');
-					$group.closest('.js-psfs-settings-body').attr('data-psfs-active', name)
+					$group.addClass('psf-search-group-active');
+					$group.closest('.js-psf-search-settings-body').attr('data-psf-search-active', name)
 
-					$(document).trigger('psfs_settings_group_active', $group);
+					$(document).trigger('psf_search_settings_group_active', $group);
 				}
 
 				//Initiate Color Picker
@@ -1002,14 +1002,14 @@ class SettingsAPI {
 					$('.wp-color-picker-field').wpColorPicker({
 						palettes: false,
 						change: function (event, ui) {
-							window.PSFS_SEARCH_PREVIEW.onColorChangeHandler($(event.target), ui.color.toString());
+							window.PSF_SEARCH_SEARCH_PREVIEW.onColorChangeHandler($(event.target), ui.color.toString());
 
 							//https://github.com/Automattic/Iris/issues/57#issuecomment-899685019
 							if (!addedClearer) {
 								$('.wp-picker-clear').on('click', function () {
 									var $input = $(this).parent('.wp-picker-input-wrap').find('input.wp-color-picker');
 									if($input.length > 0){
-										window.PSFS_SEARCH_PREVIEW.onColorChangeHandler($input, '');
+										window.PSF_SEARCH_SEARCH_PREVIEW.onColorChangeHandler($input, '');
 									}
 								});
 								addedClearer = true;
@@ -1028,7 +1028,7 @@ class SettingsAPI {
 					if (maybe_active) {
 						// Check if tabs exists
 						$('.<?php echo $this->prefix; ?>nav-tab-wrapper a:not(.js-nav-tab-minor)').each(function () {
-							if ($(this).attr('href') === maybe_active && psfsIsSafeTabHref(maybe_active)) {
+							if ($(this).attr('href') === maybe_active && psfSearchIsSafeTabHref(maybe_active)) {
 								activetab = maybe_active;
 							}
 						});
@@ -1039,7 +1039,7 @@ class SettingsAPI {
 					var maybe_active_href = getOldTabHref(window.location.hash);
 					// Check if tabs exists
 					$('.<?php echo $this->prefix; ?>nav-tab-wrapper a:not(.js-nav-tab-minor)').each(function () {
-						if ($(this).attr('href') === maybe_active_href && psfsIsSafeTabHref(maybe_active_href)) {
+						if ($(this).attr('href') === maybe_active_href && psfSearchIsSafeTabHref(maybe_active_href)) {
 							activetab = maybe_active_href;
 						}
 					});
@@ -1070,7 +1070,7 @@ class SettingsAPI {
 					$('.<?php echo $this->prefix; ?>nav-tab-wrapper a:first').addClass('nav-tab-active');
 				}
 				$('.<?php echo $this->prefix; ?>nav-tab-wrapper a:not(.js-nav-tab-minor)').on('click', function (evt) {
-					if (!psfsIsSafeTabHref($(this).attr('href'))) {
+					if (!psfSearchIsSafeTabHref($(this).attr('href'))) {
 						evt.preventDefault();
 						return;
 					}

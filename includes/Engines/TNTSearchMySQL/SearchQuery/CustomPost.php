@@ -128,7 +128,7 @@ class CustomPost {
 
 				$score     = Helpers::calcScore( $this->phrase, $item->name );
 				$showImage = $this->getOption( 'show_post_type_' . $this->postType . '_images' ) === 'on';
-				$showImage = apply_filters( "psfs/search_results/{$this->postType}/show_image", $showImage, $this->phrase, $item );
+				$showImage = apply_filters( "psf_search/search_results/{$this->postType}/show_image", $showImage, $this->phrase, $item );
 				$name      = html_entity_decode( $item->name );
 
 				$itemData = [
@@ -136,7 +136,7 @@ class CustomPost {
 					'value'     => $name,
 					'name'      => $name,
 					'image'     => $showImage && ! empty( $item->image ) ? esc_url( $item->image ) : '',
-					'url'       => apply_filters( "psfs/search_results/{$this->postType}/url", $item->url, $this->phrase, $item ),
+					'url'       => apply_filters( "psf_search/search_results/{$this->postType}/url", $item->url, $this->phrase, $item ),
 					'type'      => 'post',
 					'post_type' => $this->postType,
 					'score'     => $score,
@@ -152,7 +152,7 @@ class CustomPost {
 			}
 		}
 
-		$this->documents = apply_filters( 'psfs/tnt/search_results/' . $this->postType, $documents, $this->phrase, $this->getLang() );
+		$this->documents = apply_filters( 'psf_search/tnt/search_results/' . $this->postType, $documents, $this->phrase, $this->getLang() );
 	}
 
 	/**
@@ -167,7 +167,7 @@ class CustomPost {
 			$score  = 0;
 			$score += Helpers::calcScore( $this->phrase, $post['name'] );
 
-			$this->documents[ $i ]['score'] = apply_filters( "psfs/tnt/{$this->postType}/score", (float) $score, $post['post_id'], $post, $this );
+			$this->documents[ $i ]['score'] = apply_filters( "psf_search/tnt/{$this->postType}/score", (float) $score, $post['post_id'], $post, $this );
 
 			$i ++;
 		}

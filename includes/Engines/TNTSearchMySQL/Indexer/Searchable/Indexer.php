@@ -55,7 +55,7 @@ class Indexer extends AbstractIndexer {
 		$config = [
 			'scope'      => [
 				// @TODO rest of scope for future use
-				'attributes' => PSFS()->settings->getOption( 'search_in_product_attributes' ) === 'on' ? true : false,
+				'attributes' => PSF_SEARCH()->settings->getOption( 'search_in_product_attributes' ) === 'on' ? true : false,
 			],
 			'index_role' => Config::getIndexRole(),
 		];
@@ -94,7 +94,7 @@ class Indexer extends AbstractIndexer {
 			}
 		}
 
-		$row = apply_filters( 'psfs/indexer/items_row', $row );
+		$row = apply_filters( 'psf_search/indexer/items_row', $row );
 
 		$document = new Document( $row, $this->config );
 		$document->setStemmer( $this->stemmer );

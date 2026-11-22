@@ -21,7 +21,7 @@ class Settings {
 	 *
 	 * @var string
 	 */
-	private $settingSlug = PSFS_SETTINGS_KEY;
+	private $settingSlug = PSF_SEARCH_SETTINGS_KEY;
 
 	/**
 	 * All options values in one array
@@ -59,33 +59,33 @@ class Settings {
 	private $settingsCache = [];
 
 	public function __construct() {
-		global $psfsSettings;
+		global $psfSearchSettings;
 
 		// Set global variable with settings
 		$settings = get_option( $this->settingSlug );
 		if ( ! isset( $settings ) || empty( $settings ) ) {
-			$psfsSettings = [];
+			$psfSearchSettings = [];
 		} else {
-			$psfsSettings = $settings;
+			$psfSearchSettings = $settings;
 		}
 
 		$this->settingsApi = new SettingsAPI( $this->settingSlug );
 
 		add_action( 'admin_init', [ $this, 'settingsInit' ] );
 
-		add_filter( 'psfs/settings/option_value', [ $this, 'restoreDefaultValueForFreePlan' ], 10, 3 );
+		add_filter( 'psf_search/settings/option_value', [ $this, 'restoreDefaultValueForFreePlan' ], 10, 3 );
 
-		add_action( 'wp_ajax_psfs_adv_settings', [ $this, 'toggleAdvancedSettings' ] );
+		add_action( 'wp_ajax_psf_search_adv_settings', [ $this, 'toggleAdvancedSettings' ] );
 
 		add_action(
-			'wp_ajax_psfs_settings_list_custom_fields',
+			'wp_ajax_psf_search_settings_list_custom_fields',
 			[
 				$this,
 				'listSearchableCustomFields__premium_only',
 			]
 		);
 		add_action(
-			'wp_ajax_psfs_settings_search_terms',
+			'wp_ajax_psf_search_settings_search_terms',
 			[
 				$this,
 				'searchTermsForFilter__premium_only',
@@ -94,7 +94,7 @@ class Settings {
 
 		if ( Helpers::shopManagerHasAccess() ) {
 			add_filter(
-				'option_page_capability_psfs_troubleshooting',
+				'option_page_capability_psf_search_troubleshooting',
 				function ( $cap ) {
 					return 'manage_woocommerce';
 				}
@@ -129,19 +129,19 @@ class Settings {
 
 		$sections = [
 			5  => [
-				'id'    => 'psfs_basic',
+				'id'    => 'psf_search_basic',
 				'title' => __( 'Starting', 'psf-search' ),
 			],
 			10 => [
-				'id'    => 'psfs_form_body',
+				'id'    => 'psf_search_form_body',
 				'title' => __( 'Search bar', 'psf-search' ),
 			],
 			15 => [
-				'id'    => 'psfs_autocomplete',
+				'id'    => 'psf_search_autocomplete',
 				'title' => __( 'Autocomplete', 'psf-search' ),
 			],
 			25 => [
-				'id'    => 'psfs_search',
+				'id'    => 'psf_search_search',
 				'title' => __( 'Search config', 'psf-search' ),
 			],
 		];
@@ -149,23 +149,23 @@ class Settings {
 		$suffix = '';
 		// TODO tutaj trzeba wskazac budowany indeks
 		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-			$suffix .= '<span class="js-psfs-indexer-tab-error psfs-tab-mark active">!</span>';
+			$suffix .= '<span class="js-psf-search-indexer-tab-error psf-search-tab-mark active">!</span>';
 		} else {
-			$suffix .= '<span class="js-psfs-indexer-tab-error psfs-tab-mark">!</span>';
+			$suffix .= '<span class="js-psf-search-indexer-tab-error psf-search-tab-mark">!</span>';
 		}
 
 		if ( in_array( Builder::getInfo( 'status', Config::getIndexRole() ), [ 'preparing', 'building', 'cancellation' ] ) ) {
-			$suffix .= '<span class="js-psfs-indexer-tab-progress psfs-tab-progress active"></span>';
+			$suffix .= '<span class="js-psf-search-indexer-tab-progress psf-search-tab-progress active"></span>';
 		} else {
-			$suffix .= '<span class="js-psfs-indexer-tab-progress psfs-tab-progress"></span>';
+			$suffix .= '<span class="js-psf-search-indexer-tab-progress psf-search-tab-progress"></span>';
 		}
 		$sections[30] = [
-			'id'    => 'psfs_performance',
+			'id'    => 'psf_search_performance',
 			'title' => __( 'Indexer', 'psf-search' ) . $suffix,
 		];
 
-		$sections = apply_filters( 'psfs_settings_sections', $sections ); // deprecated since v1.2.0
-		$sections = apply_filters( 'psfs/settings/sections', $sections );
+		$sections = apply_filters( 'psf_search_settings_sections', $sections ); // deprecated since v1.2.0
+		$sections = apply_filters( 'psf_search/settings/sections', $sections );
 
 		ksort( $sections );
 
@@ -197,32 +197,32 @@ class Settings {
 		$readMore = __( '<a target="_blank" href="%s">Read more</a> about this feature.', 'psf-search' );
 
 		$settingsFields = [
-			'psfs_basic'        => apply_filters(
-				'psfs/settings/section=basic',
+			'psf_search_basic'        => apply_filters(
+				'psf_search/settings/section=basic',
 				[
 					90  => [
 						'name'  => 'embedding_search_form_head',
 						'label' => __( 'How to add search bar in your theme?', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					100 => [
 						'name'  => 'how_to_use',
 						'label' => __( 'How to add?', 'psf-search' ),
 						'type'  => 'desc',
-						'class' => 'psfs-only-desc',
+						'class' => 'psf-search-only-desc',
 						'desc'  => Helpers::howToUseHtml(),
 					],
 				]
 			),
-			'psfs_form_body'    => apply_filters(
-				'psfs/settings/section=form',
+			'psf_search_form_body'    => apply_filters(
+				'psf_search/settings/section=form',
 				[
 					100  => [
 						'name'  => 'form_head',
 						'label' => __( 'Basic', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					200  => [
 						'name'              => 'min_chars',
@@ -230,7 +230,7 @@ class Settings {
 						'type'              => 'number',
 						'size'              => 'small',
 						'number_min'        => 1,
-						'class'             => 'js-psfs-adv-settings',
+						'class'             => 'js-psf-search-adv-settings',
 						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_natural_numbers' ],
 						'desc'              => __( 'Min characters to show autocomplete', 'psf-search' ),
 						'default'           => 3,
@@ -241,14 +241,14 @@ class Settings {
 						'type'    => 'number',
 						'size'    => 'small',
 						'desc'    => ' px. ' . __( 'To set 100% width leave blank', 'psf-search' ),
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => 600,
 					],
 					400  => [
 						'name'    => 'show_submit_button',
 						'label'   => __( 'Show submit button', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'psfs-options-cb-toggle js-psfs-cbtgroup-submit-btn',
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-submit-btn',
 						'size'    => 'small',
 						'default' => 'off',
 					],
@@ -256,21 +256,21 @@ class Settings {
 						'name'    => 'search_submit_text',
 						'label'   => __( 'Label', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search-submit-text', __( 'To display the magnifier icon leave this field empty.', 'psf-search' ) ),
 						'type'    => 'text',
-						'class'   => 'js-psfs-cbtgroup-submit-btn psfs-settings-suboption',
+						'class'   => 'js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
 						'default' => __( 'Search', 'psf-search' ),
 					],
 					510  => [
 						'name'    => 'bg_submit_color',
 						'label'   => __( 'Background color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings js-psfs-cbtgroup-submit-btn psfs-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
 						'default' => '',
 					],
 					520  => [
 						'name'    => 'text_submit_color',
 						'label'   => '<span>' . __( 'Text color', 'psf-search' ) . ' </span><span>' . __( 'Search icon color', 'psf-search' ) . '</span>',
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings js-psfs-cbtgroup-submit-btn psfs-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings js-psf-search-cbtgroup-submit-btn psf-search-settings-suboption',
 						'default' => '',
 					],
 					600  => [
@@ -284,7 +284,7 @@ class Settings {
 						'name'  => 'layout_head',
 						'label' => __( 'Appearance', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					645  => [
 						'name'    => 'search_style',
@@ -305,7 +305,7 @@ class Settings {
 							'solaris'      => _x( 'Solaris', 'Solaris is proper name.', 'psf-search' ),
 						],
 						'default' => 'pirx',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					660  => [
 						'name'    => 'search_layout',
@@ -322,14 +322,14 @@ class Settings {
 							'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'psf-search' ),
 						],
 						'default' => 'classic',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					670  => [
 						'name'    => 'mobile_breakpoint',
 						'label'   => __( 'Breakpoint', 'psf-search' ),
 						'desc'    => __( 'px', 'psf-search' ),
 						'type'    => 'number',
-						'class'   => 'js-psfs-adv-settings psfs-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'size'    => 'small',
 						'default' => 992,
 					],
@@ -337,7 +337,7 @@ class Settings {
 						'name'    => 'search_icon_color',
 						'label'   => __( 'Search icon color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings psfs-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'default' => '',
 					],
 					680  => [
@@ -355,14 +355,14 @@ class Settings {
 						'desc'    => __( 'The search will open as an overlay on mobile', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'on',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					685  => [
 						'name'    => 'mobile_overlay_breakpoint',
 						'label'   => __( 'Breakpoint', 'psf-search' ),
 						'desc'    => __( 'px', 'psf-search' ),
 						'type'    => 'number',
-						'class'   => 'js-psfs-adv-settings psfs-settings-suboption',
+						'class'   => 'js-psf-search-adv-settings psf-search-settings-suboption',
 						'size'    => 'small',
 						'default' => 992,
 					],
@@ -379,7 +379,7 @@ class Settings {
 							)
 						),
 						'type'    => 'checkbox',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'size'    => 'small',
 						'default' => 'off',
 					],
@@ -387,66 +387,66 @@ class Settings {
 						'name'  => 'search_form',
 						'label' => __( 'Other colors', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					790  => [
 						'name'    => 'bg_input_underlay_color',
 						'label'   => __( 'Search bar underlay', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					800  => [
 						'name'    => 'bg_input_color',
 						'label'   => __( 'Search input background', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					900  => [
 						'name'    => 'text_input_color',
 						'label'   => __( 'Search input text', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					1000 => [
 						'name'    => 'border_input_color',
 						'label'   => __( 'Search input border', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					1500 => [
 						'name'  => 'preloader_head',
 						'label' => __( 'Preloader', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					1700 => [
 						'name'    => 'show_preloader',
 						'label'   => __( 'Show preloader', 'psf-search' ),
-						'class'   => 'psfs-options-cb-toggle js-psfs-cbtgroup-preloader js-psfs-adv-settings',
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-preloader js-psf-search-adv-settings',
 						'type'    => 'checkbox',
 						'default' => 'on',
 					],
 					1800 => [
 						'name'    => 'preloader_url',
 						'label'   => __( 'Upload preloader image', 'psf-search' ),
-						'class'   => 'js-psfs-cbtgroup-preloader js-psfs-adv-settings',
+						'class'   => 'js-psf-search-cbtgroup-preloader js-psf-search-adv-settings',
 						'type'    => 'file',
 						'default' => '',
 					],
 				]
 			),
-			'psfs_autocomplete' => apply_filters(
-				'psfs/settings/section=autocomplete',
+			'psf_search_autocomplete' => apply_filters(
+				'psf_search/settings/section=autocomplete',
 				[
 					20   => [
 						'name'  => 'autocomplete_head',
 						'label' => __( 'Basic', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					50   => [
 						'name'    => 'suggestions_limit',
@@ -465,7 +465,7 @@ class Settings {
 						),
 						'type'              => 'textarea',
 						'textarea_rows'     => 2,
-						'class'             => 'psfs-settings-textarea--half',
+						'class'             => 'psf-search-settings-textarea--half',
 						'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_no_results_field' ],
 						'default'           => __( 'No results', 'psf-search' ),
 					],
@@ -473,7 +473,7 @@ class Settings {
 						'name'  => 'product_suggestion_head',
 						'label' => __( 'Products', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					300  => [
 						'name'    => 'show_product_image',
@@ -492,7 +492,7 @@ class Settings {
 						'label'   => __( 'Show product description', 'psf-search' ),
 						'type'    => 'checkbox',
 						'default' => 'off',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 					],
 					600  => [
 						'name'    => 'show_product_sku',
@@ -524,13 +524,13 @@ class Settings {
 						'name'  => 'non_products_in_autocomplete_head',
 						'label' => __( 'Non-products in autocomplete', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					1100 => [
 						'name'       => 'show_product_tax_product_cat',
 						'label'      => __( 'Show categories', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-psfs-settings-margin js-psfs-options-toggle-sibling',
+						'class'      => 'js-psf-search-settings-margin js-psf-search-options-toggle-sibling',
 						'default'    => 'on',
 						'input_data' => 'data-option-trigger="show_matching_categories"',
 					],
@@ -538,7 +538,7 @@ class Settings {
 						'name'       => 'show_product_tax_product_cat_images',
 						'label'      => __( 'show images', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-psfs-adv-settings psfs-premium-only',
+						'class'      => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default'    => 'off',
 						'desc'       => __( 'show images', 'psf-search' ),
 						'move_dest'  => 'show_product_tax_product_cat',
@@ -548,7 +548,7 @@ class Settings {
 						'name'       => 'show_product_tax_product_tag',
 						'label'      => __( 'Show tags', 'psf-search' ),
 						'type'       => 'checkbox',
-						'class'      => 'js-psfs-settings-margin js-psfs-adv-settings',
+						'class'      => 'js-psf-search-settings-margin js-psf-search-adv-settings',
 						'default'    => 'off',
 						'input_data' => 'data-option-trigger="show_matching_tags"',
 					],
@@ -556,21 +556,21 @@ class Settings {
 						'name'    => 'show_matching_posts',
 						'label'   => __( 'Show posts', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					1800 => [
 						'name'    => 'show_matching_pages',
 						'label'   => __( 'Show pages', 'psf-search' ),
 						'type'    => 'checkbox',
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					2000 => [
 						'name'  => 'details_box_head',
 						'label' => __( 'Extra views', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					2100 => [
 						'name'    => 'show_details_box',
@@ -590,60 +590,60 @@ class Settings {
 						),
 						'type'    => 'checkbox',
 						'size'    => 'small',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => 'off',
 					],
 					2500 => [
 						'name'  => 'suggestions_style_head',
 						'label' => __( 'Suggestions colors', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					2600 => [
 						'name'    => 'sug_bg_color',
 						'label'   => __( 'Suggestion background', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2700 => [
 						'name'    => 'sug_hover_color',
 						'label'   => __( 'Suggestion selected', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2800 => [
 						'name'    => 'sug_text_color',
 						'label'   => __( 'Text color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					2900 => [
 						'name'    => 'sug_highlight_color',
 						'label'   => __( 'Highlight color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 					3000 => [
 						'name'    => 'sug_border_color',
 						'label'   => __( 'Border color', 'psf-search' ),
 						'type'    => 'color',
-						'class'   => 'js-psfs-adv-settings',
+						'class'   => 'js-psf-search-adv-settings',
 						'default' => '',
 					],
 				]
 			),
-			'psfs_search'       => apply_filters(
-				'psfs/settings/section=search',
+			'psf_search_search'       => apply_filters(
+				'psf_search/settings/section=search',
 				[
 					10  => [
 						'name'  => 'search_search_head',
 						'label' => __( 'Products search scope', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					50  => [
 						'name'    => 'search_in_product_content',
@@ -676,33 +676,33 @@ class Settings {
 							'psf-search'
 						),
 						'default' => 'off',
-						'class'   => 'js-psfs-adv-settings psfs-hidden psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-hidden psf-search-premium-only',
 					],
 					200 => [
 						'name'    => 'search_in_product_attributes',
 						'label'   => __( 'Search in attributes', 'psf-search' ),
-						'class'   => 'psfs-premium-only',
+						'class'   => 'psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					250 => [
 						'name'    => 'search_in_product_tax_product_cat',
 						'label'   => __( 'Search in categories', 'psf-search' ),
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					275 => [
 						'name'    => 'search_in_product_tax_product_tag',
 						'label'   => __( 'Search in tags', 'psf-search' ),
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					],
 					300 => [
 						'name'    => 'search_in_custom_fields',
 						'label'   => __( 'Search in custom fields', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'psf-search' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
-						'class'   => 'psfs-premium-only',
+						'class'   => 'psf-search-premium-only',
 						'type'    => 'text',
 						'default' => '',
 					],
@@ -716,13 +716,13 @@ class Settings {
 						'name'  => 'search_scope_fuzziness_head',
 						'label' => __( 'Fuzziness', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 					500 => [
 						'name'  => 'search_synonyms_head',
 						'label' => __( 'Synonyms', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					520 => [
 						'name'  => 'search_synonyms',
@@ -735,17 +735,17 @@ class Settings {
 						),
 						'type'  => 'textarea',
 						'desc'  => __(
-							'Synonyms should be separated by a comma. Each new synonyms group is entered in a new line. You can use a phrase instead of a single word. <br /> <br />Sample list:<br /> <br /><span class="psfs-synonyms-sample">sofa, couch, davenport, divan, settee<br />big, grand, great, large, outsize</span>',
+							'Synonyms should be separated by a comma. Each new synonyms group is entered in a new line. You can use a phrase instead of a single word. <br /> <br />Sample list:<br /> <br /><span class="psf-search-synonyms-sample">sofa, couch, davenport, divan, settee<br />big, grand, great, large, outsize</span>',
 							'psf-search'
 						),
-						'class'             => 'psfs-settings-synonyms js-psfs-adv-settings psfs-premium-only',
+						'class'             => 'psf-search-settings-synonyms js-psf-search-adv-settings psf-search-premium-only',
 						'sanitize_callback' => 'sanitize_textarea_field',
 					],
 					600 => [
 						'name'  => 'filter_products_head',
 						'label' => __( 'Exclude/include products', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					625 => [
 						'name'    => 'filter_products_mode',
@@ -755,7 +755,7 @@ class Settings {
 							'',
 							'right'
 						),
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'type'    => 'select',
 						'options' => [
 							'exclude' => __( 'Exclude', 'psf-search' ),
@@ -772,26 +772,26 @@ class Settings {
 							'right'
 						),
 						'type'    => 'filters_rules_plug',
-						'class'   => 'js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-adv-settings psf-search-premium-only',
 						'default' => '[]',
 					],
 				]
 			),
-			'psfs_performance'  => apply_filters(
-				'psfs/settings/section=performance',
+			'psf_search_performance'  => apply_filters(
+				'psf_search/settings/section=performance',
 				[
 					10  => [
 						'name'  => 'search_engine_head',
 						'label' => __( 'Speed up search!', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header',
+						'class' => 'psf-search-sgs-header',
 					],
 
 					100 => [
 						'name'  => 'indexer_schedule_head',
 						'label' => __( 'Scheduling indexing', 'psf-search' ),
 						'type'  => 'head',
-						'class' => 'psfs-sgs-header js-psfs-adv-settings',
+						'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 					],
 					110 => [
 						'name'    => 'indexer_schedule',
@@ -807,14 +807,14 @@ class Settings {
 						),
 						'type'    => 'checkbox',
 						'size'    => 'small',
-						'class'   => 'psfs-options-cb-toggle js-psfs-cbtgroup-indexer-schedule js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'default' => 'off',
 					],
 					120 => [
 						'name'    => 'indexer_schedule_interval',
 						'label'   => __( 'Interval', 'psf-search' ),
 						'type'    => 'select',
-						'class'   => 'js-psfs-cbtgroup-indexer-schedule js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'options' => [
 							'daily'  => __( 'daily', 'psf-search' ),
 							'weekly' => __( 'weekly', 'psf-search' ),
@@ -825,7 +825,7 @@ class Settings {
 						'name'    => 'indexer_schedule_start_time',
 						'label'   => __( 'Schedule time', 'psf-search' ),
 						'type'    => 'select',
-						'class'   => 'js-psfs-cbtgroup-indexer-schedule js-psfs-adv-settings psfs-premium-only',
+						'class'   => 'js-psf-search-cbtgroup-indexer-schedule js-psf-search-adv-settings psf-search-premium-only',
 						'options' => Helpers::getHours(),
 						'default' => 3,
 					],
@@ -845,7 +845,7 @@ class Settings {
 
 
 		// Custom fields option
-		$settingsFields['psfs_search'][300] = [
+		$settingsFields['psf_search_search'][300] = [
 			'name'                 => 'search_in_custom_fields',
 			'label'                => __( 'Search in custom fields', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'search_in_custom_fields', __( 'Make your custom fields searchable from our search bar.', 'psf-search' ) . ' ' . sprintf( $readMore, $customFieldsLink ) ),
 			'type'                 => 'selectize',
@@ -859,10 +859,10 @@ class Settings {
 		];
 
 		// Fuzzy search option
-		$settingsFields['psfs_search'][450] = [
+		$settingsFields['psf_search_search'][450] = [
 			'name'    => 'fuzziness_enabled',
 			'label'   => __( 'Fuzzy matching', 'psf-search' ) . ' ' . Helpers::createQuestionMark( 'fuzzy_search', $fuzzinesText2 ),
-			'class'   => 'psfs-premium-only',
+			'class'   => 'psf-search-premium-only',
 			'type'    => 'select',
 			'options' => [
 				'off'    => __( '-- Disabled', 'psf-search' ),
@@ -874,13 +874,13 @@ class Settings {
 		];
 
 		// Exclude/include products feature
-		$settingsFields['psfs_search'][600] = [
+		$settingsFields['psf_search_search'][600] = [
 			'name'  => 'filter_products_head',
 			'label' => __( 'Exclude/include products', 'psf-search' ),
 			'type'  => 'head',
-			'class' => 'psfs-sgs-header js-psfs-adv-settings',
+			'class' => 'psf-search-sgs-header js-psf-search-adv-settings',
 		];
-		$settingsFields['psfs_search'][625] = [
+		$settingsFields['psf_search_search'][625] = [
 			'name'    => 'filter_products_mode',
 			'label'   => __( 'Filtering mode', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 				'filter_products_mode',
@@ -888,7 +888,7 @@ class Settings {
 				'',
 				'right'
 			),
-			'class'   => 'js-psfs-adv-settings',
+			'class'   => 'js-psf-search-adv-settings',
 			'type'    => 'select',
 			'options' => [
 				'exclude' => __( 'Exclude', 'psf-search' ),
@@ -896,7 +896,7 @@ class Settings {
 			],
 			'default' => 'exclude',
 		];
-		$settingsFields['psfs_search'][650] = [
+		$settingsFields['psf_search_search'][650] = [
 			'name'              => 'filter_products_rules',
 			'label'             => __( 'Filters', 'psf-search' ) . ' ' . Helpers::createQuestionMark(
 				'filter_products_rules',
@@ -906,12 +906,12 @@ class Settings {
 			),
 			'type'              => 'filters_rules__premium_only',
 			'sanitize_callback' => [ '\PsfSearch\Admin\SettingsAPI', 'sanitize_filters_rules__premium_only' ],
-			'class'             => 'js-psfs-adv-settings',
+			'class'             => 'js-psf-search-adv-settings',
 			'default'           => '[]',
 		];
 
 		// Search in SKU - tooltip only for Pro version.
-		$settingsFields['psfs_search'][150]['label'] .= ' ' .
+		$settingsFields['psf_search_search'][150]['label'] .= ' ' .
 			Helpers::createQuestionMark(
 				'search_in_product_sku',
 				sprintf(
@@ -922,7 +922,7 @@ class Settings {
 			);
 
 		// Search in GUID.
-		$settingsFields['psfs_search'][160]['label'] =
+		$settingsFields['psf_search_search'][160]['label'] =
 			__( 'Search in GUID', 'psf-search' ) . ' ' .
 			Helpers::createQuestionMark(
 				'search_in_product_global_unique_id',
@@ -938,27 +938,27 @@ class Settings {
 			);
 
 		// Indexer feature
-		$settingsFields['psfs_performance'][11] = [
+		$settingsFields['psf_search_performance'][11] = [
 			'name'  => 'search_engine_build',
 			'label' => __( 'Index status', 'psf-search' ),
 			'type'  => 'desc',
 			'desc'  => Helpers::isSettingsPage() ? Builder::renderIndexingStatus() : '',
-			'class' => 'psfs-premium-only psfs-opt-tntsearch',
+			'class' => 'psf-search-premium-only psf-search-opt-tntsearch',
 		];
 
 		// Show next task description
-		$settingsFields['psfs_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
+		$settingsFields['psf_search_performance'][110]['desc'] = Helpers::isSettingsPage() ? Scheduler::nextTaskDescription() : '';
 
 		// Remove promo box with list of Pro features
-		unset( $settingsFields['psfs_performance'][0] );
+		unset( $settingsFields['psf_search_performance'][0] );
 
 		// Show "Search in GUID" option if there are products with these values.
 		if ( Helpers::isSettingsPage() && Helpers::productsUseGlobalUniqueId() ) {
-			$settingsFields['psfs_search'][160]['class'] = str_replace( 'psfs-hidden', '', $settingsFields['psfs_search'][160]['class'] );
+			$settingsFields['psf_search_search'][160]['class'] = str_replace( 'psf-search-hidden', '', $settingsFields['psf_search_search'][160]['class'] );
 		}
 
 
-		$settingsFields = apply_filters( 'psfs/settings', $settingsFields );
+		$settingsFields = apply_filters( 'psf_search/settings', $settingsFields );
 
 		// Set defaults
 		foreach ( $settingsFields as $sections ) {
@@ -1021,8 +1021,8 @@ class Settings {
 			$value = $default;
 		}
 
-		$value = apply_filters( 'psfs/settings/load_value', $value, $option_key );
-		$value = apply_filters( 'psfs/settings/load_value/key=' . $option_key, $value );
+		$value = apply_filters( 'psf_search/settings/load_value', $value, $option_key );
+		$value = apply_filters( 'psf_search/settings/load_value/key=' . $option_key, $value );
 
 		return $value;
 	}
@@ -1043,8 +1043,8 @@ class Settings {
 
 			$settings = get_option( $this->settingSlug );
 
-			$value = apply_filters( 'psfs/settings/update_value', $value, $optionKey );
-			$value = apply_filters( 'psfs/settings/update_value/key=' . $optionKey, $value );
+			$value = apply_filters( 'psf_search/settings/update_value', $value, $optionKey );
+			$value = apply_filters( 'psf_search/settings/update_value/key=' . $optionKey, $value );
 
 			$canUpdate = false;
 			if ( array_key_exists( $optionKey, $this->defaults ) ) {
@@ -1056,7 +1056,7 @@ class Settings {
 				$updated = update_option( $this->settingSlug, $settings );
 				if ( $updated ) {
 					$this->settingsCache = [];
-					do_action( 'psfs/settings/option_updated', $optionKey, $value );
+					do_action( 'psf_search/settings/option_updated', $optionKey, $value );
 				}
 			}
 		}
@@ -1069,9 +1069,9 @@ class Settings {
 	 */
 	public static function output() {
 
-		$settings = PSFS()->settings->settingsApi;
+		$settings = PSF_SEARCH()->settings->settingsApi;
 
-		include_once PSFS_DIR . 'partials/admin/settings.php';
+		include_once PSF_SEARCH_DIR . 'partials/admin/settings.php';
 	}
 
 	/**
@@ -1101,7 +1101,7 @@ class Settings {
 			$canSee = $this->canSeeAdvSettings;
 		} else {
 
-			$settings = get_option( 'psfs_settings_show_advanced' );
+			$settings = get_option( 'psf_search_settings_show_advanced' );
 
 			if ( ! empty( $settings ) ) {
 
@@ -1129,11 +1129,11 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_advanced_options_switch' );
+		check_ajax_referer( 'psf_search_advanced_options_switch' );
 
 		$show = ! empty( $_GET['adv_settings_value'] ) && $_GET['adv_settings_value'] === 'show' ? 'on' : 'off';
 
-		update_option( 'psfs_settings_show_advanced', $show );
+		update_option( 'psf_search_settings_show_advanced', $show );
 
 		wp_send_json_success();
 	}
@@ -1149,7 +1149,7 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_get_custom_fields' );
+		check_ajax_referer( 'psf_search_get_custom_fields' );
 
 		wp_send_json_success( Helpers::getSearchableCustomFields() );
 	}
@@ -1165,7 +1165,7 @@ class Settings {
 			wp_die( - 1, 403 );
 		}
 
-		check_ajax_referer( 'psfs_get_filter_terms' );
+		check_ajax_referer( 'psf_search_get_filter_terms' );
 
 		$query = ! empty( $_POST['query'] ) ? wc_clean( wp_unslash( $_POST['query'] ) ) : '';
 		$type  = ! empty( $_POST['type'] ) ? wc_clean( wp_unslash( $_POST['type'] ) ) : '';
@@ -1220,7 +1220,7 @@ class Settings {
 	 */
 	public static function isOptionPremium( $option ) {
 		$is_premium = false;
-		if ( ! empty( $option['class'] ) && strpos( $option['class'], 'psfs-premium-only' ) !== false ) {
+		if ( ! empty( $option['class'] ) && strpos( $option['class'], 'psf-search-premium-only' ) !== false ) {
 			$is_premium = true;
 		}
 
@@ -1235,7 +1235,7 @@ class Settings {
 	 */
 	private function dependentOptions() {
 		add_filter(
-			'psfs/settings/section=form',
+			'psf_search/settings/section=form',
 			function ( $settings ) {
 				$text                   = __( "You have selected the <b>Appearance -> Style -> Pirx</b> option. Pirx style forces a submit button to be enabled. You can find this option a few rows below. That's why this option is blocked.", 'psf-search' );
 				$settings[400]['label'] = Helpers::createOverrideTooltip( 'ovtt-pirx-submit-button', '<p>' . $text . '</p>' ) . $settings[400]['label'];
@@ -1250,14 +1250,14 @@ class Settings {
 
 			// Submit button
 			add_filter(
-				'psfs/settings/load_value/key=show_submit_button',
+				'psf_search/settings/load_value/key=show_submit_button',
 				function () {
 					return 'on';
 				}
 			);
 
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[400]['disabled'] = true;
 
@@ -1267,17 +1267,17 @@ class Settings {
 
 			// Value of submit button
 			add_filter(
-				'psfs/settings/load_value/key=search_submit_text',
+				'psf_search/settings/load_value/key=search_submit_text',
 				function () {
 					return '';
 				}
 			);
 
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[500]['disabled'] = true;
-					$settings[500]['class']    = $settings[500]['class'] . ' psfs-hidden';
+					$settings[500]['class']    = $settings[500]['class'] . ' psf-search-hidden';
 
 					return $settings;
 				}
@@ -1285,17 +1285,17 @@ class Settings {
 
 			// Submit background color
 			add_filter(
-				'psfs/settings/load_value/key=bg_submit_color',
+				'psf_search/settings/load_value/key=bg_submit_color',
 				function () {
 					return '';
 				}
 			);
 
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[510]['disabled'] = true;
-					$settings[510]['class']    = $settings[510]['class'] . ' psfs-hidden';
+					$settings[510]['class']    = $settings[510]['class'] . ' psf-search-hidden';
 
 					return $settings;
 				}

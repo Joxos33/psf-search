@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class IndexPusher {
 
-	const HOOK = 'psfs/indexer/index_pusher';
+	const HOOK = 'psf_search/indexer/index_pusher';
 
 	public function init() {
 		add_action( self::HOOK, [ __CLASS__, 'handle' ] );
@@ -46,7 +46,7 @@ class IndexPusher {
 		);
 
 		if ( empty( $isScheduled ) ) {
-			$queue->add( self::HOOK, [], 'psfs-index' );
+			$queue->add( self::HOOK, [], 'psf-search-index' );
 		}
 	}
 }

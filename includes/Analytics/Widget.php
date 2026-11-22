@@ -50,7 +50,7 @@ class Widget {
 	 * @return bool
 	 */
 	public function isCriticalSearchesWidgetEnabled() {
-		return PSFS()->settings->getOption( 'analytics_critical_searches_widget_enabled', 'off' ) === 'on';
+		return PSF_SEARCH()->settings->getOption( 'analytics_critical_searches_widget_enabled', 'off' ) === 'on';
 	}
 
 	public function addWidget() {
@@ -68,7 +68,7 @@ class Widget {
 			'days'                    => $this->ui->getExpirationInDays(),
 			'critical-searches'       => [],
 			'critical-searches-total' => 0,
-			'settings-analytics-url'  => admin_url( 'admin.php?page=psfs_settings#analytics' ),
+			'settings-analytics-url'  => admin_url( 'admin.php?page=psf_search_settings#analytics' ),
 			'multilingual'            => [],
 		];
 
@@ -96,14 +96,14 @@ class Widget {
 		<?php if ( ! empty( $vars['multilingual'] ) ) { ?>
 			<p>
 				<?php _e( 'Language', 'psf-search' ); ?>:
-				<span class="psfs-widget-tab-wrapper">
+				<span class="psf-search-widget-tab-wrapper">
 					<?php
 					$next = false;
 					foreach ( $vars['multilingual']['langs'] as $lang => $langData ) {
 						if ( $next ) {
 							echo ' | ';
 						}
-						printf( '<a class="psfs-widget-tab" title="%s" href="%s">%s</a>', esc_attr( $langData['name'] ), esc_attr( '#psfs-widget-tab-content-' . $lang ), esc_html( $langData['name'] ) );
+						printf( '<a class="psf-search-widget-tab" title="%s" href="%s">%s</a>', esc_attr( $langData['name'] ), esc_attr( '#psf-search-widget-tab-content-' . $lang ), esc_html( $langData['name'] ) );
 						$next = true;
 					}
 					?>
@@ -113,8 +113,8 @@ class Widget {
 			foreach ( $vars['multilingual']['langs'] as $lang => $langName ) {
 				?>
 				<div
-					class="psfs-widget-tab-content"
-					id="psfs-widget-tab-content-<?php echo esc_attr( $lang ); ?>">
+					class="psf-search-widget-tab-content"
+					id="psf-search-widget-tab-content-<?php echo esc_attr( $lang ); ?>">
 					<?php
 					$this->renderTable(
 						array_merge( $vars, $vars['multilingual']['langs'][ $lang ] )
@@ -190,19 +190,19 @@ class Widget {
 		<script>
 			(function ($) {
 					$(document).ready(function () {
-						const tabs = $('#psfsearch_analytics_critical_searches .psfs-widget-tab');
+						const tabs = $('#psfsearch_analytics_critical_searches .psf-search-widget-tab');
 						tabs.on('click', function (event) {
 							event.preventDefault();
 
 							// Never pass the attribute value to $(), it would be parsed as HTML.
 							const href = $(this).attr('href');
-							if (typeof href !== 'string' || !/^#psfs-widget-tab-content-[A-Za-z0-9_-]+$/.test(href)) {
+							if (typeof href !== 'string' || !/^#psf-search-widget-tab-content-[A-Za-z0-9_-]+$/.test(href)) {
 								return;
 							}
 
-							tabs.filter('.psfs-widget-tab-active').removeClass('psfs-widget-tab-active');
-							$(this).addClass('psfs-widget-tab-active');
-							$('#psfsearch_analytics_critical_searches .psfs-widget-tab-content').hide();
+							tabs.filter('.psf-search-widget-tab-active').removeClass('psf-search-widget-tab-active');
+							$(this).addClass('psf-search-widget-tab-active');
+							$('#psfsearch_analytics_critical_searches .psf-search-widget-tab-content').hide();
 							$(document.getElementById(href.slice(1))).show();
 						});
 

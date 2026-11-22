@@ -59,13 +59,13 @@ class Search {
 	public function __construct() {
 
 		// Run only if index isn't completed
-		if ( PSFS()->engine !== 'native' ) {
+		if ( PSF_SEARCH()->engine !== 'native' ) {
 			return;
 		}
 
 		// Limit the number of fields to be searched using the native engine when the index is not ready
 		add_filter(
-			'psfs/native/search_in',
+			'psf_search/native/search_in',
 			function () {
 				return [ 'title' ];
 			},
@@ -74,7 +74,7 @@ class Search {
 
 		// Set 'placeholder' if the index is being built
 		add_filter(
-			'psfs/search_results/output',
+			'psf_search/search_results/output',
 			function ( $output ) {
 				$status  = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status', \PsfSearch\Engines\TNTSearchMySQL\Config::getIndexRole() );
 				$startTs = absint( \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'start_ts', \PsfSearch\Engines\TNTSearchMySQL\Config::getIndexRole() ) );
@@ -94,7 +94,7 @@ class Search {
 		);
 
 		$this->searchIn = apply_filters(
-			'psfs/native/search_in',
+			'psf_search/native/search_in',
 			[
 				'title',
 				'content',
@@ -112,21 +112,21 @@ class Search {
 		add_action(
 			'init',
 			function () {
-				if ( apply_filters( 'psfs/override_search_results_page', true ) && ! Helpers::isNoPsfSearchModeActive() ) {
+				if ( apply_filters( 'psf_search/override_search_results_page', true ) && ! Helpers::isNoPsfSearchModeActive() ) {
 					add_filter( 'pre_get_posts', [ $this, 'overwriteSearchPage' ], 900001 );
 					add_filter( 'posts_search', [ 'PsfSearch\Helpers', 'clearSearchQuery' ], 1000, 2 );
 					add_filter( 'the_posts', [ 'PsfSearch\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
-					add_filter( 'psfs/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
+					add_filter( 'psf_search/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
 				}
 			}
 		);
 
 		// Search results ajax action
-		if ( PSFS_WC_AJAX_ENDPOINT ) {
-			add_action( 'wc_ajax_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+		if ( PSF_SEARCH_WC_AJAX_ENDPOINT ) {
+			add_action( 'wc_ajax_' . PSF_SEARCH_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
 		} else {
-			add_action( 'wp_ajax_nopriv_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
-			add_action( 'wp_ajax_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wp_ajax_nopriv_' . PSF_SEARCH_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wp_ajax_' . PSF_SEARCH_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
 		}
 
 		// Labels
@@ -138,7 +138,7 @@ class Search {
 
 		// Add "No results" suggestion if all results have been removed in earlier filters.
 		add_filter(
-			'psfs/search_results/output',
+			'psf_search/search_results/output',
 			[
 				'PsfSearch\Helpers',
 				'noResultsSuggestion',
@@ -147,7 +147,7 @@ class Search {
 		);
 
 		// Init Search Analytics
-		if ( PSFS()->settings->getOption( 'analytics_enabled' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'analytics_enabled' ) === 'on' ) {
 			$stats = new Recorder();
 			$stats->listen();
 		}
@@ -169,7 +169,7 @@ class Search {
 			$context = 'product-ids';
 		}
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['psfs_product_ids_only'] ) && $_GET['psfs_product_ids_only'] == '1' ) {
+		if ( isset( $_GET['psf_search_product_ids_only'] ) && $_GET['psf_search_product_ids_only'] == '1' ) {
 			$context = 'product-ids-ff';
 		}
 
@@ -180,16 +180,16 @@ class Search {
 			$lang = Multilingual::getCurrentLanguage();
 		}
 
-		if ( ! defined( 'PSFS_AJAX' ) ) {
-			define( 'PSFS_AJAX', true );
+		if ( ! defined( 'PSF_SEARCH_AJAX' ) ) {
+			define( 'PSF_SEARCH_AJAX', true );
 		}
 
 		$this->groups         = $this->searchResultsGroups();
-		$this->flexibleLimits = apply_filters( 'psfs/flexible_limits', true );
+		$this->flexibleLimits = apply_filters( 'psf_search/flexible_limits', true );
 		$this->showHeadings   = Helpers::canGroupSuggestions();
 
 		if ( $this->flexibleLimits ) {
-			$totalLimit       = PSFS()->settings->getOption( 'suggestions_limit', 7 );
+			$totalLimit       = PSF_SEARCH()->settings->getOption( 'suggestions_limit', 7 );
 			$this->totalLimit = $totalLimit === - 1 ? $this->calcFreeSlots() : $totalLimit;
 		}
 
@@ -202,8 +202,8 @@ class Search {
 		} else {
 			// Compatible with v1.1.7
 			//phpcs:disable WordPress.Security.NonceVerification.Recommended
-			if ( ! empty( $_REQUEST['psfs_keyword'] ) ) {
-				$keyword = sanitize_text_field( $_REQUEST['psfs_keyword'] );
+			if ( ! empty( $_REQUEST['psf_search_keyword'] ) ) {
+				$keyword = sanitize_text_field( $_REQUEST['psf_search_keyword'] );
 			}
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
@@ -212,7 +212,7 @@ class Search {
 			//phpcs:enable
 		}
 
-		$keyword = apply_filters( 'psfs/phrase', $keyword );
+		$keyword = apply_filters( 'psf_search/phrase', $keyword );
 
 		// Break early if keyword contains blacklisted phrase.
 		if ( Helpers::phraseContainsBlacklistedTerm( $keyword ) ) {
@@ -250,7 +250,7 @@ class Search {
 
 		/* SEARCH IN PRODUCTS */
 		$totalProducts = 0;
-		if ( apply_filters( 'psfs/search_in_products', true ) ) {
+		if ( apply_filters( 'psf_search/search_in_products', true ) ) {
 
 			$args = [
 				's'                   => $keyword,
@@ -269,16 +269,16 @@ class Search {
 				$args['tax_query'] = $this->getTaxQuery();
 			}
 
-			$args = apply_filters( 'psfs/search_query/args', $args );
+			$args = apply_filters( 'psf_search/search_query/args', $args );
 
 			add_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90, 2 );
 			$products = get_posts( $args );
 			remove_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90 );
 
-			$products      = apply_filters( 'psfs/search_results/products_raw', $products );
+			$products      = apply_filters( 'psf_search/search_results/products_raw', $products );
 			$totalProducts = count( $products );
 			$hits         += $totalProducts;
-			do_action( 'psfs/analytics/after_searching', $keyword, $hits, $lang );
+			do_action( 'psf_search/analytics/after_searching', $keyword, $hits, $lang );
 
 			if ( ! empty( $products ) ) {
 				$orderedProducts = [];
@@ -293,7 +293,7 @@ class Search {
 					}
 
 					$score                        = Helpers::calcScore( $keyword, $post->post_title );
-					$orderedProducts[ $i ]->score = apply_filters( 'psfs/search_results/product/score', $score, $keyword, $post->ID, $post );
+					$orderedProducts[ $i ]->score = apply_filters( 'psf_search/search_results/product/score', $score, $keyword, $post->ID, $post );
 
 					$i ++;
 				}
@@ -305,7 +305,7 @@ class Search {
 				if ( $context === 'product-ids' ) {
 					$output['suggestions'] = $orderedProducts;
 					$output['time']        = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
-					$result                = apply_filters( 'psfs/page_search_results/output', $output );
+					$result                = apply_filters( 'psf_search/page_search_results/output', $output );
 
 					if ( $return ) {
 						return $result;
@@ -318,7 +318,7 @@ class Search {
 					$output['results'] = wp_list_pluck( $orderedProducts, 'ID' );
 					$output['engine']  = 'free';
 					$output['time']    = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
-					$result            = apply_filters( 'psfs/page_search_results/output/product_ids_only', $output );
+					$result            = apply_filters( 'psf_search/page_search_results/output/product_ids_only', $output );
 
 					if ( $return ) {
 						return $result;
@@ -330,13 +330,13 @@ class Search {
 				$productsSlots = $this->flexibleLimits ? $this->totalLimit : $this->groups['product']['limit'];
 
 				$fields = [];
-				if ( PSFS()->settings->getOption( 'show_product_image' ) === 'on' ) {
+				if ( PSF_SEARCH()->settings->getOption( 'show_product_image' ) === 'on' ) {
 					$fields[] = 'thumb_html';
 				}
-				if ( PSFS()->settings->getOption( 'show_product_price' ) === 'on' ) {
+				if ( PSF_SEARCH()->settings->getOption( 'show_product_price' ) === 'on' ) {
 					$fields[] = 'price';
 				}
-				if ( PSFS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
+				if ( PSF_SEARCH()->settings->getOption( 'show_product_sku' ) === 'on' ) {
 					$fields[] = 'sku';
 				}
 
@@ -357,7 +357,7 @@ class Search {
 			$results = $this->convertGroupsToSuggestions();
 
 			// Show more
-			$showMoreProductsLink = apply_filters( 'psfs/search_results/show_more_products_link', false );
+			$showMoreProductsLink = apply_filters( 'psf_search/search_results/show_more_products_link', false );
 
 			if (
 				! empty( $this->groups['product']['results'] ) &&
@@ -370,7 +370,7 @@ class Search {
 						[
 							's'         => $keyword,
 							'post_type' => 'product',
-							'psfs' => '1',
+							'psf_search' => '1',
 						],
 						home_url()
 					),
@@ -384,7 +384,7 @@ class Search {
 					'results' => [],
 					'engine'  => 'free',
 				];
-				$result = apply_filters( 'psfs/search_results/output/product_ids_only', $output );
+				$result = apply_filters( 'psf_search/search_results/output/product_ids_only', $output );
 
 				if ( $return ) {
 					return $result;
@@ -410,9 +410,9 @@ class Search {
 		$output['time'] = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
 
 		$output['engine'] = 'free';
-		$output['v']      = PSFS_VERSION;
+		$output['v']      = PSF_SEARCH_VERSION;
 
-		$result = apply_filters( 'psfs/search_results/output', $output );
+		$result = apply_filters( 'psf_search/search_results/output', $output );
 
 		if ( $return ) {
 			return $result;
@@ -472,9 +472,9 @@ class Search {
 			}
 
 			// Get description
-			if ( PSFS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
+			if ( PSF_SEARCH()->settings->getOption( 'show_product_desc' ) === 'on' ) {
 				$wordsLimit = 0;
-				if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+				if ( PSF_SEARCH()->settings->getOption( 'show_details_box' ) === 'on' ) {
 					$wordsLimit = 15;
 				}
 				$r['desc'] = $product->getDescription( 'suggestions', $wordsLimit );
@@ -490,16 +490,16 @@ class Search {
 			}
 
 			// Is on sale
-			// if ( PSFS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
+			// if ( PSF_SEARCH()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
 			// $r[ 'on_sale' ] = $product->is_on_sale();
 			// }
 
 			// Is featured
-			// if ( PSFS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
+			// if ( PSF_SEARCH()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
 			// $r[ 'featured' ] = $product->is_featured();
 			// }
 
-			$relevantProducts[] = apply_filters( 'psfs/search_results/products', $r, $product );
+			$relevantProducts[] = apply_filters( 'psf_search/search_results/products', $r, $product );
 
 			$limit --;
 
@@ -538,7 +538,7 @@ class Search {
 		];
 
 		// Exclude out of stock products from suggestions
-		if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$meta_query[] = [
 				'key'     => '_stock_status',
 				'value'   => 'outofstock',
@@ -572,7 +572,7 @@ class Search {
 		];
 
 		// Exclude out of stock products from suggestions
-		if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$tax_query[] = [
 				'taxonomy' => 'product_visibility',
 				'field'    => 'term_taxonomy_id',
@@ -610,7 +610,7 @@ class Search {
 			return $results;
 		}
 
-		$productCategories = get_terms( 'product_cat', apply_filters( 'psfs/search/product_cat/args', $args ) );
+		$productCategories = get_terms( 'product_cat', apply_filters( 'psf_search/search/product_cat/args', $args ) );
 
 		// Compare keyword and term name
 		$i = 0;
@@ -674,7 +674,7 @@ class Search {
 			return $results;
 		}
 
-		$productTags = get_terms( 'product_tag', apply_filters( 'psfs/search/product_tag/args', $args ) );
+		$productTags = get_terms( 'product_tag', apply_filters( 'psf_search/search/product_tag/args', $args ) );
 
 		// Compare keyword and term name
 		$i = 0;
@@ -747,21 +747,21 @@ class Search {
 					}
 
 					// Search in content
-					if ( PSFS()->settings->getOption( 'search_in_product_content' ) === 'on' && in_array( 'content', $this->searchIn ) ) {
+					if ( PSF_SEARCH()->settings->getOption( 'search_in_product_content' ) === 'on' && in_array( 'content', $this->searchIn ) ) {
 						$search .= $wpdb->prepare( " OR ($wpdb->posts.post_content LIKE %s)", $like );
 					}
 
 					// Search in excerpt
-					if ( PSFS()->settings->getOption( 'search_in_product_excerpt' ) === 'on' && in_array( 'excerpt', $this->searchIn ) ) {
+					if ( PSF_SEARCH()->settings->getOption( 'search_in_product_excerpt' ) === 'on' && in_array( 'excerpt', $this->searchIn ) ) {
 						$search .= $wpdb->prepare( " OR ($wpdb->posts.post_excerpt LIKE %s)", $like );
 					}
 
 					// Search in SKU
-					if ( PSFS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
+					if ( PSF_SEARCH()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
 						$search .= $wpdb->prepare( " OR (psfsmsku.meta_key='_sku' AND psfsmsku.meta_value LIKE %s)", $like );
 					}
 
-					$search = apply_filters( 'psfs/native/search_query/search_or', $search, $like, $this );
+					$search = apply_filters( 'psf_search/native/search_query/search_or', $search, $like, $this );
 
 					$search .= ')';
 
@@ -803,11 +803,11 @@ class Search {
 
 		if ( $this->isAjaxSearch() ) {
 
-			if ( PSFS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
+			if ( PSF_SEARCH()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
 				$join .= " INNER JOIN $wpdb->postmeta AS psfsmsku ON ( $wpdb->posts.ID = psfsmsku.post_id )";
 			}
 
-			$join = apply_filters( 'psfs/native/search_query/join', $join );
+			$join = apply_filters( 'psf_search/native/search_query/join', $join );
 		}
 
 		return $join;
@@ -830,7 +830,7 @@ class Search {
 			return $where;
 		}
 
-		if ( PSFS()->settings->getOption( 'search_in_product_excerpt' ) !== 'on' && in_array( 'excerpt', $this->searchIn ) ) {
+		if ( PSF_SEARCH()->settings->getOption( 'search_in_product_excerpt' ) !== 'on' && in_array( 'excerpt', $this->searchIn ) ) {
 
 			$where = preg_replace(
 				"/OR \(post_excerpt\s+LIKE\s*(\'\%[^\%]+\%\')\)/",
@@ -862,7 +862,7 @@ class Search {
 		 *
 		 * @since 1.26.0
 		 */
-		if ( apply_filters( 'psfs/native/hook_query_once', true ) ) {
+		if ( apply_filters( 'psf_search/native/hook_query_once', true ) ) {
 			$this->hooked = true;
 		}
 
@@ -874,7 +874,7 @@ class Search {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'psfs', $query->query_vars['s'] );
+		$query->set( 'psf_search', $query->query_vars['s'] );
 
 		$phrase = $query->query_vars['s'];
 
@@ -930,7 +930,7 @@ class Search {
 	 * @since 1.1.3
 	 */
 	public function isAjaxSearch() {
-		if ( defined( 'PSFS_AJAX' ) && PSFS_AJAX ) {
+		if ( defined( 'PSF_SEARCH_AJAX' ) && PSF_SEARCH_AJAX ) {
 			return true;
 		}
 
@@ -1056,7 +1056,7 @@ class Search {
 		}
 
 		// Remove products headline when there are only product type suggestion
-		$alwaysShowProductHeadline = apply_filters( 'psfs/search_results/always_show_product_headline', false );
+		$alwaysShowProductHeadline = apply_filters( 'psf_search/search_results/always_show_product_headline', false );
 
 		if ( ! $alwaysShowProductHeadline && $totalHeadlines === 1 ) {
 			$i     = 0;
@@ -1091,13 +1091,13 @@ class Search {
 	public function searchResultsGroups() {
 		$groups = [];
 
-		if ( PSFS()->settings->getOption( 'show_product_tax_product_cat' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_tax_product_cat' ) === 'on' ) {
 			$groups['tax_product_cat'] = [
 				'limit' => 3,
 			];
 		}
 
-		if ( PSFS()->settings->getOption( 'show_product_tax_product_tag' ) === 'on' ) {
+		if ( PSF_SEARCH()->settings->getOption( 'show_product_tax_product_tag' ) === 'on' ) {
 			$groups['tax_product_tag'] = [
 				'limit' => 3,
 			];
@@ -1107,7 +1107,7 @@ class Search {
 			'limit' => 7,
 		];
 
-		return apply_filters( 'psfs/search_groups', $groups );
+		return apply_filters( 'psf_search/search_groups', $groups );
 	}
 
 	/**
@@ -1206,7 +1206,7 @@ class Search {
 			'suggestions' => [],
 			'time'        => '0 sec',
 			'total'       => 0,
-			'v'           => PSFS_VERSION,
+			'v'           => PSF_SEARCH_VERSION,
 		];
 
 		return $output;

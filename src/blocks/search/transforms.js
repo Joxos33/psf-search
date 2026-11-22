@@ -21,7 +21,7 @@ const transforms = {
 					// Can't transform if raw instance is not shown in REST API.
 					return false;
 				}
-				return idBase === 'psfs_ajax_search';
+				return idBase === 'psf_search_ajax_search';
 			},
 			transform: ( { instance } ) => {
 				const layout = instance.raw.layout;
@@ -52,9 +52,9 @@ const transforms = {
 				return createBlock( 'psfsearch/search' );
 			},
 			isMatch: ( { text } ) => {
-				const re = regexp( 'psfs-search-form' );
+				const re = regexp( 'psf-search-search-form' );
 				const match = re.exec( text );
-				return Array.isArray( match ) && match[ 2 ] === 'psfs-search-form';
+				return Array.isArray( match ) && match[ 2 ] === 'psf-search-search-form';
 			},
 		},
 	],

@@ -1,11 +1,11 @@
 <?php
 // Exit if accessed directly
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
-$activeTaxonomies = array_map( 'get_taxonomy', PSFS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' ) );
-$nonceValid       = ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_term' );
+$activeTaxonomies = array_map( 'get_taxonomy', PSF_SEARCH()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' ) );
+$nonceValid       = ! empty( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_term' );
 $termID           = $nonceValid && ! empty( $_GET['term_id'] ) ? $_GET['term_id'] : '';
 $taxonomy         = $nonceValid && ! empty( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : '';
 $lang             = ! empty( $_GET['lang'] ) ? $_GET['lang'] : '';
@@ -19,16 +19,16 @@ if ( ! empty( $termID ) && ! empty( $taxonomy ) ) {
 
 <h3>Term debug</h3>
 <form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-	<input type="hidden" name="page" value="psfs_debug">
-	<?php wp_nonce_field( 'psfs_debug_term', '_wpnonce', false ); ?>
+	<input type="hidden" name="page" value="psf_search_debug">
+	<?php wp_nonce_field( 'psf_search_debug_term', '_wpnonce', false ); ?>
 	<input
 		type="text"
 		class="regular-text"
-		id="psfs-debug-term"
+		id="psf-search-debug-term"
 		name="term_id"
 		value="<?php echo esc_html( $termID ); ?>"
 		placeholder="Term ID">
-	<select id="psfs-debug-term-taxonomy" placeholder="Taxonomy" name="taxonomy" style="margin-top: -3px">
+	<select id="psf-search-debug-term-taxonomy" placeholder="Taxonomy" name="taxonomy" style="margin-top: -3px">
 		<?php
 		// phpcs:ignore  WordPress.WP.GlobalVariablesOverride.Prohibited
 		foreach ( $activeTaxonomies as $taxonomy ) {
@@ -39,7 +39,7 @@ if ( ! empty( $termID ) && ! empty( $taxonomy ) ) {
 	<input
 		type="text"
 		class="small-text"
-		id="psfs-debug-search-lang"
+		id="psf-search-debug-search-lang"
 		name="lang"
 		value="<?php echo esc_html( $lang ); ?>"
 		placeholder="lang">
@@ -91,7 +91,7 @@ if ( ! empty( $termID ) && ! empty( $taxonomy ) && $t->term->isValid() ) :
 
 		<tr>
 			<td><b>Wordlist: </b></td>
-			<td class="psfs-table-wordlist">
+			<td class="psf-search-table-wordlist">
 				<p>
 					<?php foreach ( $wordlist as $term ) : ?>
 						<?php echo $term . '<br />'; ?>

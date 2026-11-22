@@ -33,21 +33,21 @@ class WpCliPsfSearchIndex {
 		$disablePallarel = (bool) WP_CLI\Utils\get_flag_value( $assocArgs, 'disable-parallel', false );
 
 		add_filter(
-			'psfs/tnt/indexer_mode',
+			'psf_search/tnt/indexer_mode',
 			function ( $mode ) {
 				return 'direct';
 			}
 		);
 
-		if ( $disablePallarel && ! defined( 'PSFS_PARALLEL_INDEX_BUILD' ) ) {
-			define( 'PSFS_PARALLEL_INDEX_BUILD', false );
+		if ( $disablePallarel && ! defined( 'PSF_SEARCH_PARALLEL_INDEX_BUILD' ) ) {
+			define( 'PSF_SEARCH_PARALLEL_INDEX_BUILD', false );
 		}
 
 		WP_CLI::log( 'Building the index ... This may take several minutes.' );
 
 		if ( ! $hideProgress ) {
 			add_action(
-				'psfs/readable_index/bg_processing/before_task',
+				'psf_search/readable_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -55,7 +55,7 @@ class WpCliPsfSearchIndex {
 			);
 
 			add_action(
-				'psfs/searchable_index/bg_processing/before_task',
+				'psf_search/searchable_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -63,7 +63,7 @@ class WpCliPsfSearchIndex {
 			);
 
 			add_action(
-				'psfs/taxonomy_index/bg_processing/before_task',
+				'psf_search/taxonomy_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -71,7 +71,7 @@ class WpCliPsfSearchIndex {
 			);
 
 			add_action(
-				'psfs/variation_index/bg_processing/before_task',
+				'psf_search/variation_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},

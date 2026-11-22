@@ -62,9 +62,9 @@ class Brands {
 			100
 		);
 
-		add_filter( 'psfs/suggestion_details/taxonomy/headline', [ $this, 'rebuildDetailsHeader' ], 10, 4 );
-		add_filter( 'psfs/term/thumbnail_src', [ $this, 'termThumbnailSrc' ], 10, 4 );
-		add_filter( 'psfs/indexer/taxonomies', [ $this, 'addBrandToCollectionOfTaxonomies' ], 5 );
+		add_filter( 'psf_search/suggestion_details/taxonomy/headline', [ $this, 'rebuildDetailsHeader' ], 10, 4 );
+		add_filter( 'psf_search/term/thumbnail_src', [ $this, 'termThumbnailSrc' ], 10, 4 );
+		add_filter( 'psf_search/indexer/taxonomies', [ $this, 'addBrandToCollectionOfTaxonomies' ], 5 );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class Brands {
 			}
 		}
 
-		$brandTaxonomy = apply_filters( 'psfs/brands/taxonomy', $brandTaxonomy );
+		$brandTaxonomy = apply_filters( 'psf_search/brands/taxonomy', $brandTaxonomy );
 
 		if ( ! empty( $brandTaxonomy ) && taxonomy_exists( $brandTaxonomy ) ) {
 			$this->brandTaxonomy = $brandTaxonomy;
@@ -188,7 +188,7 @@ class Brands {
 	private function addSettings() {
 		if ( $this->hasBrands() ) {
 			add_filter(
-				'psfs/settings/section=search',
+				'psf_search/settings/section=search',
 				function ( $settingsScope ) {
 
 					$label = '';
@@ -203,7 +203,7 @@ class Brands {
 					$settingsScope[220] = [
 						'name'    => 'search_in_product_tax_' . $this->getBrandTaxonomy(),
 						'label'   => __( 'Search in brands', 'psf-search' ) . $label,
-						'class'   => 'psfs-premium-only',
+						'class'   => 'psf-search-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					];
@@ -213,7 +213,7 @@ class Brands {
 			);
 
 			add_filter(
-				'psfs/settings/section=autocomplete',
+				'psf_search/settings/section=autocomplete',
 				function ( $settingsScope ) {
 
 					$label = '';
@@ -228,7 +228,7 @@ class Brands {
 					$settingsScope[1260] = [
 						'name'       => 'show_product_tax_' . $this->getBrandTaxonomy(),
 						'label'      => __( 'Show brands', 'psf-search' ) . $label,
-						'class'      => 'psfs-premium-only js-psfs-options-toggle-sibling',
+						'class'      => 'psf-search-premium-only js-psf-search-options-toggle-sibling',
 						'type'       => 'checkbox',
 						'default'    => 'off',
 						'input_data' => 'data-option-trigger="show_matching_brands"',
@@ -238,7 +238,7 @@ class Brands {
 						$settingsScope[1270] = [
 							'name'       => 'show_product_tax_' . $this->getBrandTaxonomy() . '_images',
 							'label'      => __( 'show images', 'psf-search' ),
-							'class'      => 'psfs-premium-only',
+							'class'      => 'psf-search-premium-only',
 							'type'       => 'checkbox',
 							'default'    => 'off',
 							'desc'       => __( 'show images', 'psf-search' ),
@@ -267,8 +267,8 @@ class Brands {
 
 		if ( ! empty( $taxonomy ) && $taxonomy === $this->getBrandTaxonomy() ) {
 
-			$title  = '<span class="psfs-datails-title">';
-			$title .= '<span class="psfs-details-title-tax">';
+			$title  = '<span class="psf-search-datails-title">';
+			$title .= '<span class="psf-search-details-title-tax">';
 			$title .= Helpers::getLabel( 'tax_' . $this->getBrandTaxonomy() ) . ': ';
 			$title .= '</span>';
 			$title .= $termName;
@@ -359,6 +359,6 @@ class Brands {
 			]
 		);
 
-		return apply_filters( 'psfs/brands/image_support', $result );
+		return apply_filters( 'psf_search/brands/image_support', $result );
 	}
 }

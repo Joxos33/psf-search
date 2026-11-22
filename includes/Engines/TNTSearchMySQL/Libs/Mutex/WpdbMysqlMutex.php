@@ -33,8 +33,8 @@ class WpdbMysqlMutex implements Mutex {
 
 		$this->name          = $wpdb->_real_escape( $name );
 		$this->lockTimeout   = intval( $lockTimeout );
-		$this->mutexDisabled = get_option( 'psfs_db_locking_support', '' ) === 'no'
-								|| ( defined( 'PSFS_DISABLE_MUTEX' ) && PSFS_DISABLE_MUTEX );
+		$this->mutexDisabled = get_option( 'psf_search_db_locking_support', '' ) === 'no'
+								|| ( defined( 'PSF_SEARCH_DISABLE_MUTEX' ) && PSF_SEARCH_DISABLE_MUTEX );
 	}
 
 	/**

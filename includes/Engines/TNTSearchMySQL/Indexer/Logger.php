@@ -151,7 +151,7 @@ class Logger {
 			Builder::addInfo( 'status', 'error' );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );
 			Builder::cancelBuildIndex();
-			do_action( 'psfs/indexer/status/error' );
+			do_action( 'psf_search/indexer/status/error' );
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;
@@ -209,7 +209,7 @@ class Logger {
 			Builder::addInfo( 'status', 'error' );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );
 			Builder::cancelBuildIndex();
-			do_action( 'psfs/indexer/status/error' );
+			do_action( 'psf_search/indexer/status/error' );
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;

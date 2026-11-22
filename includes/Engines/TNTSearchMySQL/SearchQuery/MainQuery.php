@@ -146,7 +146,7 @@ abstract class MainQuery {
 	 * @return void
 	 */
 	public function setPhrase( $phrase ) {
-		$charLimit = apply_filters( 'psfs/search/input_chars_limit', 200 );
+		$charLimit = apply_filters( 'psf_search/search/input_chars_limit', 200 );
 
 		if ( mb_strlen( $phrase ) > $charLimit ) {
 			// Limit the number of characters
@@ -158,12 +158,12 @@ abstract class MainQuery {
 			}
 		}
 
-		$phrase              = apply_filters( 'psfs/phrase/initial', $phrase );
+		$phrase              = apply_filters( 'psf_search/phrase/initial', $phrase );
 		$phrase              = $this->replacePhrase( $phrase );
 		$phrase              = $this->removeInPhrase( $phrase );
-		$this->nonGreeklishS = apply_filters( 'psfs/phrase/final-no-greeklish', $phrase );
+		$this->nonGreeklishS = apply_filters( 'psf_search/phrase/final-no-greeklish', $phrase );
 		$phrase              = $this->greeklish( $phrase );
-		$this->s             = apply_filters( 'psfs/phrase/final', $phrase );
+		$this->s             = apply_filters( 'psf_search/phrase/final', $phrase );
 	}
 
 	/**
@@ -200,7 +200,7 @@ abstract class MainQuery {
 		$phrase = trim( $this->s );
 		$phrase = str_replace( '  ', ' ', $phrase );
 
-		return apply_filters( 'psfs/search_phrase', $phrase );
+		return apply_filters( 'psf_search/search_phrase', $phrase );
 	}
 
 	/**
@@ -250,22 +250,22 @@ abstract class MainQuery {
 		$fuzzines = $this->getFuzzinessSettings();
 
 		$config = apply_filters(
-			'psfs/tnt/query/config',
+			'psf_search/tnt/query/config',
 			[
 				'debug'                  => $this->debug,
-				'wordlistByKeywordLimit' => apply_filters( 'psfs/tnt/wordlist_by_keyword_limit', 5000 ),
+				'wordlistByKeywordLimit' => apply_filters( 'psf_search/tnt/wordlist_by_keyword_limit', 5000 ),
 				'maxDocs'                => 50000,
 				'fuzziness'              => $fuzzines['fuzziness'],
 				'fuzzy'                  => $fuzzines['fuzzy'],
 			]
 		);
 
-		if ( defined( 'PSFS_TNT_WORDLIST_LIMIT' ) ) {
-			$config['wordlistByKeywordLimit'] = absint( PSFS_TNT_WORDLIST_LIMIT );
+		if ( defined( 'PSF_SEARCH_TNT_WORDLIST_LIMIT' ) ) {
+			$config['wordlistByKeywordLimit'] = absint( PSF_SEARCH_TNT_WORDLIST_LIMIT );
 		}
 
-		if ( defined( 'PSFS_TNT_DOCS_LIMIT' ) ) {
-			$config['maxDocs'] = absint( PSFS_TNT_DOCS_LIMIT );
+		if ( defined( 'PSF_SEARCH_TNT_DOCS_LIMIT' ) ) {
+			$config['maxDocs'] = absint( PSF_SEARCH_TNT_DOCS_LIMIT );
 		}
 
 		$this->setConfig( $config );
@@ -435,7 +435,7 @@ abstract class MainQuery {
 		$result = $this->searchPsf( $phrase, $max );
 
 		if ( ! empty( $result['ids'] ) && is_array( $result['ids'] ) ) {
-			$this->foundProductsIds = apply_filters( 'psfs/tnt/search_results/ids', $result['ids'], $phrase );
+			$this->foundProductsIds = apply_filters( 'psf_search/tnt/search_results/ids', $result['ids'], $phrase );
 
 			$this->tntTime = $this->tntTime + (float) ( str_replace( ' ms', '', $result['execution_time'] ) );
 			$found         = true;
@@ -468,7 +468,7 @@ abstract class MainQuery {
 				}
 			}
 
-			$termIds = apply_filters( 'psfs/search_results/term_ids', $termIds, $phrase );
+			$termIds = apply_filters( 'psf_search/search_results/term_ids', $termIds, $phrase );
 
 			if ( ! empty( $termIds ) ) {
 				$this->foundTax = $this->taxQuery->getResults( $termIds, $phrase );
@@ -507,8 +507,8 @@ abstract class MainQuery {
 
 				$ids = [];
 				if ( ! empty( $result['ids'] ) && is_array( $result['ids'] ) ) {
-					$ids = apply_filters( 'psfs/tnt/search_results' . $postType . '/ids', $result['ids'], $phrase );
-					$ids = apply_filters( 'psfs/tnt/search_results/' . $postType . '/ids', $ids, $phrase );
+					$ids = apply_filters( 'psf_search/tnt/search_results' . $postType . '/ids', $result['ids'], $phrase );
+					$ids = apply_filters( 'psf_search/tnt/search_results/' . $postType . '/ids', $ids, $phrase );
 				}
 
 				if ( is_array( $ids ) && ! empty( $ids ) ) {
@@ -570,7 +570,7 @@ abstract class MainQuery {
 				foreach ( $r as $index => $value ) {
 					$r[ $index ]->meta = maybe_unserialize( $value->meta );
 				}
-				$this->foundProducts = apply_filters( 'psfs/tnt/search_results/products', $r, $this->getPhrase(), $this->getLang() );
+				$this->foundProducts = apply_filters( 'psf_search/tnt/search_results/products', $r, $this->getPhrase(), $this->getLang() );
 			}
 		}
 	}
@@ -647,7 +647,7 @@ abstract class MainQuery {
 			}
 		}
 
-		$orderBy = apply_filters( 'psfs/tnt/sort_products/order_by', $orderBy );
+		$orderBy = apply_filters( 'psf_search/tnt/sort_products/order_by', $orderBy );
 
 		switch ( $orderBy ) {
 			case 'relevance':
@@ -728,7 +728,7 @@ abstract class MainQuery {
 
 		}
 
-		$this->foundProducts = apply_filters( 'psfs/tnt/sort_products', $this->foundProducts, $orderBy );
+		$this->foundProducts = apply_filters( 'psf_search/tnt/sort_products', $this->foundProducts, $orderBy );
 	}
 
 	/**
@@ -741,7 +741,7 @@ abstract class MainQuery {
 
 		$includeSynonyms       = false;
 		$canonizedSearchPhrase = '';
-		if ( ! empty( $this->settings['search_synonyms'] ) && apply_filters( 'psfs/tnt/product/score/include_synonyms', true ) ) {
+		if ( ! empty( $this->settings['search_synonyms'] ) && apply_filters( 'psf_search/tnt/product/score/include_synonyms', true ) ) {
 			$this->synonymsHandler->setSynonyms( $this->settings['search_synonyms'] );
 			$this->synonymsHandler->buildLookup();
 			$includeSynonyms       = $this->synonymsHandler->canCanonize();
@@ -803,7 +803,7 @@ abstract class MainQuery {
 				);
 			}
 
-			$this->foundProducts[ $i ]->score = apply_filters( 'psfs/tnt/product/score', (float) $score, $product->post_id, $product, $this );
+			$this->foundProducts[ $i ]->score = apply_filters( 'psf_search/tnt/product/score', (float) $score, $product->post_id, $product, $this );
 
 			$i ++;
 		}
@@ -828,7 +828,7 @@ abstract class MainQuery {
 	public function getExtraPostTypes() {
 		$postTypes = Builder::getInfo( 'active_post_types' );
 
-		return apply_filters( 'psfs/tnt/search_post_types', $postTypes );
+		return apply_filters( 'psf_search/tnt/search_post_types', $postTypes );
 	}
 
 	/**
@@ -878,7 +878,7 @@ abstract class MainQuery {
 	 */
 	private function replacePhrase( $phrase ) {
 		$phrase    = trim( mb_strtolower( $phrase ) );
-		$toReplace = apply_filters( 'psfs/phrase/replace', [] );
+		$toReplace = apply_filters( 'psf_search/phrase/replace', [] );
 		if ( empty( $toReplace ) || ! is_array( $toReplace ) ) {
 			return $phrase;
 		}
@@ -905,7 +905,7 @@ abstract class MainQuery {
 	 */
 	private function removeInPhrase( $phrase ) {
 		$phrase   = trim( mb_strtolower( $phrase ) );
-		$toRemove = apply_filters( 'psfs/phrase/remove', [] );
+		$toRemove = apply_filters( 'psf_search/phrase/remove', [] );
 		if ( empty( $toRemove ) || ! is_array( $toRemove ) ) {
 			return $phrase;
 		}
@@ -924,7 +924,7 @@ abstract class MainQuery {
 	 * @return string
 	 */
 	private function greeklish( $phrase ) {
-		if ( ! apply_filters( 'psfs/search/convert_to_greeklish', true ) ) {
+		if ( ! apply_filters( 'psf_search/search/convert_to_greeklish', true ) ) {
 			return $phrase;
 		}
 		if ( Helpers::isGreekText__premium_only( $phrase ) ) {
@@ -964,7 +964,7 @@ abstract class MainQuery {
 		 *
 		 * In this case, we return only one result, if the SKU is exactly the same as the search phrase.
 		 */
-		if ( empty( $this->type ) && $this->searchIn( 'sku' ) && apply_filters( 'psfs/search/exact_sku_match', false ) ) {
+		if ( empty( $this->type ) && $this->searchIn( 'sku' ) && apply_filters( 'psf_search/search/exact_sku_match', false ) ) {
 			$exactSkuDocIds = $this->searchExactSKU( $phrase, $this->lang );
 			if ( ! empty( $exactSkuDocIds ) ) {
 				$stopTimer = microtime( true );
@@ -1449,7 +1449,7 @@ abstract class MainQuery {
 			$keywordLike = $wpdb->esc_like( $keyword ) . '%';
 		}
 
-		return apply_filters( 'psfs/tnt/keyword_like_format', $keywordLike, $keyword, $isLastKeyword, true );
+		return apply_filters( 'psf_search/tnt/keyword_like_format', $keywordLike, $keyword, $isLastKeyword, true );
 	}
 
 	/**
@@ -1610,7 +1610,7 @@ abstract class MainQuery {
 	 * @return array
 	 */
 	public function breakIntoTokens( $phrase ) {
-		$stopwords = apply_filters( 'psfs/search/stopwords', [], $this->getLang() );
+		$stopwords = apply_filters( 'psf_search/search/stopwords', [], $this->getLang() );
 
 		return $this->tokenizer->tokenize( $phrase, $stopwords );
 	}

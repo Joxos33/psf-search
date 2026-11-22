@@ -17,7 +17,7 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'psfs';
+	protected $prefix = 'psf_search';
 
 	/**
 	 * @var string
@@ -42,8 +42,8 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $dataPart ) {
-		if ( ! defined( 'PSFS_VARIATIONS_UPDATE_TASK' ) ) {
-			define( 'PSFS_VARIATIONS_UPDATE_TASK', true );
+		if ( ! defined( 'PSF_SEARCH_VARIATIONS_UPDATE_TASK' ) ) {
+			define( 'PSF_SEARCH_VARIATIONS_UPDATE_TASK', true );
 		}
 
 		Builder::log( '[Variation update] Starting async task. Variations set count: ' . count( $dataPart['items'] ) . '. Parent: #' . $dataPart['parent_id'], 'debug', 'file', 'variation', $this->action );
@@ -179,7 +179,7 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 		}
 
 		// Wait 15s and redispatch process if queue is not empty and process is not running
-		$redispatchProcess = apply_filters( 'psfs/indexer/redispatch-not-running-process', true );
+		$redispatchProcess = apply_filters( 'psf_search/indexer/redispatch-not-running-process', true );
 		if ( $redispatchProcess ) {
 			for ( $i = 1; $i <= 10; $i ++ ) {
 				$sleep = $i <= 5 ? 1 : 2;

@@ -53,7 +53,7 @@ abstract class AbstractIndexer {
 		$counter = ! empty( $productProcessed ) && is_numeric( $productProcessed ) ? intval( $productProcessed ) : 0;
 
 		$defaultItemsCount = constant( '\PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::' . strtoupper( $this->getType() ) . '_SET_ITEMS_COUNT' );
-		$productsSetCount  = apply_filters( "psfs/indexer/{$this->getType()}_set_items_count", $defaultItemsCount );
+		$productsSetCount  = apply_filters( "psf_search/indexer/{$this->getType()}_set_items_count", $defaultItemsCount );
 		$longTimeCounter   = 0;
 		$longTimeLimit     = 20;
 		$longTimeWarning   = false;

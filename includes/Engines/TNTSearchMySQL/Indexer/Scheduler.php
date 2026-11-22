@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Scheduler {
-	const HOOK                        = 'psfs_recurring_indexing';
-	const LAST_DATA_SETTINGS_KEY      = 'psfs_schedule_last_data';
-	const SINGLE_SCHEDULE_ENABLED_KEY = 'psfs_schedule_single';
+	const HOOK                        = 'psf_search_recurring_indexing';
+	const LAST_DATA_SETTINGS_KEY      = 'psf_search_schedule_last_data';
+	const SINGLE_SCHEDULE_ENABLED_KEY = 'psf_search_schedule_single';
 
 	/**
 	 * @var \WC_Queue_Interface
@@ -66,7 +66,7 @@ class Scheduler {
 		// If scheduler was enabled
 		if ( $scheduleEnabled && ! $isRunning ) {
 
-			$this->queue->schedule_single( $firstRunTs, self::HOOK, [], 'psfs-index' );
+			$this->queue->schedule_single( $firstRunTs, self::HOOK, [], 'psf-search-index' );
 
 			$this->updateData( 'lastInterval', $interval );
 			$this->updateData( 'lastInitHour', $initHour );
@@ -81,7 +81,7 @@ class Scheduler {
 		) {
 
 			$this->queue->cancel_all( self::HOOK );
-			$this->queue->schedule_single( $firstRunTs, self::HOOK, [], 'psfs-index' );
+			$this->queue->schedule_single( $firstRunTs, self::HOOK, [], 'psf-search-index' );
 
 			$this->updateData( 'lastInterval', $interval );
 			$this->updateData( 'lastInitHour', $initHour );
@@ -109,7 +109,7 @@ class Scheduler {
 	 * @return bool
 	 */
 	public function isEnabled() {
-		return PSFS()->settings->getOption( 'indexer_schedule' ) === 'on' ? true : false;
+		return PSF_SEARCH()->settings->getOption( 'indexer_schedule' ) === 'on' ? true : false;
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Scheduler {
 	public function getInterval() {
 		$interval = DAY_IN_SECONDS * 7;
 
-		$opt = PSFS()->settings->getOption( 'indexer_schedule_interval', 'weekly' );
+		$opt = PSF_SEARCH()->settings->getOption( 'indexer_schedule_interval', 'weekly' );
 
 		switch ( $opt ) {
 			case 'daily':
@@ -213,7 +213,7 @@ class Scheduler {
 	public function getInitHour() {
 		$initHour = 3;
 
-		$hour = PSFS()->settings->getOption( 'indexer_schedule_start_time', 3 );
+		$hour = PSF_SEARCH()->settings->getOption( 'indexer_schedule_start_time', 3 );
 		if ( $hour !== '' && is_numeric( $hour ) && $hour >= 0 && $hour < 24 ) {
 			$initHour = (int) $hour;
 		}

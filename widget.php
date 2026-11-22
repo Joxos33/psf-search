@@ -12,20 +12,20 @@ if ( class_exists( 'WC_Widget' ) ) {
 	add_action(
 		'widgets_init',
 		function () {
-			register_widget( 'PSFS_Search_Widget' );
+			register_widget( 'PSF_SEARCH_Search_Widget' );
 		}
 	);
 
-	class PSFS_Search_Widget extends WC_Widget {
+	class PSF_SEARCH_Search_Widget extends WC_Widget {
 
 		/**
 		 * Constructor
 		 */
 		public function __construct() {
 
-			$this->widget_cssclass    = 'woocommerce psfs-widget';
+			$this->widget_cssclass    = 'woocommerce psf-search-widget';
 			$this->widget_description = __( 'AJAX (live) search form for WooCommerce', 'psf-search' );
-			$this->widget_id          = 'psfs_ajax_search';
+			$this->widget_id          = 'psf_search_ajax_search';
 			$this->widget_name        = __( 'PSF Search bar', 'psf-search' );
 			$this->settings           = [
 				'title'          => [
@@ -84,7 +84,7 @@ if ( class_exists( 'WC_Widget' ) ) {
 
 			$html = ob_get_clean();
 			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo apply_filters( 'psfs/widget/html', $html, $args, $instance );
+			echo apply_filters( 'psf_search/widget/html', $html, $args, $instance );
 		}
 	}
 }

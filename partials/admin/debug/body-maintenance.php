@@ -3,22 +3,22 @@
  * Exit if accessed directly
  */
 
-if ( ! defined( 'PSFS_FILE' ) ) {
+if ( ! defined( 'PSF_SEARCH_FILE' ) ) {
 	exit;
 }
 
 if (
-	! empty( $_REQUEST['psfs-debug-setting-reset-to-default'] ) &&
+	! empty( $_REQUEST['psf-search-debug-setting-reset-to-default'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_reset_settings' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psf_search_debug_reset_settings' )
 ) {
-	global $psfsSettings;
+	global $psfSearchSettings;
 
-	$psfsSettings = [];
-	delete_option( PSFS_SETTINGS_KEY );
+	$psfSearchSettings = [];
+	delete_option( PSF_SEARCH_SETTINGS_KEY );
 	PsfSearch\Admin\Install::createOptions();
 	?>
-	<div class="psfs-notice notice notice-success">
+	<div class="psf-search-notice notice notice-success">
 		<p>The settings have been reset to the default values.</p>
 	</div>
 	<?php
@@ -30,10 +30,10 @@ if (
 		action="<?php echo admin_url( 'admin.php' ); ?>" method="get"
 		onsubmit="return confirm('Are you sure you want to reset the settings?');">
 		<input
-			type="hidden" name="page" value="psfs_debug">
-		<?php wp_nonce_field( 'psfs_debug_reset_settings', '_wpnonce', false ); ?>
+			type="hidden" name="page" value="psf_search_debug">
+		<?php wp_nonce_field( 'psf_search_debug_reset_settings', '_wpnonce', false ); ?>
 		<input
-			type="submit" name="psfs-debug-setting-reset-to-default" class="button"
+			type="submit" name="psf-search-debug-setting-reset-to-default" class="button"
 			value="Reset the plugin settings to default values">
 	</form>
 <?php

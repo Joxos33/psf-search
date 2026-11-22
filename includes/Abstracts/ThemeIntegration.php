@@ -52,7 +52,7 @@ abstract class ThemeIntegration {
 			$this->extraFunctions();
 		}
 
-		add_filter( 'psfs/settings', [ $this, 'registerSettings' ] );
+		add_filter( 'psf_search/settings', [ $this, 'registerSettings' ] );
 	}
 
 	/**
@@ -63,13 +63,13 @@ abstract class ThemeIntegration {
 	 * @return array
 	 */
 	public function registerSettings( $settings ) {
-		$key = 'psfs_basic';
+		$key = 'psf_search_basic';
 
 		$settings[ $key ][10] = [
 			'name'  => $this->themeSlug . '_main_head',
 			'label' => sprintf( __( 'Replace the search bars', 'psf-search' ), $this->themeName ),
 			'type'  => 'head',
-			'class' => 'psfs-sgs-header',
+			'class' => 'psf-search-sgs-header',
 		];
 
 		if ( ! $this->args['whiteLabel'] ) {
@@ -78,10 +78,10 @@ abstract class ThemeIntegration {
 				'label' => sprintf( __( '%s Theme', 'psf-search' ), $this->themeName ),
 				'type'  => 'desc',
 				'desc'  => Helpers::embeddingInThemeHtml(),
-				'class' => 'psfs-sgs-themes-label',
+				'class' => 'psf-search-sgs-themes-label',
 			];
 
-			$img = PSFS()->themeCompatibility->getThemeImageSrc();
+			$img = PSF_SEARCH()->themeCompatibility->getThemeImageSrc();
 			if ( ! empty( $img ) ) {
 				$settings[ $key ][52]['label'] = '<img src="' . $img . '">';
 			}
@@ -107,7 +107,7 @@ abstract class ThemeIntegration {
 			'name'  => $this->themeSlug . '_othersways__head',
 			'label' => __( 'Alternative ways to embed a search bar', 'psf-search' ),
 			'type'  => 'head',
-			'class' => 'psfs-sgs-header',
+			'class' => 'psf-search-sgs-header',
 		];
 
 		return $settings;
@@ -123,7 +123,7 @@ abstract class ThemeIntegration {
 
 		if ( $this->args['alwaysEnabled'] ) {
 			$canIntegrate = true;
-		} elseif ( PSFS()->settings->getOption( $this->themeSlug . '_replace_search', 'off' ) === 'on' ) {
+		} elseif ( PSF_SEARCH()->settings->getOption( $this->themeSlug . '_replace_search', 'off' ) === 'on' ) {
 			$canIntegrate = true;
 		}
 
@@ -143,7 +143,7 @@ abstract class ThemeIntegration {
 		}
 
 		$partialFilename = ! empty( $this->args['partialFilename'] ) ? $this->args['partialFilename'] : $this->themeSlug . '.php';
-		$partialPath     = PSFS_DIR . 'partials/themes/' . $partialFilename;
+		$partialPath     = PSF_SEARCH_DIR . 'partials/themes/' . $partialFilename;
 		$partialMuPath   = str_replace( '.php', '-mu.php', $partialPath );
 
 		// Load "must-use" partials
@@ -169,7 +169,7 @@ abstract class ThemeIntegration {
 		if ( $this->args['forceMobileOverlay'] ) {
 			// Force enable overlay for mobile search.
 			add_filter(
-				'psfs/settings/load_value/key=enable_mobile_overlay',
+				'psf_search/settings/load_value/key=enable_mobile_overlay',
 				function () {
 					return 'on';
 				}
@@ -177,7 +177,7 @@ abstract class ThemeIntegration {
 
 			// Mark that the value of the option "mobile overlay" is forced.
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[680]['disabled'] = true;
 					$settings[680]['label']    = Helpers::createOverrideTooltip( 'ovtt-theme-mobile-overlay', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[680]['label'];
@@ -191,7 +191,7 @@ abstract class ThemeIntegration {
 			// Change mobile breakpoint.
 			if ( is_numeric( $this->args['forceMobileOverlayBreakpoint'] ) && intval( $this->args['forceMobileOverlayBreakpoint'] ) > 0 ) {
 				add_filter(
-					'psfs/settings/load_value/key=mobile_overlay_breakpoint',
+					'psf_search/settings/load_value/key=mobile_overlay_breakpoint',
 					function () {
 						return $this->args['forceMobileOverlayBreakpoint'];
 					}
@@ -200,7 +200,7 @@ abstract class ThemeIntegration {
 
 			// Mark that the value of the option "mobile breakpoint" is forced.
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[685]['disabled'] = true;
 					$settings[685]['label']    = Helpers::createOverrideTooltip( 'ovtt-theme-breakpoint', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[685]['label'];
@@ -214,7 +214,7 @@ abstract class ThemeIntegration {
 			// Change layout breakpoint.
 			if ( is_numeric( $this->args['forceLayoutBreakpoint'] ) && intval( $this->args['forceLayoutBreakpoint'] ) > 0 ) {
 				add_filter(
-					'psfs/settings/load_value/key=mobile_breakpoint',
+					'psf_search/settings/load_value/key=mobile_breakpoint',
 					function () {
 						return $this->args['forceLayoutBreakpoint'];
 					}
@@ -223,7 +223,7 @@ abstract class ThemeIntegration {
 
 			// Mark that the value of the option "layout breakpoint" is forced.
 			add_filter(
-				'psfs/settings/section=form',
+				'psf_search/settings/section=form',
 				function ( $settings ) {
 					$settings[670]['disabled'] = true;
 					$settings[670]['label']    = Helpers::createOverrideTooltip( 'ovtt-theme-breakpoint', Helpers::getOverrideOptionText( $this->themeName ) ) . $settings[670]['label'];

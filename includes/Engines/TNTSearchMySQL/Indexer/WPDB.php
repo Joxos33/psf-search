@@ -33,7 +33,7 @@ class WPDB {
 	 * @return void
 	 */
 	private function clear_saved_queries() {
-		if ( defined( 'PSFS_INDEXER_ALLOW_SAVEQUERIES' ) && PSFS_INDEXER_ALLOW_SAVEQUERIES ) {
+		if ( defined( 'PSF_SEARCH_INDEXER_ALLOW_SAVEQUERIES' ) && PSF_SEARCH_INDEXER_ALLOW_SAVEQUERIES ) {
 			return;
 		}
 

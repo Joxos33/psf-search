@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class UserInterface {
 
-	const SECTION_ID                        = 'psfs_analytics';
+	const SECTION_ID                        = 'psf_search_analytics';
 	const LOAD_INTERFACE_NONCE              = 'analytics-load-interface';
 	const LOAD_MORE_CRITICAL_SEARCHES_NONCE = 'analytics-load-more-critical-searches';
 	const LOAD_MORE_AUTOCOMPLETE_NONCE      = 'analytics-load-more-autocomplete';
@@ -21,7 +21,7 @@ class UserInterface {
 	const EXCLUDE_CRITICAL_PHRASE_NONCE     = 'analytics-exclude-critical-phrase';
 	const RESET_STATS_NONCE                 = 'analytics-reset-stats';
 	const EXPORT_STATS_CSV_NONCE            = 'analytics-export-stats-csv';
-	const CSS_CLASS_PLACEHOLDER             = 'js-psfs-stats-placeholder';
+	const CSS_CLASS_PLACEHOLDER             = 'js-psf-search-stats-placeholder';
 	const CRITICAL_SEARCHES_LOAD_LIMIT      = 10;
 	const TABLE_ROW_LIMIT_LIMIT             = 10;
 
@@ -47,22 +47,22 @@ class UserInterface {
 	public function init() {
 
 		// Draw settings page
-		add_filter( 'psfs/settings/sections', [ $this, 'addSettingsSection' ] );
-		add_filter( 'psfs/settings', [ $this, 'addSettingsTab' ] );
-		add_filter( 'psfs/scripts/admin/localize', [ $this, 'localizeSettings' ] );
+		add_filter( 'psf_search/settings/sections', [ $this, 'addSettingsSection' ] );
+		add_filter( 'psf_search/settings', [ $this, 'addSettingsTab' ] );
+		add_filter( 'psf_search/scripts/admin/localize', [ $this, 'localizeSettings' ] );
 
 		// AJAX callbacks
-		add_action( 'wp_ajax_psfs_load_stats_interface', [ $this, 'loadInterface' ] );
-		add_action( 'wp_ajax_psfs_laod_more_critical_searches', [ $this, 'loadMoreCriticalSearches' ] );
-		add_action( 'wp_ajax_psfs_laod_more_autocomplete', [ $this, 'loadMoreAutocomplete' ] );
-		add_action( 'wp_ajax_psfs_laod_more_search_page', [ $this, 'loadMoreSearchPage' ] );
-		add_action( 'wp_ajax_psfs_check_critical_phrase', [ $this, 'checkCriticalPhrase' ] );
-		add_action( 'wp_ajax_psfs_exclude_critical_phrase', [ $this, 'excludeCriticalPhrase' ] );
-		add_action( 'wp_ajax_psfs_reset_stats', [ $this, 'resetStats' ] );
-		add_action( 'wp_ajax_psfs_export_stats_csv', [ $this, 'exportStats' ] );
+		add_action( 'wp_ajax_psf_search_load_stats_interface', [ $this, 'loadInterface' ] );
+		add_action( 'wp_ajax_psf_search_laod_more_critical_searches', [ $this, 'loadMoreCriticalSearches' ] );
+		add_action( 'wp_ajax_psf_search_laod_more_autocomplete', [ $this, 'loadMoreAutocomplete' ] );
+		add_action( 'wp_ajax_psf_search_laod_more_search_page', [ $this, 'loadMoreSearchPage' ] );
+		add_action( 'wp_ajax_psf_search_check_critical_phrase', [ $this, 'checkCriticalPhrase' ] );
+		add_action( 'wp_ajax_psf_search_exclude_critical_phrase', [ $this, 'excludeCriticalPhrase' ] );
+		add_action( 'wp_ajax_psf_search_reset_stats', [ $this, 'resetStats' ] );
+		add_action( 'wp_ajax_psf_search_export_stats_csv', [ $this, 'exportStats' ] );
 
 		if ( $this->analytics->isModuleEnabled() ) {
-			add_action( PSFS_SETTINGS_KEY . '-form_end_' . self::SECTION_ID, [ $this, 'tabContent' ] );
+			add_action( PSF_SEARCH_SETTINGS_KEY . '-form_end_' . self::SECTION_ID, [ $this, 'tabContent' ] );
 		}
 	}
 
@@ -94,13 +94,13 @@ class UserInterface {
 		$searchAnalyticsLink = 'https://fibosearch.com/documentation/features/psfsearch-analytics/';
 
 		$settings[ self::SECTION_ID ] = apply_filters(
-			'psfs/settings/section=analytics',
+			'psf_search/settings/section=analytics',
 			[
 				100 => [
 					'name'  => 'analytics_head',
 					'label' => __( 'Search Analytics', 'psf-search' ),
 					'type'  => 'head',
-					'class' => 'psfs-sgs-header',
+					'class' => 'psf-search-sgs-header',
 				],
 				110 => [
 					'name'    => 'analytics_enabled',
@@ -109,7 +109,7 @@ class UserInterface {
 						sprintf( __( 'Search analytics system helps to eliminate search phrases that don’t return any results. Also, allows to explore trending keywords. <a target="_blank" href="%s">Find our more</a> how to use and customize PSF Search Analytics.', 'psf-search' ), $searchAnalyticsLink )
 					),
 					'type'    => 'checkbox',
-					'class'   => 'psfs-options-cb-toggle js-psfs-cbtgroup-analytics-critial-searches-widget',
+					'class'   => 'psf-search-options-cb-toggle js-psf-search-cbtgroup-analytics-critial-searches-widget',
 					'size'    => 'small',
 					'default' => 'off',
 				],
@@ -117,7 +117,7 @@ class UserInterface {
 					'name'    => 'analytics_critical_searches_widget_enabled',
 					'label'   => __( 'Show widget with critical searches in Dashboard', 'psf-search' ),
 					'type'    => 'checkbox',
-					'class'   => 'js-psfs-cbtgroup-analytics-critial-searches-widget',
+					'class'   => 'js-psf-search-cbtgroup-analytics-critial-searches-widget',
 					'size'    => 'small',
 					'default' => 'off',
 				],
@@ -148,7 +148,7 @@ class UserInterface {
 			],
 			'enabled' => $this->analytics->isModuleEnabled(),
 			'images'  => [
-				'placeholder' => PSFS_URL . 'assets/img/admin-stats-placeholder.png',
+				'placeholder' => PSF_SEARCH_URL . 'assets/img/admin-stats-placeholder.png',
 			],
 			'labels'  => [
 				'reset_stats_confirm' => __( 'Are you sure you want to reset stats?', 'psf-search' ),
@@ -167,7 +167,7 @@ class UserInterface {
 		if ( Multilingual::isMultilingual() ) {
 			echo $this->getLanguageSwitcher();
 		}
-		echo '<div class="psfs-analytics-body ' . self::CSS_CLASS_PLACEHOLDER . '"></div>';
+		echo '<div class="psf-search-analytics-body ' . self::CSS_CLASS_PLACEHOLDER . '"></div>';
 	}
 
 	/**
@@ -189,7 +189,7 @@ class UserInterface {
 		}
 
 		ob_start();
-		require PSFS_DIR . 'partials/admin/stats/langs.php';
+		require PSF_SEARCH_DIR . 'partials/admin/stats/langs.php';
 
 		return ob_get_clean();
 	}
@@ -214,7 +214,7 @@ class UserInterface {
 
 		ob_start();
 		$vars = $this->getVars( $lang );
-		require PSFS_DIR . 'partials/admin/stats/stats.php';
+		require PSF_SEARCH_DIR . 'partials/admin/stats/stats.php';
 		$data['html'] = ob_get_clean();
 
 		wp_send_json_success( $data );
@@ -249,7 +249,7 @@ class UserInterface {
 			ob_start();
 			$i = $offset + 1;
 			foreach ( $critical as $row ) {
-				require PSFS_DIR . 'partials/admin/stats/critical-searches-row.php';
+				require PSF_SEARCH_DIR . 'partials/admin/stats/critical-searches-row.php';
 				$i ++;
 			}
 			$html = ob_get_clean();
@@ -296,7 +296,7 @@ class UserInterface {
 		ob_start();
 		$i = 1;
 		foreach ( $phrases as $row ) {
-			require PSFS_DIR . 'partials/admin/stats/ac-searches-row.php';
+			require PSF_SEARCH_DIR . 'partials/admin/stats/ac-searches-row.php';
 			$i ++;
 		}
 		$html = ob_get_clean();
@@ -333,7 +333,7 @@ class UserInterface {
 		ob_start();
 		$i = 1;
 		foreach ( $phrases as $row ) {
-			require PSFS_DIR . 'partials/admin/stats/sp-searches-row.php';
+			require PSF_SEARCH_DIR . 'partials/admin/stats/sp-searches-row.php';
 			$i ++;
 		}
 		$html = ob_get_clean();
@@ -412,23 +412,23 @@ class UserInterface {
 		switch ( $context ) {
 			case 'with-results':
 				$html  = '<p>';
-				$html .= '<b class="psfs-analytics-text-good">' . __( 'Perfect!', 'psf-search' ) . '</b>';
+				$html .= '<b class="psf-search-analytics-text-good">' . __( 'Perfect!', 'psf-search' ) . '</b>';
 				$html .= ' ' . __( "It's sorted.", 'psf-search' );
 				$html .= ' ' . __( 'This phrase returns some results.', 'psf-search' );
 				$html .= ' ' . __( 'Click the button below to remove this phrase from the list.', 'psf-search' );
-				$html .= '<button class="button button-small psfs-analytics-btn-mark js-psfs-analytics-exclude-phrase"><span class="dashicons dashicons-yes"></span> ' . __( 'Mark this phrase as resolved', 'psf-search' ) . '</button>';
+				$html .= '<button class="button button-small psf-search-analytics-btn-mark js-psf-search-analytics-exclude-phrase"><span class="dashicons dashicons-yes"></span> ' . __( 'Mark this phrase as resolved', 'psf-search' ) . '</button>';
 				$html .= '</p>';
 				break;
 			case 'without-results':
 				$html  = '<p>';
-				$html .= '<b class="psfs-analytics-text-poorly">' . __( 'Poor!', 'psf-search' ) . '</b>';
+				$html .= '<b class="psf-search-analytics-text-poorly">' . __( 'Poor!', 'psf-search' ) . '</b>';
 				$html .= ' ' . __( "Still this phrase doesn't return any results. Learn how to fix it.", 'psf-search' );
 				$html .= '</p>';
 				break;
 			case 'wrong-index':
 				$html  = '<p>';
 				$html .= __( "Can't check the status. The search index hasn't been completed. Go to the Indexer tab and wait until the search index is completed.", 'psf-search' );
-				$html .= '<button class="button button-small psfs-analytics-btn-mark js-psfs-analytics-check-indexer">' . __( 'Check the indexer status', 'psf-search' ) . '</button>';
+				$html .= '<button class="button button-small psf-search-analytics-btn-mark js-psf-search-analytics-check-indexer">' . __( 'Check the indexer status', 'psf-search' ) . '</button>';
 				$html .= '</p>';
 				break;
 			case 'error':
@@ -606,10 +606,10 @@ class UserInterface {
 		$days = Maintenance::ANALYTICS_EXPIRATION_IN_DAYS;
 
 		if (
-			defined( 'PSFS_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
-			intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
+			defined( 'PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
+			intval( PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
 		) {
-			$days = intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS );
+			$days = intval( PSF_SEARCH_ANALYTICS_EXPIRATION_IN_DAYS );
 		}
 
 		return $days;
