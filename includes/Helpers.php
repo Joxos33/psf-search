@@ -93,6 +93,10 @@ class Helpers {
 			}
 		}
 
+		if ( ( $args['style'] ?? PSF_SEARCH()->settings->getOption( 'search_style' ) ) === Appearance::STYLE ) {
+			$classes = array_merge( $classes, Appearance::wrapperClasses() );
+		}
+
 		if ( ! empty( $args['layout'] ) ) {
 			$type      = esc_html( $args['layout'] );
 			$classes[] = 'js-psf-search-layout-' . $type . ' psf-search-layout-' . $type;

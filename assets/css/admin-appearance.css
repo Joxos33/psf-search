@@ -1,0 +1,61 @@
+/* PSF Search: admin layout for the Appearance tab (preview beside the settings). */
+
+[data-psf-search-active="appearance"] .psf-search-preview {
+	display: block;
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] .metabox-holder {
+	max-width: 550px;
+	min-width: 495px;
+	width: 100%;
+	border-right: 1px solid #ddd;
+	overflow: hidden;
+}
+
+/* The preview is sticky so it stays in view while scrolling through the long list of options. */
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-preview-inner {
+	position: sticky;
+	top: 40px;
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-preview-subheader,
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-preview-device-info,
+.psf-search-settings-body[data-psf-search-active="appearance"] .js-psf-search-preview-icon-example {
+	display: none !important;
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] .js-psf-search-preview-bar-example {
+	display: block !important;
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-sgs-header label,
+[data-psf-search-active="appearance"] .psf-search-sgs-header label {
+	width: 541px;
+}
+
+.psf-search-ap-hidden {
+	display: none !important;
+}
+
+.psf-search-ap-note {
+	margin: 0;
+	padding: 10px 12px;
+	background: #f6f7f7;
+	border-left: 3px solid #2271b1;
+}
+
+/* The preview shows the dropdown open, so draw the bar in its open state. */
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	border-bottom-left-radius: var(--psfs-open-radius, 0);
+	border-bottom-right-radius: var(--psfs-open-radius, 0);
+}
+
+.psf-search-settings-body[data-psf-search-active="appearance"] .psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-attached .psf-search-sf-wrapp button.psf-search-search-submit {
+	border-bottom-right-radius: var(--psfs-open-radius, 0);
+}

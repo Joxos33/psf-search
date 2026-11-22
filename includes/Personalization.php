@@ -52,6 +52,13 @@ class Personalization {
 	 * @return string
 	 */
 	public function getStyles( $minified = true ) {
+		// PSF Custom style: everything comes from the Appearance settings (CSS variables).
+		if ( Appearance::isActive() ) {
+			$maxFormWidth = absint( PSF_SEARCH()->settings->getOption( 'max_form_width' ) );
+
+			return ( $maxFormWidth ? '.psf-search-search-wrapp{max-width:' . $maxFormWidth . 'px}' : '' ) . Appearance::getCss();
+		}
+
 		// Search form
 		$show_submit             = PSF_SEARCH()->settings->getOption( 'show_submit_button' );
 		$bg_input_underlay_color = PSF_SEARCH()->settings->getOption( 'bg_input_underlay_color' ); // Pirx

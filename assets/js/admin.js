@@ -1205,7 +1205,11 @@
             var _this = this,
                 methodToCall = $el.attr('id').replace(']', '').replace('psf_search_settings[', '');
             methodToCall = 'onColor' + _this.camelCase(methodToCall);
-            _this[methodToCall]($el, value);
+            if (typeof _this[methodToCall] === 'function') {
+                _this[methodToCall]($el, value);
+            }
+            // Fields without a dedicated handler (e.g. Appearance) listen for this event.
+            $(document).trigger('psf-search:color-change', [$el, value]);
         },
         onTypeHandler: function () {
             var _this = this,
@@ -1593,7 +1597,7 @@
         },
         onChangeSearchStyle: function ($el, value) {
             var _this = this,
-                themes = ['solaris', 'pirx', 'pirx-compact'],
+                themes = ['solaris', 'pirx', 'pirx-compact', 'custom'],
                 $inputSubmitButton = $('input[id*="show_submit_button"]'),
                 $inputSubmitBgColor = $('label[for*="bg_submit_color"]'),
                 i;
