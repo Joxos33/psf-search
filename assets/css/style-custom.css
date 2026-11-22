@@ -1,0 +1,328 @@
+/*
+ * PSF Search: "PSF Custom" style.
+ * Every value comes from a CSS variable set by the Appearance settings
+ * (includes/Appearance.php, live preview in assets/js/admin-appearance.js).
+ * Fallbacks match Appearance::defaults().
+ */
+
+/* ---------- Bar ---------- */
+
+.psf-search-search-wrapp.psf-search-style-custom {
+	font-family: var(--psfs-font, inherit);
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp {
+	background: none;
+	padding: 0;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input,
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input:hover {
+	height: var(--psfs-bar-h, 44px);
+	min-height: var(--psfs-bar-h, 44px);
+	margin: 0;
+	padding: 0 14px;
+	font-family: var(--psfs-font, inherit);
+	font-size: var(--psfs-fs, 15px);
+	font-weight: var(--psfs-fw, 400);
+	line-height: normal;
+	letter-spacing: normal;
+	color: var(--psfs-text, #0a0a0a);
+	background: var(--psfs-bar-bg, #fff);
+	border: var(--psfs-bar-bw, 1px) solid var(--psfs-bar-bc, #31651f);
+	border-radius: var(--psfs-bar-radius, 6px);
+	box-shadow: var(--psfs-bar-shadow, none);
+	transition: border-color 150ms ease-in, box-shadow 150ms ease-in;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input:focus {
+	outline: 0;
+	background: var(--psfs-bar-bg, #fff);
+	border-color: var(--psfs-focus-bc, #254d18);
+	box-shadow: var(--psfs-focus-shadow, none);
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input::placeholder {
+	color: var(--psfs-ph, #8a8a8a);
+	font-style: var(--psfs-ph-style, italic);
+	font-weight: inherit;
+	opacity: 1;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input::-webkit-input-placeholder {
+	color: var(--psfs-ph, #8a8a8a);
+	font-style: var(--psfs-ph-style, italic);
+	font-weight: inherit;
+	opacity: 1;
+}
+
+/* Bar + dropdown read as one shape when the dropdown has no gap. */
+body.psf-search-open .psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	border-bottom-left-radius: var(--psfs-open-radius, 0);
+	border-bottom-right-radius: var(--psfs-open-radius, 0);
+}
+
+/* No button: magnifier inside the bar, in the text color. */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-no-submit .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	padding-left: calc(var(--psfs-btn-ico, 18px) + 26px);
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-no-submit .psf-search-sf-wrapp > .psf-search-ico-magnifier {
+	width: var(--psfs-btn-ico, 18px);
+	height: var(--psfs-btn-ico, 18px);
+	max-width: none;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	margin: 0;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-no-submit .psf-search-sf-wrapp > .psf-search-ico-magnifier path {
+	fill: var(--psfs-ph, #8a8a8a);
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp > .js-psf-search-ico-magnifier-pirx {
+	display: none !important;
+}
+
+/* ---------- Button ---------- */
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: auto;
+	left: auto;
+	height: 100%;
+	min-height: 0;
+	width: auto;
+	min-width: var(--psfs-btn-w, 52px);
+	margin: 0;
+	padding: 0 14px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border: 0;
+	border-radius: 0 var(--psfs-bar-radius, 6px) var(--psfs-bar-radius, 6px) 0;
+	background: var(--psfs-btn-bg, #254d18);
+	color: var(--psfs-btn-c, #f7f7f7);
+	font-family: var(--psfs-font, inherit);
+	font-size: var(--psfs-fs, 15px);
+	font-weight: 600;
+	line-height: 1;
+	text-transform: none;
+	text-shadow: none;
+	box-shadow: none;
+	opacity: 1;
+	transition: background-color 150ms ease-in;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit:hover,
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit:focus,
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit:active {
+	background: var(--psfs-btn-hover, #1b3a11);
+	opacity: 1;
+	outline: 0;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit svg {
+	width: var(--psfs-btn-ico, 18px);
+	height: var(--psfs-btn-ico, 18px);
+	max-width: none;
+	position: static;
+	margin: 0;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit svg path {
+	fill: currentColor;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp button.psf-search-search-submit .js-psf-search-ico-magnifier-pirx {
+	display: none !important;
+}
+
+/* Attached: flush with the bar's right edge. */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-attached .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	padding-right: calc(var(--psfs-btn-w, 52px) + 10px);
+}
+
+body.psf-search-open .psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-attached .psf-search-sf-wrapp button.psf-search-search-submit {
+	border-bottom-right-radius: var(--psfs-open-radius, 0);
+}
+
+/* Inset: inside the bar, with a gap all around. */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-inset .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	padding-right: calc(var(--psfs-btn-w, 52px) + var(--psfs-btn-gap, 6px) * 2 + 6px);
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-inset .psf-search-sf-wrapp button.psf-search-search-submit {
+	top: var(--psfs-btn-gap, 6px);
+	right: var(--psfs-btn-gap, 6px);
+	height: calc(100% - var(--psfs-btn-gap, 6px) * 2);
+	border-radius: var(--psfs-btn-radius, 6px);
+}
+
+/* Separate: its own shape next to the bar. */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-separate .psf-search-sf-wrapp {
+	padding-right: calc(var(--psfs-btn-w, 52px) + var(--psfs-btn-gap, 6px));
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-separate .psf-search-sf-wrapp button.psf-search-search-submit {
+	border-radius: var(--psfs-btn-radius, 6px);
+}
+
+/* Preloader sits just left of the button (JS sets an inline offset; this replaces it). */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-attached .psf-search-preloader {
+	right: calc(var(--psfs-btn-w, 52px) + 4px) !important;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-inset .psf-search-preloader {
+	right: calc(var(--psfs-btn-w, 52px) + var(--psfs-btn-gap, 6px) * 2) !important;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-has-submit.psf-search-btn-separate .psf-search-preloader {
+	right: calc(var(--psfs-btn-w, 52px) + var(--psfs-btn-gap, 6px) + 4px) !important;
+}
+
+/* Arrow tab: off unless enabled. */
+.psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp .psf-search-search-submit::before {
+	display: none;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-arrow .psf-search-sf-wrapp .psf-search-search-submit::before {
+	display: block;
+	top: 50%;
+	margin-top: -8px;
+	left: -6px;
+	border-color: transparent var(--psfs-btn-bg, #254d18) transparent;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-arrow .psf-search-sf-wrapp .psf-search-search-submit:hover::before,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-arrow .psf-search-sf-wrapp .psf-search-search-submit:focus::before {
+	border-right-color: var(--psfs-btn-hover, #1b3a11);
+}
+
+/* Content: icon / text / both. Admin preview uses the -m/-l spans. */
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-icon .psf-search-btn-txt,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-icon .js-psf-search-search-submit-l,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-text .psf-search-btn-ico,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-text .js-psf-search-search-submit-m {
+	display: none !important;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-icon .psf-search-btn-ico,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-icon .js-psf-search-search-submit-m,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-both .psf-search-btn-ico,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-both .js-psf-search-search-submit-m {
+	display: inline-flex !important;
+	align-items: center;
+}
+
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-text .psf-search-btn-txt,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-text .js-psf-search-search-submit-l,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-both .psf-search-btn-txt,
+.psf-search-search-wrapp.psf-search-style-custom.psf-search-btn-content-both .js-psf-search-search-submit-l {
+	display: inline !important;
+}
+
+/* ---------- Dropdown ---------- */
+
+.psf-search-custom .psf-search-suggestions-wrapp {
+	margin-top: var(--psfs-dd-gap, 0);
+	background: var(--psfs-dd-bg, #fcfcfc);
+	border: var(--psfs-dd-bw, 1px) solid var(--psfs-dd-bc, #d9d9d9);
+	border-top-width: var(--psfs-dd-top-bw, 0);
+	border-radius: var(--psfs-dd-top-radius, 0) var(--psfs-dd-top-radius, 0) var(--psfs-dd-radius, 6px) var(--psfs-dd-radius, 6px);
+	box-shadow: var(--psfs-dd-shadow, none);
+	font-family: var(--psfs-font, inherit);
+	overflow: hidden;
+	overflow-y: auto;
+}
+
+.psf-search-custom .psf-search-suggestion {
+	color: var(--psfs-dd-text, #0a0000);
+	border-bottom-color: var(--psfs-dd-div, #ececec);
+	padding: 8px 12px;
+}
+
+.psf-search-custom .psf-search-suggestion:last-child {
+	border-bottom: 0;
+}
+
+.psf-search-custom .psf-search-suggestion *,
+.psf-search-custom .psf-search-suggestion-headline {
+	color: var(--psfs-dd-text, #0a0000);
+}
+
+.psf-search-custom .psf-search-suggestion.psf-search-suggestion-selected {
+	background: var(--psfs-dd-hover, #eef4ea);
+}
+
+.psf-search-custom .psf-search-st,
+.psf-search-custom .psf-search-st-title {
+	font-size: var(--psfs-dd-title-fs, 14px);
+	font-weight: var(--psfs-dd-title-fw, 500);
+	line-height: 1.25;
+}
+
+.psf-search-custom .psf-search-suggestion .psf-search-st strong,
+.psf-search-custom .psf-search-suggestion .psf-search-sd strong {
+	color: var(--psfs-dd-hl, #254d18);
+	font-weight: 700;
+}
+
+.psf-search-custom .psf-search-has-img .psf-search-si,
+.psf-search-custom .psf-search-si {
+	width: calc(var(--psfs-dd-img, 48px) + 8px);
+	min-width: calc(var(--psfs-dd-img, 48px) + 8px);
+	height: var(--psfs-dd-img, 48px);
+	padding-right: 8px;
+}
+
+.psf-search-custom .psf-search-si img {
+	max-height: var(--psfs-dd-img, 48px);
+	max-width: var(--psfs-dd-img, 48px);
+	border: 0;
+}
+
+.psf-search-custom .psf-search-suggestion .psf-search-sp,
+.psf-search-custom .psf-search-suggestion .psf-search-sp * {
+	color: var(--psfs-dd-price-c, #254d18);
+	font-size: var(--psfs-dd-price-fs, 14px);
+	font-weight: 600;
+}
+
+.psf-search-custom .psf-search-suggestion .psf-search-sp del,
+.psf-search-custom .psf-search-suggestion .psf-search-sp del * {
+	color: var(--psfs-ph, #8a8a8a);
+	font-weight: 400;
+}
+
+/* ---------- Mobile overlay ---------- */
+
+.psf-search-custom .psf-search-overlay-mobile {
+	background: var(--psfs-om-bg, #fff);
+}
+
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return,
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return:hover,
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return:focus {
+	background: var(--psfs-om-bar-bg, #254d18);
+	height: var(--psfs-bar-h, 44px);
+}
+
+.psf-search-custom .psf-search-om-bar,
+.psf-search-custom .psf-search-om-bar .psf-search-search-wrapp.psf-search-style-custom .psf-search-sf-wrapp input[type="search"].psf-search-search-input {
+	height: var(--psfs-bar-h, 44px);
+}
+
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return svg,
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return svg path {
+	fill: var(--psfs-om-ico, #fff);
+}
+
+.psf-search-custom .psf-search-om-bar button.psf-search-om-return svg {
+	top: 50%;
+	transform: translateY(-50%);
+}

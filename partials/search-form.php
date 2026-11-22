@@ -16,6 +16,7 @@ $uniqueID     = ++ PSF_SEARCH()->searchInstances;
 $layoutType   = ! empty( $args['layout'] ) ? $args['layout'] : $layout->layout;
 $iconType     = ! empty( $args['icon'] ) ? $args['icon'] : $layout->icon;
 $isAMP        = Helpers::isAMPEndpoint();
+$isCustomStyle = ( $args['style'] ?? PSF_SEARCH()->settings->getOption( 'search_style' ) ) === \PsfSearch\Appearance::STYLE;
 $iconColor    = ! empty( $args['icon_color'] ) ? $args['icon_color'] : '';
 $customParams = apply_filters( 'psf_search/search_bar/custom_params', [], PSF_SEARCH()->searchInstances );
 
@@ -61,7 +62,11 @@ if ( ! empty( $args['layout_breakpoint'] ) && ! empty( $args['layout_breakpoint'
 
 			<div class="psf-search-voice-search"></div>
 
-			<?php if ( $hasSubmit === 'on' ) : ?>
+			<?php if ( $hasSubmit === 'on' && $isCustomStyle ) : ?>
+				<button type="submit"
+						aria-label="<?php echo esc_attr( empty( $submitText ) ? __( 'Search', 'psf-search' ) : $submitText ); ?>"
+						class="psf-search-search-submit"><span class="psf-search-btn-ico"><?php echo Helpers::getMagnifierIco( 'psf-search-ico-magnifier', $iconType ); ?></span><span class="psf-search-btn-txt"><?php echo esc_html( empty( $submitText ) ? __( 'Search', 'psf-search' ) : $submitText ); ?></span></button>
+			<?php elseif ( $hasSubmit === 'on' ) : ?>
 				<button type="submit"
 						aria-label="<?php echo empty( $submitText ) ? __( 'Search', 'psf-search' ) : esc_attr( $submitText ); ?>"
 						class="psf-search-search-submit"><?php echo empty( $submitText ) ? Helpers::getMagnifierIco( 'psf-search-ico-magnifier', $iconType ) : esc_html( $submitText ); ?></button>

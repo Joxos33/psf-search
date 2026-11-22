@@ -267,6 +267,11 @@ class Install {
 				 */
 				remove_action( 'update_option_' . PSF_SEARCH_SETTINGS_KEY, [ PSF_SEARCH()->tntsearchMySql, 'buildIndexOnchangeSettings' ], 10 );
 
+				// Must run before createOptions(), which fills missing keys with defaults.
+				if ( ! empty( $pluginVersion ) && version_compare( $pluginVersion, '0.2.0', '<' ) ) {
+					\PsfSearch\Appearance::migrateFromLegacy();
+				}
+
 				self::createOptions();
 
 				self::maybeUpgradeOptions( 'pro' );
@@ -309,14 +314,11 @@ class Install {
 	 * @return bool
 	 */
 	public static function shouldRebuildIndex__premium_only( $savedPluginVersion, $currentPluginVersion ) {
+		// PSF Search versions whose updates don't change the index format.
 		$versionsWithoutIndexChanges = [
 			[
-				'min' => '1.32.0',
-				'max' => '1.33.0',
-			],
-			[
-				'min' => '1.34.0',
-				'max' => '1.34.3',
+				'min' => '0.1.0',
+				'max' => '0.2.99',
 			],
 		];
 
