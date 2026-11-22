@@ -13,8 +13,7 @@ $prefix = 'psfsearch-debug_page-';
 		<div class="psf-search-settings__title">
 			<div class="psf-search-settings__title-top">
 				<div class="psf-search-settings-logo-wrapper">
-					<img class="psf-search-settings-logo" src="<?php echo PSF_SEARCH_URL . 'assets/img/logo-30.png'; ?>"/>
-					<span class="psf-search-settings-logo-pro">Pro</span>
+					<span class="psf-search-settings-wordmark">PSF Search</span>
 				</div>
 				<span class="psf-search-settings__title-core"><?php _e( 'Debug page', 'psf-search' ); ?></span>
 			</div>

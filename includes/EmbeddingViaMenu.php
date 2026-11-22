@@ -188,7 +188,6 @@ class EmbeddingViaMenu {
 
 	public function getDescription() {
 		$html  = '<div class="psf-search-admin-menu-item-desc js-psf-search-admin-menu-item-desc">';
-		$html .= '<img class="" src="' . PSF_SEARCH_URL . 'assets/img/logo-for-review.png" width="32" height="32" />';
 		$html .= '<span>' . __( 'PSF Search bar will be displayed here.', 'psf-search' ) . '</span>';
 		$html .= '</div>';
 

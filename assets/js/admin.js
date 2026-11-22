@@ -2100,49 +2100,49 @@
                     that.positionPreloader();
                 }
                 if (frame === 13) {
-                    $searchBar.val('fibo');
+                    $searchBar.val('sig ');
                 }
                 if (frame === 14) {
-                    $searchBar.val('fibo ');
+                    $searchBar.val('sig p');
                 }
                 if (frame === 15) {
-                    $searchBar.val('fibo s');
+                    $searchBar.val('sig p3');
                 }
                 if (frame === 16) {
-                    $searchBar.val('fibo se');
+                    $searchBar.val('sig p36');
                 }
                 if (frame === 17) {
-                    $searchBar.val('fibo sea');
+                    $searchBar.val('sig p365');
                 }
                 if (frame === 18) {
-                    $searchBar.val('fibo sear');
+                    $searchBar.val('sig p365 ');
                 }
                 if (frame === 19) {
-                    $searchBar.val('fibo searc');
+                    $searchBar.val('sig p365 x');
                 }
                 if (frame === 20) {
-                    $searchBar.val('fibo search');
+                    $searchBar.val('sig p365 xl');
                 }
                 if (frame === 30) {
-                    $searchBar.val('fibo searc');
+                    $searchBar.val('sig p365 x');
                 }
                 if (frame === 31) {
-                    $searchBar.val('fibo sear');
+                    $searchBar.val('sig p365 ');
                 }
                 if (frame === 32) {
-                    $searchBar.val('fibo sea');
+                    $searchBar.val('sig p365');
                 }
                 if (frame === 33) {
-                    $searchBar.val('fibo se');
+                    $searchBar.val('sig p36');
                 }
                 if (frame === 34) {
-                    $searchBar.val('fibo s');
+                    $searchBar.val('sig p3');
                 }
                 if (frame === 35) {
-                    $searchBar.val('fibo ');
+                    $searchBar.val('sig p');
                 }
                 if (frame === 36) {
-                    $searchBar.val('fibo');
+                    $searchBar.val('sig ');
                 }
                 if (frame === 37) {
                     $searchBar.val('fib');

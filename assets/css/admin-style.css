@@ -221,31 +221,13 @@
 	position: relative;
 }
 
-.psf-search-settings-logo-pro {
-	display: none;
-}
-
-.psf-search-settings-pro .psf-search-settings-logo-pro {
-	display: block;
-	position: absolute;
-	right: 11px;
-	top: 1px;
-	color: #000;
-	text-transform: uppercase;
-	font-size: 10px;
-	font-weight: normal;
-	height: 17px;
-	line-height: 17px;
-	padding: 0px 5px;
-}
-
-.psf-search-settings-pro .psf-search-settings-logo {
-	margin-right: 40px;
-}
-
-.psf-search-settings-logo {
-	max-height: 30px;
+.psf-search-settings-wordmark {
+	font-size: 24px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: #1d2327;
 	margin-right: 25px;
+	white-space: nowrap;
 }
 
 .psf-search-settings__title-core {
@@ -820,7 +802,6 @@ table.widefat.psf-search-analytics-table {
 }
 
 .psf-search-review-notice .psf-search-review-notice-logo {
-	background: url('../img/logo-for-review.png') no-repeat;
 	background-size: 68px;
 	float: left;
 	margin-top: 5px;
