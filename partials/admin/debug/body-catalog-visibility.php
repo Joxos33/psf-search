@@ -1,9 +1,9 @@
 <?php
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSFS_FILE' ) ) {
 	exit;
 }
 
@@ -13,7 +13,7 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 	<h3>Products visibility</h3>
 
 	<p>Show terms IDs that are in charge of catalog visibility. It's obtained from <code>wc_get_product_visibility_term_ids()</code></p>
-	<table class="wc_status_table widefat dgwt-wcas-table-visibility" style="max-width: 300px;">
+	<table class="wc_status_table widefat psfs-table-visibility" style="max-width: 300px;">
 		<tr>
 			<td></td>
 			<td><b>Term ID</b></td>
@@ -37,9 +37,9 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 	<p>Visibility checker bases on visibility options stored in a <code>term_relationships</code> table.
 		All products below <b>are published</b>. There are no draft, private or pending products.</p>
 	<form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-		<input type="hidden" name="page" value="dgwt_wcas_debug">
+		<input type="hidden" name="page" value="psfs_debug">
 		<input type="hidden" name="catalog_visibility" value="1">
-		<?php wp_nonce_field( 'dgwt_wcas_debug_visibility', '_wpnonce', false ); ?>
+		<?php wp_nonce_field( 'psfs_debug_visibility', '_wpnonce', false ); ?>
 		<button class="button" type="submit">Show results</button>
 	</form>
 
@@ -50,9 +50,9 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 	<p>Automatically regenerates visibility data in the <code>term_relationships</code> table for products marked as
 		“out of stock” to ensure they are correctly indexed and displayed in search results.</p>
 	<form action="<?php echo admin_url( 'admin.php' ); ?>" method="get">
-		<input type="hidden" name="page" value="dgwt_wcas_debug">
+		<input type="hidden" name="page" value="psfs_debug">
 		<input type="hidden" name="out_of_stock_visibility_fix_tool" value="1">
-		<?php wp_nonce_field( 'dgwt_wcas_debug_visibility_fix_outofstock', '_wpnonce', false ); ?>
+		<?php wp_nonce_field( 'psfs_debug_visibility_fix_outofstock', '_wpnonce', false ); ?>
 		<button class="button" type="submit">Fix out of stock visibility</button>
 	</form>
 		<?php
@@ -65,7 +65,7 @@ $visibility_terms = wc_get_product_visibility_term_ids();
 if (
 	! empty( $_GET['catalog_visibility'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'dgwt_wcas_debug_visibility' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_visibility' )
 ) :
 
 	$shopOnly   = Helpers::getProductsByVisibility( $visibility_terms['exclude-from-search'] );
@@ -93,7 +93,7 @@ if (
 		<tr>
 			<td>
 				<b>Hidden</b>
-				<span class="dgwt-wcas-tooltip-basic dashicons dashicons-editor-help" title='Hidden products are actually those marked in the database as "Shop only" and "Search results only"'></span>
+				<span class="psfs-tooltip-basic dashicons dashicons-editor-help" title='Hidden products are actually those marked in the database as "Shop only" and "Search results only"'></span>
 			</td>
 			<td><?php echo '<b>' . count( $hidden ); ?></b> products</td>
 		</tr>
@@ -122,7 +122,7 @@ if (
 		<tr>
 			<td>
 				<b>Hidden</b>
-				<span class="dgwt-wcas-tooltip-basic dashicons dashicons-editor-help" title='Hidden products are actually those marked in the database as "Shop only" and "Search results only"'></span>
+				<span class="psfs-tooltip-basic dashicons dashicons-editor-help" title='Hidden products are actually those marked in the database as "Shop only" and "Search results only"'></span>
 			</td>
 			<td><?php Helpers::printExplodedProductsIdsAsLinks( $hidden ); ?></td>
 		</tr>
@@ -139,15 +139,15 @@ endif;
 if (
 	! empty( $_GET['out_of_stock_visibility_fix_tool'] ) &&
 	! empty( $_REQUEST['_wpnonce'] ) &&
-	wp_verify_nonce( $_REQUEST['_wpnonce'], 'dgwt_wcas_debug_visibility_fix_outofstock' )
+	wp_verify_nonce( $_REQUEST['_wpnonce'], 'psfs_debug_visibility_fix_outofstock' )
 ) :
 	Helpers::fixOutOfStock__premium_only();
-	wp_safe_redirect( admin_url( 'admin.php?page=dgwt_wcas_debug&outofstock_fixed=1' ) );
+	wp_safe_redirect( admin_url( 'admin.php?page=psfs_debug&outofstock_fixed=1' ) );
 endif;
 
 if ( isset( $_GET['outofstock_fixed'] ) && $_GET['outofstock_fixed'] === '1' ) :
 	?>
-	<div class="dgwt-wcas-notice notice notice-success">
+	<div class="psfs-notice notice notice-success">
 		<p>Success!</p>
 	</div>
 	<?php

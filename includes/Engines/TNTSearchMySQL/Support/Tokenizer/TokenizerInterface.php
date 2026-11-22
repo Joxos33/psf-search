@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer;
 
 interface TokenizerInterface {
 	/**

@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Support;
+namespace PsfSearch\Engines\TNTSearchMySQL\Support;
 
 // Exit if accessed directly
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,7 +38,7 @@ class SynonymsHandler {
 		 * In other contexts, it is retrieved directly from the plugin settings (search_synonyms).
 		 */
 		if ( is_null( $rawSynonyms ) ) {
-			$rawSynonyms = DGWT_WCAS()->settings->getOption( 'search_synonyms' );
+			$rawSynonyms = PSFS()->settings->getOption( 'search_synonyms' );
 		}
 
 		if ( ! is_null( $rawSynonyms ) ) {
@@ -86,12 +86,12 @@ class SynonymsHandler {
 
 		$canCanonize = true;
 
-		if ( ! defined( 'DGWT_WCAS_SYN_MAX_COMPLEX_PATTERNS' ) ) {
-			define( 'DGWT_WCAS_SYN_MAX_COMPLEX_PATTERNS', 1000 );
+		if ( ! defined( 'PSFS_SYN_MAX_COMPLEX_PATTERNS' ) ) {
+			define( 'PSFS_SYN_MAX_COMPLEX_PATTERNS', 1000 );
 		}
 
-		if ( ! defined( 'DGWT_WCAS_SYN_MAX_SINGLE_WORD' ) ) {
-			define( 'DGWT_WCAS_SYN_MAX_SINGLE_WORD', 40000 );
+		if ( ! defined( 'PSFS_SYN_MAX_SINGLE_WORD' ) ) {
+			define( 'PSFS_SYN_MAX_SINGLE_WORD', 40000 );
 		}
 
 		/**
@@ -105,7 +105,7 @@ class SynonymsHandler {
 		 * Safety check #2 – perform a maximum of 1,000 preg_replace() operations.
 		 * This number of patterns should add an overhead of approximately 15ms.
 		 */
-		if ( ! empty( $this->lookup['complex_patterns'] ) && count( $this->lookup['complex_patterns'] ) > DGWT_WCAS_SYN_MAX_COMPLEX_PATTERNS ) {
+		if ( ! empty( $this->lookup['complex_patterns'] ) && count( $this->lookup['complex_patterns'] ) > PSFS_SYN_MAX_COMPLEX_PATTERNS ) {
 			$canCanonize = false;
 		}
 
@@ -113,7 +113,7 @@ class SynonymsHandler {
 		 * Safety check #3 – perform a maximum of 40000 operations inside preg_replace_callback.
 		 * The operation with this limit should add an overhead of approximately 2ms.
 		 */
-		if ( ! empty( $this->lookup['single_word'] ) && count( $this->lookup['single_word'] ) > DGWT_WCAS_SYN_MAX_SINGLE_WORD ) {
+		if ( ! empty( $this->lookup['single_word'] ) && count( $this->lookup['single_word'] ) > PSFS_SYN_MAX_SINGLE_WORD ) {
 			$canCanonize = false;
 		}
 

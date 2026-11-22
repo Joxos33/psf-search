@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,15 +19,15 @@ class Request {
 		Builder::addInfo( 'start_taxonomies_ts', time() );
 		Builder::log( '[Taxonomy index] Building...' );
 
-		$activeTaxonomies = DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' );
+		$activeTaxonomies = PSFS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_direct' );
 		foreach ( $activeTaxonomies as $taxonomy ) {
 			self::buildForTaxonomy( $taxonomy );
 		}
 
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexT->complete();
+			PSFS()->tntsearchMySql->asynchBuildIndexT->complete();
 		} else {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexT->save()->maybe_dispatch();
+			PSFS()->tntsearchMySql->asynchBuildIndexT->save()->maybe_dispatch();
 		}
 	}
 
@@ -40,14 +40,14 @@ class Request {
 			'taxonomy'   => $taxonomy,
 			'hide_empty' => true,
 		];
-		$args = apply_filters( 'dgwt/wcas/search/' . $taxonomy . '/args', $args );
+		$args = apply_filters( 'psfs/search/' . $taxonomy . '/args', $args );
 
 		$langsWithoutDefault = [];
 		if ( Multilingual::isMultilingual() ) {
 			$terms               = Multilingual::getTermsInAllLangs( $taxonomy );
 			$langsWithoutDefault = array_values( array_diff( Multilingual::getLanguages(), [ Multilingual::getDefaultLanguage() ] ) );
 		} else {
-			$terms = get_terms( apply_filters( 'dgwt/wcas/search/' . $taxonomy . '/args', $args ) );
+			$terms = get_terms( apply_filters( 'psfs/search/' . $taxonomy . '/args', $args ) );
 		}
 
 		if ( empty( $terms ) ) {
@@ -55,7 +55,7 @@ class Request {
 		}
 
 		// Exclude terms matched by user choice from "Exclude/include products" option
-		$filterMode = DGWT_WCAS()->settings->getOption( 'filter_products_mode', 'exclude' );
+		$filterMode = PSFS()->settings->getOption( 'filter_products_mode', 'exclude' );
 		$rules      = Helpers::getFilterProductsRules__premium_only();
 		if ( $filterMode === 'exclude' && ! empty( $rules ) && isset( $rules[ $taxonomy ] ) ) {
 			$excluded = array_map( 'intval', $rules[ $taxonomy ] );
@@ -91,18 +91,18 @@ class Request {
 		);
 
 		$termsSet      = [];
-		$termsSetCount = apply_filters( 'dgwt/wcas/indexer/taxonomy-set-items-count', Builder::TAXONOMY_SET_ITEMS_COUNT );
-		$termsSetCount = apply_filters( 'dgwt/wcas/indexer/taxonomy_set_items_count', $termsSetCount );
+		$termsSetCount = apply_filters( 'psfs/indexer/taxonomy-set-items-count', Builder::TAXONOMY_SET_ITEMS_COUNT );
+		$termsSetCount = apply_filters( 'psfs/indexer/taxonomy_set_items_count', $termsSetCount );
 
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			DGWT_WCAS()->tntsearchMySql->asynchBuildIndexT->task( $terms );
+			PSFS()->tntsearchMySql->asynchBuildIndexT->task( $terms );
 		} else {
 			$i = 0;
 			foreach ( $terms as $term ) {
 				$termsSet[] = $term;
 
 				if ( count( $termsSet ) === $termsSetCount || $i + 1 === count( $terms ) ) {
-					DGWT_WCAS()->tntsearchMySql->asynchBuildIndexT->push_to_queue( $termsSet );
+					PSFS()->tntsearchMySql->asynchBuildIndexT->push_to_queue( $termsSet );
 					$termsSet = [];
 				}
 

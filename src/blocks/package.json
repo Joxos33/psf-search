@@ -1,5 +1,5 @@
 {
-	"name": "@fibosearch/blocks",
+	"name": "@psfsearch/blocks",
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"lint:js": "NODE_ENV=production wp-scripts lint-js ."
 	},
 	"keywords": [],
-	"author": "FiboSearch Team",
+	"author": "PSF Search Team",
 	"devDependencies": {
 		"@wordpress/scripts": "^26.19.0"
 	},

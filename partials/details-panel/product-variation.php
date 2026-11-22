@@ -2,26 +2,26 @@
 /**
  * The Template for displaying product variation info in Details Panel
  *
- * This template can be overridden by copying it to yourtheme/fibosearch/details-panel/product-variation.php.
+ * This template can be overridden by copying it to yourtheme/psfsearch/details-panel/product-variation.php.
  */
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSFS_FILE' ) ) {
 	exit;
 }
 
 ?>
-<div class="dgwt-wcas-details-inner dgwt-wcas-details-inner-product">
+<div class="psfs-details-inner psfs-details-inner-product">
 
-	<?php do_action( 'dgwt/wcas/details_panel/product_variation/container_before', $vars ); ?>
+	<?php do_action( 'psfs/details_panel/product_variation/container_before', $vars ); ?>
 
-	<div class="dgwt-wcas-product-details">
+	<div class="psfs-product-details">
 
-		<?php do_action( 'dgwt/wcas/details_panel/product_variation/image_before', $vars ); ?>
+		<?php do_action( 'psfs/details_panel/product_variation/image_before', $vars ); ?>
 		<a href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
-			<div class="dgwt-wcas-details-main-image">
+			<div class="psfs-details-main-image">
 				<img
 					src="<?php echo esc_url( $vars->imageSrc ); ?>"
 					<?php echo ( ! empty( $vars->imageSrcset ) && ! empty( $vars->imageSizes ) ) ? 'srcset="' . esc_attr( $vars->imageSrcset ) . '"' : ''; ?>
@@ -30,40 +30,40 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 				>
 			</div>
 		</a>
-		<?php do_action( 'dgwt/wcas/details_panel/product_variation/image_after', $vars ); ?>
+		<?php do_action( 'psfs/details_panel/product_variation/image_after', $vars ); ?>
 
-		<div class="dgwt-wcas-details-space">
-			<a class="dgwt-wcas-details-product-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
+		<div class="psfs-details-space">
+			<a class="psfs-details-product-title" href="<?php echo esc_url( $vars->link ); ?>" title="<?php echo esc_attr( wp_strip_all_tags( $vars->name ) ); ?>">
 				<?php echo Helpers::secureHtmlOutput( $vars->name, 'name' ); ?>
 			</a>
 			<?php if ( ! empty( $vars->sku ) ) : ?>
-				<span class="dgwt-wcas-details-product-sku"><?php echo Helpers::secureHtmlOutput( $vars->sku, 'sku' ); ?></span>
+				<span class="psfs-details-product-sku"><?php echo Helpers::secureHtmlOutput( $vars->sku, 'sku' ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( $vars->reviewCount > 0 ) : ?>
 
-				<div class="dgwt-wcas-pd-rating">
-					<?php echo Helpers::secureHtmlOutput( $vars->ratingHtml . ' <span class="dgwt-wcas-pd-review">(' . $vars->reviewCount . ')</span>', 'rating' ); ?>
+				<div class="psfs-pd-rating">
+					<?php echo Helpers::secureHtmlOutput( $vars->ratingHtml . ' <span class="psfs-pd-review">(' . $vars->reviewCount . ')</span>', 'rating' ); ?>
 				</div>
 
 			<?php endif; ?>
 
-			<?php do_action( 'dgwt/wcas/details_panel/product_variation/price_before', $vars ); ?>
-			<div class="dgwt-wcas-pd-price">
+			<?php do_action( 'psfs/details_panel/product_variation/price_before', $vars ); ?>
+			<div class="psfs-pd-price">
 				<?php echo Helpers::secureHtmlOutput( $vars->priceHtml, 'price' ); ?>
 			</div>
-			<?php do_action( 'dgwt/wcas/details_panel/product_variation/price_after', $vars ); ?>
+			<?php do_action( 'psfs/details_panel/product_variation/price_after', $vars ); ?>
 
 			<?php if ( ! empty( $vars->attributes ) ) : ?>
-				<div class="dgwt-wcas-details-hr"></div>
-				<div class="dgwt-wcas-details-attributes">
+				<div class="psfs-details-hr"></div>
+				<div class="psfs-details-attributes">
 					<?php foreach ( $vars->attributes as $attribute ) : ?>
-						<div class="dgwt-wcas-details-attribute"><b><?php echo Helpers::secureHtmlOutput( $attribute['label'], 'attribute_label' ); ?></b>: <span><?php echo Helpers::secureHtmlOutput( $attribute['value'], 'attribute_value' ); ?></span></div>
+						<div class="psfs-details-attribute"><b><?php echo Helpers::secureHtmlOutput( $attribute['label'], 'attribute_label' ); ?></b>: <span><?php echo Helpers::secureHtmlOutput( $attribute['value'], 'attribute_value' ); ?></span></div>
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 
-			<div class="dgwt-wcas-details-hr"></div>
+			<div class="psfs-details-hr"></div>
 
 			<?php
 			if ( ! empty( $vars->stockAvailability ) ) {
@@ -71,15 +71,15 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 			};
 			?>
 
-			<?php do_action( 'dgwt/wcas/details_panel/product_variation/add_to_cart_before', $vars ); ?>
-			<div class="dgwt-wcas-pd-addtc js-dgwt-wcas-pd-addtc">
-				<form class="dgwt-wcas-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
+			<?php do_action( 'psfs/details_panel/product_variation/add_to_cart_before', $vars ); ?>
+			<div class="psfs-pd-addtc js-psfs-pd-addtc">
+				<form class="psfs-pd-addtc-form" action="" method="post" enctype="multipart/form-data">
 					<?php
 
 					if ( $vars->showQuantity ) {
 						woocommerce_quantity_input(
 							[
-								'input_name' => 'js-dgwt-wcas-quantity',
+								'input_name' => 'js-psfs-quantity',
 							],
 							$vars->wooObject,
 							true
@@ -96,12 +96,12 @@ if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
 					?>
 				</form>
 			</div>
-			<?php do_action( 'dgwt/wcas/details_panel/product_variation/add_to_cart_after', $vars ); ?>
+			<?php do_action( 'psfs/details_panel/product_variation/add_to_cart_after', $vars ); ?>
 
 		</div>
 
 	</div>
 
-	<?php do_action( 'dgwt/wcas/details_panel/product_variation/container_after', $vars ); ?>
+	<?php do_action( 'psfs/details_panel/product_variation/container_after', $vars ); ?>
 
 </div>

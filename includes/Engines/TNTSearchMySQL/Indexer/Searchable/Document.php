@@ -1,10 +1,10 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AbstractDocument;
-use DgoraWcas\Multilingual;
-use DgoraWcas\Product;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\AbstractDocument;
+use PsfSearch\Multilingual;
+use PsfSearch\Product;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

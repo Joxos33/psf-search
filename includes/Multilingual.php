@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +21,7 @@ class Multilingual {
 
 		$isMultilingual = false;
 
-		if ( defined( 'DGWT_WCAS_DISABLE_MULTILINGUAL' ) && DGWT_WCAS_DISABLE_MULTILINGUAL ) {
+		if ( defined( 'PSFS_DISABLE_MULTILINGUAL' ) && PSFS_DISABLE_MULTILINGUAL ) {
 			return false;
 		}
 
@@ -66,7 +66,7 @@ class Multilingual {
 			$provider = 'Polylang';
 		}
 
-		$provider = apply_filters( 'dgwt/wcas/multilingual/provider', $provider );
+		$provider = apply_filters( 'psfs/multilingual/provider', $provider );
 
 		return $provider;
 	}
@@ -104,7 +104,7 @@ class Multilingual {
 			$defaultLang = substr( $locale, 0, 2 );
 		}
 
-		return apply_filters( 'dgwt/wcas/multilingual/default-language', $defaultLang );
+		return apply_filters( 'psfs/multilingual/default-language', $defaultLang );
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Multilingual {
 		}
 		//phpcs:enable
 
-		return apply_filters( 'dgwt/wcas/multilingual/current-language', $currentLang );
+		return apply_filters( 'psfs/multilingual/current-language', $currentLang );
 	}
 
 	/**
@@ -174,7 +174,7 @@ class Multilingual {
 			$lang = pll_get_post_language( $postID, 'slug' );
 		}
 
-		$lang = apply_filters( 'dgwt/wcas/multilingual/post-language', $lang, $postID, $postType );
+		$lang = apply_filters( 'psfs/multilingual/post-language', $lang, $postID, $postType );
 
 		return $lang;
 	}
@@ -222,7 +222,7 @@ class Multilingual {
 		}
 
 		// TranslatePress/qTranslate-XT has no language relationship with the post, so we always return the default
-		$lang = apply_filters( 'dgwt/wcas/multilingual/term-language', $lang, $termID, $taxonomy );
+		$lang = apply_filters( 'psfs/multilingual/term-language', $lang, $termID, $taxonomy );
 
 		return $lang;
 	}
@@ -254,7 +254,7 @@ class Multilingual {
 			}
 		}
 
-		$permalink = apply_filters( 'dgwt/wcas/multilingual/post-permalink', $permalink, $lang, $postID );
+		$permalink = apply_filters( 'psfs/multilingual/post-permalink', $permalink, $lang, $postID );
 
 		return $permalink;
 	}
@@ -267,7 +267,7 @@ class Multilingual {
 	 * @return array
 	 */
 	public static function getLanguages( $includeInvalid = false ) {
-		$includeHidden = apply_filters( 'dgwt/wcas/multilingual/languages/include-hidden', false );
+		$includeHidden = apply_filters( 'psfs/multilingual/languages/include-hidden', false );
 
 		if ( self::$langs !== null && ! $includeInvalid && ! $includeHidden ) {
 			return self::$langs;
@@ -327,7 +327,7 @@ class Multilingual {
 			$langs[] = self::getDefaultLanguage();
 		}
 
-		$langs = apply_filters( 'dgwt/wcas/multilingual/languages', $langs, $includeInvalid, $includeHidden );
+		$langs = apply_filters( 'psfs/multilingual/languages', $langs, $includeInvalid, $includeHidden );
 
 		if ( ! $includeInvalid && ! $includeHidden ) {
 			self::$langs = $langs;
@@ -408,7 +408,7 @@ class Multilingual {
 					'hide_empty'       => true,
 					'suppress_filters' => false,
 				];
-				$termsInLang = get_terms( apply_filters( 'dgwt/wcas/search/' . $taxonomy . '/args', $args ) );
+				$termsInLang = get_terms( apply_filters( 'psfs/search/' . $taxonomy . '/args', $args ) );
 
 				if ( ! empty( $termsInLang ) && is_array( $termsInLang ) ) {
 					foreach ( $termsInLang as $termInLang ) {
@@ -435,7 +435,7 @@ class Multilingual {
 
 		}
 
-		$terms = apply_filters( 'dgwt/wcas/multilingual/terms-in-all-languages', $terms, $taxonomy );
+		$terms = apply_filters( 'psfs/multilingual/terms-in-all-languages', $terms, $taxonomy );
 
 		return $terms;
 	}
@@ -468,7 +468,7 @@ class Multilingual {
 					'suppress_filters' => false,
 				]
 			);
-			$termsInLang = get_terms( apply_filters( 'dgwt/wcas/search/' . $args['taxonomy'] . '/args', $args ) );
+			$termsInLang = get_terms( apply_filters( 'psfs/search/' . $args['taxonomy'] . '/args', $args ) );
 
 			if ( ! empty( $termsInLang ) && is_array( $termsInLang ) ) {
 				foreach ( $termsInLang as $termInLang ) {
@@ -496,7 +496,7 @@ class Multilingual {
 			$terms = get_terms( $args );
 		}
 
-		$terms = apply_filters( 'dgwt/wcas/multilingual/terms-in-language', $terms, $args, $lang );
+		$terms = apply_filters( 'psfs/multilingual/terms-in-language', $terms, $args, $lang );
 
 		return $terms;
 	}
@@ -546,7 +546,7 @@ class Multilingual {
 			}
 		}
 
-		$term = apply_filters( 'dgwt/wcas/multilingual/term', $term, $termID, $taxonomy, $lang );
+		$term = apply_filters( 'psfs/multilingual/term', $term, $termID, $taxonomy, $lang );
 
 		return $term;
 	}
@@ -628,7 +628,7 @@ class Multilingual {
 			wp_cache_flush();
 		}
 
-		do_action( 'dgwt/wcas/multilingual/switch-language', $lang );
+		do_action( 'psfs/multilingual/switch-language', $lang );
 	}
 
 }

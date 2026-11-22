@@ -1,12 +1,12 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPAsyncRequest;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPAsyncRequest;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'wcas';
+	protected $prefix = 'psfs';
 
 	/**
 	 * @var string
@@ -42,8 +42,8 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $dataPart ) {
-		if ( ! defined( 'DGWT_WCAS_VARIATIONS_UPDATE_TASK' ) ) {
-			define( 'DGWT_WCAS_VARIATIONS_UPDATE_TASK', true );
+		if ( ! defined( 'PSFS_VARIATIONS_UPDATE_TASK' ) ) {
+			define( 'PSFS_VARIATIONS_UPDATE_TASK', true );
 		}
 
 		Builder::log( '[Variation update] Starting async task. Variations set count: ' . count( $dataPart['items'] ) . '. Parent: #' . $dataPart['parent_id'], 'debug', 'file', 'variation', $this->action );
@@ -179,7 +179,7 @@ class AsyncVariationsUpdater extends WPBackgroundProcess {
 		}
 
 		// Wait 15s and redispatch process if queue is not empty and process is not running
-		$redispatchProcess = apply_filters( 'dgwt/wcas/indexer/redispatch-not-running-process', true );
+		$redispatchProcess = apply_filters( 'psfs/indexer/redispatch-not-running-process', true );
 		if ( $redispatchProcess ) {
 			for ( $i = 1; $i <= 10; $i ++ ) {
 				$sleep = $i <= 5 ? 1 : 2;

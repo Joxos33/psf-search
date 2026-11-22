@@ -1,8 +1,8 @@
 (function ($) {
 
     var RADIO_SETTINGS_TOGGLE = {
-        inputSel: 'dgwt-wcas-options-toggle input[type=radio]',
-        groupSel: 'dgwt_wcas_settings-group',
+        inputSel: 'psfs-options-toggle input[type=radio]',
+        groupSel: 'psfs_settings-group',
         reloadChoices: function (name) {
             var _this = this,
                 $group = $('[name="' + name + '"]').closest('.' + _this.groupSel),
@@ -14,7 +14,7 @@
             value = value.replace('_', '-');
 
             if (value.length > 0) {
-                currentClass = 'wcas-opt-' + value;
+                currentClass = 'psfs-opt-' + value;
             }
 
             if ($('.' + currentClass).length > 0) {
@@ -24,7 +24,7 @@
 
         },
         hideAll: function ($group) {
-            $group.find('tr[class*="wcas-opt-"]').hide();
+            $group.find('tr[class*="psfs-opt-"]').hide();
         },
         registerListeners: function () {
             var _this = this;
@@ -54,20 +54,20 @@
 
 
     var CHECKBOX_SETTINGS_TOGGLE = {
-        inputSel: 'dgwt-wcas-options-cb-toggle input[type=checkbox]',
-        groupSel: 'dgwt_wcas_settings-group',
+        inputSel: 'psfs-options-cb-toggle input[type=checkbox]',
+        groupSel: 'psfs_settings-group',
         reloadChoices: function ($el) {
             var _this = this,
                 checked = $el.is(':checked'),
                 groupClass = _this.getGroupSelector($el);
 
-            $('.' + groupClass + ':not(.dgwt-wcas-options-cb-toggle)').hide();
+            $('.' + groupClass + ':not(.psfs-options-cb-toggle)').hide();
 
             if (checked) {
                 $('.' + groupClass).each(function () {
                     if (!(
-                        $(this).hasClass('js-dgwt-wcas-adv-settings')
-                        && $('.js-dgwt-wcas-adv-settings-toggle').hasClass('woocommerce-input-toggle--disabled')
+                        $(this).hasClass('js-psfs-adv-settings')
+                        && $('.js-psfs-adv-settings-toggle').hasClass('woocommerce-input-toggle--disabled')
                     )
                     ) {
                         $(this).fadeIn();
@@ -76,12 +76,12 @@
             }
         },
         getGroupSelector($el) {
-            var $row = $el.closest('.dgwt-wcas-options-cb-toggle'),
+            var $row = $el.closest('.psfs-options-cb-toggle'),
                 className = '',
                 classList = $row.attr('class').split(/\s+/);
 
             $.each(classList, function (index, item) {
-                if (item.indexOf('js-dgwt-wcas-cbtgroup-') !== -1) {
+                if (item.indexOf('js-psfs-cbtgroup-') !== -1) {
                     className = item;
                 }
             });
@@ -107,7 +107,7 @@
                     if (checked) {
                         $('.' + groupClass).fadeIn();
                     } else {
-                        $('.' + groupClass + ':not(.dgwt-wcas-options-cb-toggle)').hide();
+                        $('.' + groupClass + ':not(.psfs-options-cb-toggle)').hide();
                     }
                 });
             }
@@ -131,7 +131,7 @@
     };
 
     var CHECKBOX_SETTINGS_TOGGLE_SIBLING = {
-        inputSel: 'js-dgwt-wcas-options-toggle-sibling input[type=checkbox]',
+        inputSel: 'js-psfs-options-toggle-sibling input[type=checkbox]',
 
         toogleSibling: function ($el) {
             var _this = this;
@@ -181,7 +181,7 @@
             var _this = this,
                 layoutVal = _this.$layoutSelectEl.find('option:selected').val(),
                 overlayOnMobileVal = _this.$overlayMobileEl.is(':checked'),
-                hasAdvSettings = $('.js-dgwt-wcas-adv-settings-toggle').hasClass('woocommerce-input-toggle--enabled');
+                hasAdvSettings = $('.js-psfs-adv-settings-toggle').hasClass('woocommerce-input-toggle--enabled');
 
             _this.hideOption(_this.$switchLayoutBreakpointEl);
             _this.hideOption(_this.$mobileOverlayBreakpointEl);
@@ -261,14 +261,14 @@
     var AJAX_BUILD_INDEX = {
         actionTriggerClass: 'js-ajax-build-index',
         actionStopTriggerClass: 'js-ajax-stop-build-index',
-        indexingWrapperClass: 'js-dgwt-wcas-indexing-wrapper',
-        indexerTabProgressClass: 'js-dgwt-wcas-indexer-tab-progress',
-        indexerTabErrorClass: 'js-dgwt-wcas-indexer-tab-error',
-        indexerMenuErrorClass: 'dgwt-wcas-menu-warning-icon',
+        indexingWrapperClass: 'js-psfs-indexing-wrapper',
+        indexerTabProgressClass: 'js-psfs-indexer-tab-progress',
+        indexerTabErrorClass: 'js-psfs-indexer-tab-error',
+        indexerMenuErrorClass: 'psfs-menu-warning-icon',
         getWrapper: function () {
             var _this = this;
 
-            return $('.' + _this.indexingWrapperClass).closest('.dgwt-wcas-settings-info');
+            return $('.' + _this.indexingWrapperClass).closest('.psfs-settings-info');
         },
         registerListeners: function () {
             var _this = this;
@@ -280,7 +280,7 @@
 
                 $btn.attr('disabled', 'disabled');
 
-                $('.dgwt-wcas-settings-info').addClass('wcas-ajax-build-index-wait');
+                $('.psfs-settings-info').addClass('psfs-ajax-build-index-wait');
                 $('.' + _this.indexerTabErrorClass).removeClass('active');
                 $('.' + _this.indexerTabProgressClass).addClass('active');
 
@@ -288,17 +288,17 @@
 
                 if (emergency) {
 
-                    $('.dgwt-wcas-indexing-header__title').text('[Emergency mode] Wait... Indexing in progress');
-                    $('.dgwt-wcas-indexing-header__troubleshooting, .dgwt-wcas-indexing-header__actions, .js-dgwt-wcas-indexer-details').hide();
+                    $('.psfs-indexing-header__title').text('[Emergency mode] Wait... Indexing in progress');
+                    $('.psfs-indexing-header__troubleshooting, .psfs-indexing-header__actions, .js-psfs-indexer-details').hide();
                 }
 
                 $.ajax({
                     url: ajaxurl,
                     type: 'post',
                     data: {
-                        action: 'dgwt_wcas_build_index',
+                        action: 'psfs_build_index',
                         emergency: emergency,
-                        _wpnonce: dgwt_wcas.nonces.build_index,
+                        _wpnonce: psfs.nonces.build_index,
                     },
                     success: function (response) {
                         if (typeof response != 'undefined' && response.success) {
@@ -308,7 +308,7 @@
                     },
                     complete: function () {
                         $btn.removeAttr('disabled');
-                        $('.dgwt-wcas-settings-info').removeClass('wcas-ajax-build-index-wait');
+                        $('.psfs-settings-info').removeClass('psfs-ajax-build-index-wait');
                         if (emergency) {
                             window.location.reload();
                         }
@@ -328,8 +328,8 @@
                     url: ajaxurl,
                     type: 'post',
                     data: {
-                        action: 'dgwt_wcas_stop_build_index',
-                        _wpnonce: dgwt_wcas.nonces.stop_build_index,
+                        action: 'psfs_stop_build_index',
+                        _wpnonce: psfs.nonces.stop_build_index,
                     },
                     success: function (response) {
                         if (typeof response != 'undefined' && response.success) {
@@ -352,8 +352,8 @@
                     url: ajaxurl,
                     type: 'post',
                     data: {
-                        action: 'dgwt_wcas_build_index_heartbeat',
-                        _wpnonce: dgwt_wcas.nonces.build_index_heartbeat,
+                        action: 'psfs_build_index_heartbeat',
+                        _wpnonce: psfs.nonces.build_index_heartbeat,
                     },
                     success: function (response) {
                         if (typeof response != 'undefined' && response.success) {
@@ -377,11 +377,11 @@
                                 // If refresh cookie non exist and Troubleshooting tab is hidden then reload
                                 if (
                                     !document.cookie.split(';').some(function (item) {
-                                        return item.trim().indexOf('dgwt_wcas_refresh_once=' + response.data.refresh_once) === 0;
+                                        return item.trim().indexOf('psfs_refresh_once=' + response.data.refresh_once) === 0;
                                     }) &&
-                                    $('#dgwt_wcas_troubleshooting-tab').css('display') === 'none'
+                                    $('#psfs_troubleshooting-tab').css('display') === 'none'
                                 ) {
-                                    document.cookie = 'dgwt_wcas_refresh_once=' + response.data.refresh_once;
+                                    document.cookie = 'psfs_refresh_once=' + response.data.refresh_once;
                                     location.reload();
                                 }
                             }
@@ -397,22 +397,22 @@
                 display;
 
 
-            $(document).on('click', '.js-dgwt-wcas-indexing-details-trigger', function (e) {
+            $(document).on('click', '.js-psfs-indexing-details-trigger', function (e) {
                 e.preventDefault();
 
-                var $details = $('.js-dgwt-wcas-indexer-details');
+                var $details = $('.js-psfs-indexer-details');
 
                 if ($details.hasClass('show')) {
                     $details.removeClass('show');
                     $details.addClass('hide');
-                    $('.js-dgwt-wcas-indexing__showd').addClass('show').removeClass('hide');
-                    $('.js-dgwt-wcas-indexing__hided').addClass('hide').removeClass('show');
+                    $('.js-psfs-indexing__showd').addClass('show').removeClass('hide');
+                    $('.js-psfs-indexing__hided').addClass('hide').removeClass('show');
                     display = false;
                 } else {
                     $details.addClass('show');
                     $details.removeClass('hide');
-                    $('.js-dgwt-wcas-indexing__showd').addClass('hide').removeClass('show');
-                    $('.js-dgwt-wcas-indexing__hided').addClass('show').removeClass('hide');
+                    $('.js-psfs-indexing__showd').addClass('hide').removeClass('show');
+                    $('.js-psfs-indexing__hided').addClass('show').removeClass('hide');
                     display = true;
                 }
 
@@ -420,8 +420,8 @@
                     url: ajaxurl,
                     type: 'post',
                     data: {
-                        action: 'dgwt_wcas_index_details_toggle',
-                        _wpnonce: dgwt_wcas.nonces.index_details_toggle,
+                        action: 'psfs_index_details_toggle',
+                        _wpnonce: psfs.nonces.index_details_toggle,
                         display: display
                     }
                 });
@@ -433,7 +433,7 @@
             var _this = this;
             _this.registerListeners();
 
-            if ($('.' + _this.indexingWrapperClass).length > 0 && typeof dgwt_wcas['is_premium'] !== 'undefined') {
+            if ($('.' + _this.indexingWrapperClass).length > 0 && typeof psfs['is_premium'] !== 'undefined') {
                 _this.heartbeat();
             }
             _this.detailsToggle();
@@ -444,12 +444,12 @@
         init: function () {
             var _this = this;
 
-            if ($('.dgwt-wcas-selectize').length > 0) {
+            if ($('.psfs-selectize').length > 0) {
                 $.ajax({
                     url: ajaxurl,
                     data: {
-                        action: 'dgwt_wcas_settings_list_custom_fields',
-                        _wpnonce: $('.dgwt-wcas-selectize').data('security')
+                        action: 'psfs_settings_list_custom_fields',
+                        _wpnonce: $('.psfs-selectize').data('security')
 
                     },
                     success: function (res) {
@@ -459,7 +459,7 @@
                         }
                     },
                     error: function () {
-                        $('.dgwt-wcas-selectize').removeClass('loading').parent().find('.dgwt_wcas_settings-description-field').html(dgwt_wcas.adminLabels.custom_fields_loading_error).css({'color': '#f04124'});
+                        $('.psfs-selectize').removeClass('loading').parent().find('.psfs_settings-description-field').html(psfs.adminLabels.custom_fields_loading_error).css({'color': '#f04124'});
                     },
                 });
             }
@@ -467,7 +467,7 @@
         },
         initSelectize: function (loadedOptions) {
 
-            var $inputs = $('.dgwt-wcas-selectize');
+            var $inputs = $('.psfs-selectize');
 
 
             if ($inputs.length > 0) {
@@ -520,7 +520,7 @@
                             $.ajax({
                                 url: ajaxurl,
                                 data: {
-                                    action: 'dgwt_wcas_settings_list_custom_fields',
+                                    action: 'psfs_settings_list_custom_fields',
                                     _wpnonce: $input.data('security')
 
                                 },
@@ -543,7 +543,7 @@
     var TOOLTIP = {
         init: function () {
             var _this = this;
-            var $tooltips = $('.js-dgwt-wcas-tooltip');
+            var $tooltips = $('.js-psfs-tooltip');
 
             if ($tooltips.length > 0) {
                 $tooltips.each(function () {
@@ -552,17 +552,17 @@
                     var placement = $(this).data('tooltip-placement');
 
                     // Accept only content containers generated by Helpers::createTooltip().
-                    if (typeof contentEl !== 'string' || !/^js-dgwt-wcas-tooltip-id[a-z0-9_-]*$/.test(contentEl)) {
+                    if (typeof contentEl !== 'string' || !/^js-psfs-tooltip-id[a-z0-9_-]*$/.test(contentEl)) {
                         return;
                     }
 
-                    var content = $('div.' + contentEl + ' > .dgwt-wcas-tooltip-wrapper')[0];
+                    var content = $('div.' + contentEl + ' > .psfs-tooltip-wrapper')[0];
 
                     if (content) {
                         // The tooltip content must come only from the content container, never from the "title" attribute.
                         element.removeAttribute('title');
 
-                        const instance = new DgwtWcasTooltip(element, {
+                        const instance = new PsfsTooltip(element, {
                             title: content,
                             placement: placement,
                             trigger: "hover",
@@ -577,9 +577,9 @@
     };
 
     var ADVANCED_SETTINGS = {
-        advClass: 'js-dgwt-wcas-adv-settings',
-        highlightClass: 'dgwt-wcas-opt-highlight',
-        transClass: 'dgwt-wcas-opt-transition',
+        advClass: 'js-psfs-adv-settings',
+        highlightClass: 'psfs-opt-highlight',
+        transClass: 'psfs-opt-transition',
         init: function () {
             var _this = this;
 
@@ -588,8 +588,8 @@
         },
         clickListener: function () {
             var _this = this;
-            $(document).on('click', '.js-dgwt-wcas-settings__advanced', function () {
-                var $toggleEl = $('.js-dgwt-wcas-adv-settings-toggle'),
+            $(document).on('click', '.js-psfs-settings__advanced', function () {
+                var $toggleEl = $('.js-psfs-adv-settings-toggle'),
                     choice;
 
                 if ($toggleEl.hasClass('woocommerce-input-toggle--disabled')) {
@@ -607,7 +607,7 @@
                 $options = $('.' + _this.advClass);
 
             if ($options.length > 0) {
-                var showAdvanced = $('.js-dgwt-wcas-adv-settings-toggle').hasClass('woocommerce-input-toggle--enabled');
+                var showAdvanced = $('.js-psfs-adv-settings-toggle').hasClass('woocommerce-input-toggle--enabled');
 
                 if (!showAdvanced) {
                     $options.hide();
@@ -620,20 +620,20 @@
         saveChoice: function (choice) {
             var _this = this;
 
-            $('.js-dgwt-wcas-settings__advanced').append('<span class="dgwt-wcas-adv-settings-saving">saving...</span>');
+            $('.js-psfs-settings__advanced').append('<span class="psfs-adv-settings-saving">saving...</span>');
 
             $.ajax({
                 url: ajaxurl,
                 data: {
-                    _wpnonce: dgwt_wcas.nonces.advanced_options_switch,
-                    action: 'dgwt_wcas_adv_settings',
+                    _wpnonce: psfs.nonces.advanced_options_switch,
+                    action: 'psfs_adv_settings',
                     adv_settings_value: choice
                 }
             }).done(function (data) {
-                $('.dgwt-wcas-adv-settings-saving').remove();
+                $('.psfs-adv-settings-saving').remove();
             });
 
-            var $el = $('.js-dgwt-wcas-adv-settings-toggle');
+            var $el = $('.js-psfs-adv-settings-toggle');
 
             if (choice === 'show') {
                 $el.removeClass('woocommerce-input-toggle--disabled');
@@ -688,26 +688,26 @@
     };
 
     var STATS_INTERFACE = {
-        placeholderClass: 'js-dgwt-wcas-stats-placeholder',
-        placeholderClassLoaded: 'js-dgwt-wcas-stats-placeholder-loaded',
-        preloaderClass: 'dgwt-wcas-stats-preloader',
-        settingsGroupSel: '#dgwt_wcas_analytics',
-        criticalSearchesLoadMoreClass: 'js-dgwt-wcas-critical-searches-load-more',
-        autocompleteWithResultsLoadMoreClass: 'js-dgwt-wcas-autocomplete-with-results-load-more',
-        searchPageWithResultsLoadMoreClass: 'js-dgwt-wcas-search-page-with-results-load-more',
-        checkPhraseStatusClass: 'js-dgwt-wcas-stats-critical-check',
-        checkPhraseStatusInitClass: 'js-dgwt-wcas-stats-critical-check-init',
-        rowLoadingClass: 'dgwt-wcas-analytics-row-loading',
-        languageSwitcherClass: 'js-dgwt-wcas-analytics-lang',
-        excludePhraseClass: 'js-dgwt-wcas-analytics-exclude-phrase',
-        checkIndexerAction: 'js-dgwt-wcas-analytics-check-indexer',
-        resetAnalyticsAction: 'js-dgwt-wcas-analytics-reset',
-        analyticsExportCSVAction: 'js-dgwt-wcas-analytics-export-csv',
+        placeholderClass: 'js-psfs-stats-placeholder',
+        placeholderClassLoaded: 'js-psfs-stats-placeholder-loaded',
+        preloaderClass: 'psfs-stats-preloader',
+        settingsGroupSel: '#psfs_analytics',
+        criticalSearchesLoadMoreClass: 'js-psfs-critical-searches-load-more',
+        autocompleteWithResultsLoadMoreClass: 'js-psfs-autocomplete-with-results-load-more',
+        searchPageWithResultsLoadMoreClass: 'js-psfs-search-page-with-results-load-more',
+        checkPhraseStatusClass: 'js-psfs-stats-critical-check',
+        checkPhraseStatusInitClass: 'js-psfs-stats-critical-check-init',
+        rowLoadingClass: 'psfs-analytics-row-loading',
+        languageSwitcherClass: 'js-psfs-analytics-lang',
+        excludePhraseClass: 'js-psfs-analytics-exclude-phrase',
+        checkIndexerAction: 'js-psfs-analytics-check-indexer',
+        resetAnalyticsAction: 'js-psfs-analytics-reset',
+        analyticsExportCSVAction: 'js-psfs-analytics-export-csv',
         init: function () {
             var _this = this;
 
             // Do nothing if the analytics module is disabled
-            if (typeof dgwt_wcas.analytics == 'undefined' || !dgwt_wcas.analytics.enabled) {
+            if (typeof psfs.analytics == 'undefined' || !psfs.analytics.enabled) {
                 return;
             }
 
@@ -717,8 +717,8 @@
             var _this = this,
                 $languageSelectorEl = $('.' + _this.languageSwitcherClass);
 
-            $(document).on('dgwt_wcas_settings_group_active', function (event, el) {
-                if ($(el).length > 0 && el.id === 'dgwt_wcas_analytics') {
+            $(document).on('psfs_settings_group_active', function (event, el) {
+                if ($(el).length > 0 && el.id === 'psfs_analytics') {
                     if (!_this.isLoaded()) {
                         _this.loadInterface();
                     }
@@ -743,7 +743,7 @@
         showPreloader: function () {
             var _this = this,
                 $placeholder = $('.' + _this.placeholderClass),
-                html = '<img class="' + _this.preloaderClass + '" src="' + dgwt_wcas.analytics.images.placeholder + '" />';
+                html = '<img class="' + _this.preloaderClass + '" src="' + psfs.analytics.images.placeholder + '" />';
 
             if ($placeholder.length) {
                 $placeholder.append(html);
@@ -756,8 +756,8 @@
             _this.showPreloader();
 
             var data = {
-                'action': 'dgwt_wcas_load_stats_interface',
-                '_wpnonce': dgwt_wcas.analytics.nonce.analytics_load_interface
+                'action': 'psfs_load_stats_interface',
+                '_wpnonce': psfs.analytics.nonce.analytics_load_interface
             };
 
             if ($lang.length > 0) {
@@ -787,7 +787,7 @@
             // Critical searches - check status
             $elements.on('click', function (e) {
                 e.preventDefault();
-                $(e.target).after('<img src="' + dgwt_wcas.images.admin_preloader_url + '" />');
+                $(e.target).after('<img src="' + psfs.images.admin_preloader_url + '" />');
                 _this.checkPhraseStatus($(e.target));
             })
 
@@ -802,7 +802,7 @@
             // Critical searches - load more
             $('.' + _this.criticalSearchesLoadMoreClass).on('click', function (e) {
                 e.preventDefault();
-                $(this).before('<img src="' + dgwt_wcas.images.admin_preloader_url + '" />');
+                $(this).before('<img src="' + psfs.images.admin_preloader_url + '" />');
                 $(this).closest('tr').addClass(_this.rowLoadingClass);
                 _this.loadMoreCriticalSearches();
             })
@@ -827,10 +827,10 @@
             $('.' + _this.resetAnalyticsAction).on('click', function (e) {
                 var $el = $(this);
                 e.preventDefault();
-                if (confirm(dgwt_wcas.analytics.labels.reset_stats_confirm)) {
+                if (confirm(psfs.analytics.labels.reset_stats_confirm)) {
                     var data = {
-                        'action': 'dgwt_wcas_reset_stats',
-                        '_wpnonce': dgwt_wcas.analytics.nonce.reset_stats
+                        'action': 'psfs_reset_stats',
+                        '_wpnonce': psfs.analytics.nonce.reset_stats
                     };
 
                     $el.next().addClass('loading');
@@ -852,10 +852,10 @@
             $('.' + _this.analyticsExportCSVAction).on('click', function (e) {
                 var $el = $(this);
                 e.preventDefault();
-                var url = new URL(dgwt_wcas.adminurl);
-                url.searchParams.append('action', 'dgwt_wcas_export_stats_csv');
+                var url = new URL(psfs.adminurl);
+                url.searchParams.append('action', 'psfs_export_stats_csv');
                 url.searchParams.append('context', $(this).data('context'));
-                url.searchParams.append('_wpnonce', dgwt_wcas.analytics.nonce.export_stats_csv);
+                url.searchParams.append('_wpnonce', psfs.analytics.nonce.export_stats_csv);
                 if ($lang.length > 0) {
                     url.searchParams.append('lang', $lang.val());
                 }
@@ -868,9 +868,9 @@
                 $lang = $('.' + _this.languageSwitcherClass + ' option:selected');
 
             var data = {
-                'action': 'dgwt_wcas_check_critical_phrase',
+                'action': 'psfs_check_critical_phrase',
                 'phrase': $el.closest('tr').find('td:nth-child(2)').text(),
-                '_wpnonce': dgwt_wcas.analytics.nonce.check_critical_phrase
+                '_wpnonce': psfs.analytics.nonce.check_critical_phrase
             };
 
             if ($lang.length > 0) {
@@ -902,7 +902,7 @@
                         if ($checkIndexerEl.length > 0) {
                             $('.' + _this.checkIndexerAction).on('click', function (e) {
                                 e.preventDefault();
-                                var $tab = $('#dgwt_wcas_performance-tab');
+                                var $tab = $('#psfs_performance-tab');
                                 if ($tab.length > 0) {
                                     $tab[0].click();
                                     $([document.documentElement, document.body]).animate({
@@ -920,9 +920,9 @@
                 $lang = $('.' + _this.languageSwitcherClass + ' option:selected');
 
             var data = {
-                'action': 'dgwt_wcas_exclude_critical_phrase',
+                'action': 'psfs_exclude_critical_phrase',
                 'phrase': $el.find('td:nth-child(2)').text(),
-                '_wpnonce': dgwt_wcas.analytics.nonce.exclude_critical_phrase
+                '_wpnonce': psfs.analytics.nonce.exclude_critical_phrase
             };
 
             if ($lang.length > 0) {
@@ -934,7 +934,7 @@
                 data,
                 function (response) {
                     if (typeof response == 'object' && response.success) {
-                        $el.addClass('dgwt-wcas-analytics-disable-row');
+                        $el.addClass('psfs-analytics-disable-row');
                         $el.find('td:last-child').html(response.data);
                     }
                 }
@@ -945,9 +945,9 @@
                 $lang = $('.' + _this.languageSwitcherClass + ' option:selected');
 
             var data = {
-                'action': 'dgwt_wcas_laod_more_critical_searches',
-                'loaded': $('.js-dgwt-wcas-critical-searches-row').length,
-                '_wpnonce': dgwt_wcas.analytics.nonce.load_more_critical_searches
+                'action': 'psfs_laod_more_critical_searches',
+                'loaded': $('.js-psfs-critical-searches-row').length,
+                '_wpnonce': psfs.analytics.nonce.load_more_critical_searches
             };
 
             if ($lang.length > 0) {
@@ -981,20 +981,20 @@
             var _this = this,
                 $lang = $('.' + _this.languageSwitcherClass + ' option:selected');
 
-            $el.before('<img src="' + dgwt_wcas.images.admin_preloader_url + '" />');
+            $el.before('<img src="' + psfs.images.admin_preloader_url + '" />');
             $el.closest('tr').addClass(_this.rowLoadingClass);
 
             if (context === 'autocomplete') {
                 var data = {
-                    'action': 'dgwt_wcas_laod_more_autocomplete',
-                    'loaded': $('.js-dgwt-wcas-autocomplete-row').length,
-                    '_wpnonce': dgwt_wcas.analytics.nonce.load_more_autocomplete
+                    'action': 'psfs_laod_more_autocomplete',
+                    'loaded': $('.js-psfs-autocomplete-row').length,
+                    '_wpnonce': psfs.analytics.nonce.load_more_autocomplete
                 };
             } else {
                 var data = {
-                    'action': 'dgwt_wcas_laod_more_search_page',
-                    'loaded': $('.js-dgwt-wcas-search-page-row').length,
-                    '_wpnonce': dgwt_wcas.analytics.nonce.load_more_search_page
+                    'action': 'psfs_laod_more_search_page',
+                    'loaded': $('.js-psfs-search-page-row').length,
+                    '_wpnonce': psfs.analytics.nonce.load_more_search_page
                 };
             }
 
@@ -1015,7 +1015,7 @@
         },
     };
 
-    window.DGWT_WCAS_SEARCH_PREVIEW = {
+    window.PSFS_SEARCH_PREVIEW = {
         previewWrapper: {},
         searchWrapp: {},
         suggestionWrapp: {},
@@ -1024,11 +1024,11 @@
         init: function () {
             var _this = this;
 
-            _this.previewWrapper = $('.js-dgwt-wcas-preview');
-            _this.searchWrapp = $('.js-dgwt-wcas-search-wrapp');
-            _this.suggestionWrapp = $('.js-dgwt-wcas-suggestions-wrapp');
-            _this.detailsWrapp = $('.js-dgwt-wcas-details-wrapp');
-            _this.searchInput = $('.js-dgwt-wcas-search-input');
+            _this.previewWrapper = $('.js-psfs-preview');
+            _this.searchWrapp = $('.js-psfs-search-wrapp');
+            _this.suggestionWrapp = $('.js-psfs-suggestions-wrapp');
+            _this.detailsWrapp = $('.js-psfs-details-wrapp');
+            _this.searchInput = $('.js-psfs-search-input');
 
             _this.onChangeHandler();
             _this.onColorHandler();
@@ -1061,11 +1061,11 @@
             var timeout,
                 $tooltip;
 
-            $('.js-dgwt-wcas-preview-source').on('click', function (e) {
+            $('.js-psfs-preview-source').on('click', function (e) {
                 e.preventDefault();
                 var relativeX = e.pageX - 100,
                     relativeY = e.pageY + 10,
-                    tooltipHTML = '<div class="dgwt-wcas-click-alert">' + window.dgwt_wcas.adminLabels.preview + '</div>';
+                    tooltipHTML = '<div class="psfs-click-alert">' + window.psfs.adminLabels.preview + '</div>';
 
                 if (typeof timeout != 'undefined') {
                     clearTimeout(timeout);
@@ -1075,14 +1075,14 @@
                 }
 
                 $('body').append(tooltipHTML);
-                $tooltip = $('.dgwt-wcas-click-alert');
+                $tooltip = $('.psfs-click-alert');
                 $tooltip.css({left: relativeX, top: relativeY});
-                $('.dgwt-wcas-preview-source').addClass('dgwt-wcas-preview-source-no-click');
+                $('.psfs-preview-source').addClass('psfs-preview-source-no-click');
 
                 timeout = setTimeout(function () {
                     $tooltip.fadeOut(500, function () {
                         $(this).remove();
-                        $('.dgwt-wcas-preview-source').removeClass('dgwt-wcas-preview-source-no-click');
+                        $('.psfs-preview-source').removeClass('psfs-preview-source-no-click');
                     });
                 }, 2000);
 
@@ -1090,22 +1090,22 @@
         },
         noResultsHandler: function () {
             var _this = this,
-                suggestionsTarget = '.js-dgwt-wcas-preview .dgwt-wcas-suggestion:not(.js-dgwt-wcas-suggestion-nores)',
-                noresTarget = '.js-dgwt-wcas-suggestion-nores',
+                suggestionsTarget = '.js-psfs-preview .psfs-suggestion:not(.js-psfs-suggestion-nores)',
+                noresTarget = '.js-psfs-suggestion-nores',
                 target = "textarea[id*='search_no_results_text']";
 
             $(document).on('focus', target, function () {
-                $(suggestionsTarget).addClass('dgwt-wcas-hide');
-                $(noresTarget).removeClass('dgwt-wcas-hide');
-                _this.detailsWrapp.addClass('dgwt-wcas-hide');
-                _this.suggestionWrapp.addClass('dgwt-wcas-preview-nores');
+                $(suggestionsTarget).addClass('psfs-hide');
+                $(noresTarget).removeClass('psfs-hide');
+                _this.detailsWrapp.addClass('psfs-hide');
+                _this.suggestionWrapp.addClass('psfs-preview-nores');
             });
 
             $(document).on('blur', target, function () {
-                $(suggestionsTarget).removeClass('dgwt-wcas-hide');
-                $(noresTarget).addClass('dgwt-wcas-hide');
-                _this.detailsWrapp.removeClass('dgwt-wcas-hide');
-                _this.suggestionWrapp.removeClass('dgwt-wcas-preview-nores');
+                $(suggestionsTarget).removeClass('psfs-hide');
+                $(noresTarget).addClass('psfs-hide');
+                _this.detailsWrapp.removeClass('psfs-hide');
+                _this.suggestionWrapp.removeClass('psfs-preview-nores');
             });
 
         },
@@ -1134,8 +1134,8 @@
                 ];
             for (var i = 0; i < options.length; i++) {
                 var tag = ['search_style', 'search_layout'].includes(options[i]) ? 'select' : 'input',
-                    selector = tag + "[id='dgwt_wcas_settings\\[" + options[i] + "\\]']",
-                    altSelector = tag + "[id^='dgwt_wcas_settings'][data-option-trigger='" + options[i] + "']",
+                    selector = tag + "[id='psfs_settings\\[" + options[i] + "\\]']",
+                    altSelector = tag + "[id^='psfs_settings'][data-option-trigger='" + options[i] + "']",
                     $el = $(selector),
                     $altEl = $(altSelector),
                     methodToCall = 'onChange' + _this.camelCase(options[i]);
@@ -1146,7 +1146,7 @@
                     });
 
                     $(document).on('change', selector, function () {
-                        methodToCall = $(this).attr('id').replace(']', '').replace('dgwt_wcas_settings[', '');
+                        methodToCall = $(this).attr('id').replace(']', '').replace('psfs_settings[', '');
                         methodToCall = 'onChange' + _this.camelCase(methodToCall);
                         if (typeof (_this[methodToCall]) === 'function') {
                             _this[methodToCall]($(this), this.value);
@@ -1195,7 +1195,7 @@
                 _this[methodToCall]($el, $el.val());
 
                 $(document).on("change", selector, function () {
-                    methodToCall = $(this).attr('id').replace(']', '').replace('dgwt_wcas_settings[', '');
+                    methodToCall = $(this).attr('id').replace(']', '').replace('psfs_settings[', '');
                     methodToCall = 'onColor' + _this.camelCase(methodToCall);
                     _this[methodToCall]($(this), this.value);
                 });
@@ -1203,7 +1203,7 @@
         },
         onColorChangeHandler: function ($el, value) {
             var _this = this,
-                methodToCall = $el.attr('id').replace(']', '').replace('dgwt_wcas_settings[', '');
+                methodToCall = $el.attr('id').replace(']', '').replace('psfs_settings[', '');
             methodToCall = 'onColor' + _this.camelCase(methodToCall);
             _this[methodToCall]($el, value);
         },
@@ -1218,14 +1218,14 @@
             for (var i = 0; i < options.length; i++) {
                 // Scope to the settings form, so elements injected elsewhere on the page (e.g. admin notices) are ignored.
                 var elType = options[i] === 'search_no_results_text' ? 'textarea' : 'input',
-                    selector = "form.dgwt-eq-settings-form " + elType + "[id*='" + options[i] + "']",
+                    selector = "form.psfs-eq-settings-form " + elType + "[id*='" + options[i] + "']",
                     $el = $(selector),
                     methodToCall = 'onType' + _this.camelCase(options[i],);
 
                 _this[methodToCall]($el, $el.val());
 
                 $(document).on("input", selector, function (a) {
-                    methodToCall = $(a.target).attr('id').replace(']', '').replace('dgwt_wcas_settings[', '');
+                    methodToCall = $(a.target).attr('id').replace(']', '').replace('psfs_settings[', '');
                     methodToCall = 'onType' + _this.camelCase(methodToCall);
                     _this[methodToCall]($(a.target), this.value);
                 });
@@ -1246,13 +1246,13 @@
         },
         onChangeShowSubmitButton: function ($el, value) {
             var _this = this,
-                $submit = $('.js-dgwt-wcas-search-submit');
+                $submit = $('.js-psfs-search-submit');
 
             if (_this.isChecked($el)) {
-                _this.searchWrapp.addClass('dgwt-wcas-has-submit');
-                _this.searchWrapp.removeClass('dgwt-wcas-no-submit');
+                _this.searchWrapp.addClass('psfs-has-submit');
+                _this.searchWrapp.removeClass('psfs-no-submit');
                 $submit.show();
-                $('.dgwt-wcas-sf-wrapp > .dgwt-wcas-ico-magnifier').hide();
+                $('.psfs-sf-wrapp > .psfs-ico-magnifier').hide();
 
                 var $textSubmitBgEl = $("input[id*='bg_submit_color']");
                 var $textSubmitTextEl = $("input[id*='text_submit_color']");
@@ -1264,10 +1264,10 @@
                 }, 10);
 
             } else {
-                _this.searchWrapp.addClass('dgwt-wcas-no-submit');
-                _this.searchWrapp.removeClass('dgwt-wcas-has-submit');
+                _this.searchWrapp.addClass('psfs-no-submit');
+                _this.searchWrapp.removeClass('psfs-has-submit');
                 $submit.hide();
-                $('.dgwt-wcas-sf-wrapp > .dgwt-wcas-ico-magnifier').show();
+                $('.psfs-sf-wrapp > .psfs-ico-magnifier').show();
                 _this.positionPreloader();
             }
 
@@ -1275,23 +1275,23 @@
         },
         onChangeShowProductImage: function ($el, value) {
             var _this = this,
-                $imageWrapp = $('.js-dgwt-wcas-si'),
-                $contentWrapp = $('.js-dgwt-wcas-content-wrapp');
+                $imageWrapp = $('.js-psfs-si'),
+                $contentWrapp = $('.js-psfs-content-wrapp');
 
             if (_this.isChecked($el)) {
-                _this.suggestionWrapp.addClass('dgwt-wcas-has-img');
+                _this.suggestionWrapp.addClass('psfs-has-img');
 
-                $('.dgwt-wcas-suggestion-product > .dgwt-wcas-st').remove();
-                $('.dgwt-wcas-suggestion-product > .dgwt-wcas-sp').remove();
+                $('.psfs-suggestion-product > .psfs-st').remove();
+                $('.psfs-suggestion-product > .psfs-sp').remove();
 
                 $contentWrapp.show();
                 $imageWrapp.show();
 
             } else {
-                _this.suggestionWrapp.removeClass('dgwt-wcas-has-img');
+                _this.suggestionWrapp.removeClass('psfs-has-img');
 
                 $contentWrapp.each(function () {
-                    $(this).closest('.dgwt-wcas-suggestion-product').append($(this).html());
+                    $(this).closest('.psfs-suggestion-product').append($(this).html());
                 });
 
                 $contentWrapp.hide();
@@ -1301,59 +1301,59 @@
         },
         onChangeShowProductSku: function ($el, value) {
             var _this = this,
-                $skuWrapp = $('.js-dgwt-wcas-sku');
+                $skuWrapp = $('.js-psfs-sku');
 
             if (_this.isChecked($el)) {
-                _this.suggestionWrapp.addClass('dgwt-wcas-has-sku');
+                _this.suggestionWrapp.addClass('psfs-has-sku');
                 $skuWrapp.show();
 
             } else {
-                _this.suggestionWrapp.removeClass('dgwt-wcas-has-sku');
+                _this.suggestionWrapp.removeClass('psfs-has-sku');
                 $skuWrapp.hide();
             }
 
         },
         onChangeShowProductDesc: function ($el, value) {
             var _this = this,
-                $descWrapp = $('.js-dgwt-wcas-sd');
+                $descWrapp = $('.js-psfs-sd');
 
             if (_this.isChecked($el)) {
-                _this.suggestionWrapp.addClass('dgwt-wcas-has-desc');
+                _this.suggestionWrapp.addClass('psfs-has-desc');
                 $descWrapp.show();
 
             } else {
-                _this.suggestionWrapp.removeClass('dgwt-wcas-has-desc');
+                _this.suggestionWrapp.removeClass('psfs-has-desc');
                 $descWrapp.hide();
             }
 
         },
         onChangeShowProductPrice: function ($el, value) {
             var _this = this,
-                $priceWrapp = $('.js-dgwt-wcas-sp');
+                $priceWrapp = $('.js-psfs-sp');
 
             if (_this.isChecked($el)) {
-                _this.suggestionWrapp.addClass('dgwt-wcas-has-price');
+                _this.suggestionWrapp.addClass('psfs-has-price');
                 $priceWrapp.show();
 
             } else {
-                _this.suggestionWrapp.removeClass('dgwt-wcas-has-price');
+                _this.suggestionWrapp.removeClass('psfs-has-price');
                 $priceWrapp.hide();
             }
 
         },
         onChangeShowMatchingCategories: function ($el, value) {
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-cat'),
-                $items = $('.dgwt-wcas-suggestion-cat');
+                $headline = $('.psfs-suggestion-headline-cat'),
+                $items = $('.psfs-suggestion-cat');
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1362,27 +1362,27 @@
         },
         onChangeShowCategoriesImages: function ($el, value) {
             var _this = this,
-                $contentWrapp = $('.js-dgwt-wcas-suggestion-cat');
+                $contentWrapp = $('.js-psfs-suggestion-cat');
 
             if (_this.isChecked($el)) {
-                $contentWrapp.addClass('dgwt-wcas-has-img');
+                $contentWrapp.addClass('psfs-has-img');
             } else {
-                $contentWrapp.removeClass('dgwt-wcas-has-img');
+                $contentWrapp.removeClass('psfs-has-img');
             }
         },
         onChangeShowMatchingTags: function ($el, value) {
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-tag'),
-                $items = $('.dgwt-wcas-suggestion-tag');
+                $headline = $('.psfs-suggestion-headline-tag'),
+                $items = $('.psfs-suggestion-tag');
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1391,17 +1391,17 @@
         },
         onChangeShowMatchingBrands: function ($el, value) {
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-brand'),
-                $items = $('.dgwt-wcas-suggestion-brand');
+                $headline = $('.psfs-suggestion-headline-brand'),
+                $items = $('.psfs-suggestion-brand');
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1410,27 +1410,27 @@
         },
         onChangeShowBrandsImages: function ($el, value) {
             var _this = this,
-                $contentWrapp = $('.js-dgwt-wcas-suggestion-brand');
+                $contentWrapp = $('.js-psfs-suggestion-brand');
 
             if (_this.isChecked($el)) {
-                $contentWrapp.addClass('dgwt-wcas-has-img');
+                $contentWrapp.addClass('psfs-has-img');
             } else {
-                $contentWrapp.removeClass('dgwt-wcas-has-img');
+                $contentWrapp.removeClass('psfs-has-img');
             }
         },
         onChangeShowMatchingPosts: function ($el, value) {
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-post'),
-                $items = $('.dgwt-wcas-suggestion-post');
+                $headline = $('.psfs-suggestion-headline-post'),
+                $items = $('.psfs-suggestion-post');
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1439,17 +1439,17 @@
         },
         onChangeShowMatchingPages: function ($el, value) {
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-page'),
-                $items = $('.dgwt-wcas-suggestion-page');
+                $headline = $('.psfs-suggestion-headline-page'),
+                $items = $('.psfs-suggestion-page');
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1459,17 +1459,17 @@
         onChangeShowMatchingPostType: function ($el, value) {
             var $postType = $($el).data('post-type');
             var _this = this,
-                $headline = $('.dgwt-wcas-suggestion-headline-' + $postType),
-                $items = $('.dgwt-wcas-suggestion-' + $postType);
+                $headline = $('.psfs-suggestion-headline-' + $postType),
+                $items = $('.psfs-suggestion-' + $postType);
 
             if (_this.isChecked($el)) {
                 $headline.show();
                 $items.show();
-                $items.removeClass('js-dgwt-wcas-suggestion-hidden');
+                $items.removeClass('js-psfs-suggestion-hidden');
             } else {
                 $headline.hide();
                 $items.hide();
-                $items.addClass('js-dgwt-wcas-suggestion-hidden');
+                $items.addClass('js-psfs-suggestion-hidden');
             }
 
             var $limitInput = $("input[id*='suggestions_limit']");
@@ -1478,12 +1478,12 @@
         onChangeShowPostTypeImages: function ($el, value) {
             var $postType = $($el).data('post-type');
             var _this = this,
-                $contentWrapp = $('.js-dgwt-wcas-suggestion-' + $postType);
+                $contentWrapp = $('.js-psfs-suggestion-' + $postType);
 
             if (_this.isChecked($el)) {
-                $contentWrapp.addClass('dgwt-wcas-has-img');
+                $contentWrapp.addClass('psfs-has-img');
             } else {
-                $contentWrapp.removeClass('dgwt-wcas-has-img');
+                $contentWrapp.removeClass('psfs-has-img');
             }
         },
         onChangeSuggestionsLimit: function ($el, value) {
@@ -1491,8 +1491,8 @@
                 var _this = this,
                     i = 0,
                     limit = 7,
-                    $duplicated = $('.dgwt-wcas-suggestion-duplicated'),
-                    types = ['brand', 'cat', 'tag', 'product'].concat(typeof dgwt_wcas.postTypes === 'undefined' ? ['post', 'page'] : dgwt_wcas.postTypes);
+                    $duplicated = $('.psfs-suggestion-duplicated'),
+                    types = ['brand', 'cat', 'tag', 'product'].concat(typeof psfs.postTypes === 'undefined' ? ['post', 'page'] : psfs.postTypes);
 
                 if (value.length > 0 && value != '0') {
                     limit = Math.min(Math.abs(value), 15);
@@ -1505,7 +1505,7 @@
                 var prototypes = [];
 
                 for (i = 0; i < types.length; i++) {
-                    var prototype = $('.dgwt-wcas-suggestion-' + types[i] + ':not(.js-dgwt-wcas-suggestion-hidden)');
+                    var prototype = $('.psfs-suggestion-' + types[i] + ':not(.js-psfs-suggestion-hidden)');
                     if (prototype.length > 0) {
                         prototypes.push(prototype);
                     }
@@ -1521,8 +1521,8 @@
                     while (slots > 0) {
 
                         var $cloned = prototypes[lastProtoypeIndex].clone();
-                        $cloned.addClass('dgwt-wcas-suggestion-duplicated');
-                        $cloned.removeClass('dgwt-wcas-suggestion-selected');
+                        $cloned.addClass('psfs-suggestion-duplicated');
+                        $cloned.removeClass('psfs-suggestion-selected');
                         prototypes[lastProtoypeIndex].after($cloned);
                         total++
 
@@ -1547,20 +1547,20 @@
 
             if (_this.isChecked($el)) {
                 _this.detailsWrapp.show();
-                _this.searchWrapp.addClass('dgwt-wcas-is-detail-box');
-                _this.previewWrapper.addClass('dgwt-wcas-is-details');
-                _this.previewWrapper.addClass('dgwt-wcas-details-right');
+                _this.searchWrapp.addClass('psfs-is-detail-box');
+                _this.previewWrapper.addClass('psfs-is-details');
+                _this.previewWrapper.addClass('psfs-details-right');
 
 
                 setTimeout(function () {
 
-                    $('.dgwt-wcas-suggestion-product:not(.dgwt-wcas-suggestion-duplicated)').addClass('dgwt-wcas-suggestion-selected');
+                    $('.psfs-suggestion-product:not(.psfs-suggestion-duplicated)').addClass('psfs-suggestion-selected');
 
-                    var $visibleSearchWrapp = $('.js-dgwt-wcas-preview-bar-example');
+                    var $visibleSearchWrapp = $('.js-psfs-preview-bar-example');
                     var searchWidth = $visibleSearchWrapp.width();
 
                     if (searchWidth >= 550) {
-                        _this.previewWrapper.addClass('dgwt-wcas-full-width');
+                        _this.previewWrapper.addClass('psfs-full-width');
 
                         var realWidth = getComputedStyle($visibleSearchWrapp[0]).width;
                         realWidth = Math.round(parseFloat(realWidth.replace('px', '')));
@@ -1582,11 +1582,11 @@
 
             } else {
                 _this.detailsWrapp.hide();
-                _this.searchWrapp.removeClass('dgwt-wcas-is-detail-box');
-                _this.previewWrapper.removeClass('dgwt-wcas-is-details');
-                _this.previewWrapper.removeClass('dgwt-wcas-details-right');
-                _this.previewWrapper.removeClass('dgwt-wcas-full-width');
-                $('.dgwt-wcas-suggestion-product').removeClass('dgwt-wcas-suggestion-selected');
+                _this.searchWrapp.removeClass('psfs-is-detail-box');
+                _this.previewWrapper.removeClass('psfs-is-details');
+                _this.previewWrapper.removeClass('psfs-details-right');
+                _this.previewWrapper.removeClass('psfs-full-width');
+                $('.psfs-suggestion-product').removeClass('psfs-suggestion-selected');
                 _this.suggestionWrapp.css('width', '');
                 _this.detailsWrapp.css('width', '');
             }
@@ -1598,35 +1598,35 @@
                 $inputSubmitBgColor = $('label[for*="bg_submit_color"]'),
                 i;
 
-            $('.dgwt-wcas-ico-magnifier').addClass('dgwt-wcas-hidden');
+            $('.psfs-ico-magnifier').addClass('psfs-hidden');
 
             for (i = 0; i < themes.length; i++) {
-                $('.js-dgwt-wcas-preview').removeClass('dgwt-wcas-open-' + themes[i]);
-                $('.js-dgwt-wcas-search-wrapp').removeClass('dgwt-wcas-style-' + themes[i]);
+                $('.js-psfs-preview').removeClass('psfs-open-' + themes[i]);
+                $('.js-psfs-search-wrapp').removeClass('psfs-style-' + themes[i]);
             }
 
-            $('.js-dgwt-wcas-ico-magnifier-' + value).removeClass('dgwt-wcas-hidden');
+            $('.js-psfs-ico-magnifier-' + value).removeClass('psfs-hidden');
 
-            $('.js-dgwt-wcas-preview').addClass('dgwt-wcas-open-' + value);
-            $('.js-dgwt-wcas-search-wrapp').addClass('dgwt-wcas-style-' + value);
+            $('.js-psfs-preview').addClass('psfs-open-' + value);
+            $('.js-psfs-search-wrapp').addClass('psfs-style-' + value);
             if (value === 'pirx-compact') {
-                $('.js-dgwt-wcas-search-wrapp').addClass('dgwt-wcas-style-pirx');
-                $('.js-dgwt-wcas-ico-magnifier-pirx').removeClass('dgwt-wcas-hidden');
+                $('.js-psfs-search-wrapp').addClass('psfs-style-pirx');
+                $('.js-psfs-ico-magnifier-pirx').removeClass('psfs-hidden');
             }
 
-            $('label[for*="bg_input_underlay_color"]').closest('tr').removeClass('dgwt-wcas-hidden');
+            $('label[for*="bg_input_underlay_color"]').closest('tr').removeClass('psfs-hidden');
 
             if (value === 'solaris') {
-                $('label[for*="bg_input_underlay_color"]').closest('tr').addClass('dgwt-wcas-hidden');
-                $('label[for*="show_submit_button"] .js-dgwt-wcas-tooltip').addClass('dgwt-wcas-hidden');
-                $('label[for*="search_submit_text"]').closest('tr').removeClass('dgwt-wcas-hidden');
+                $('label[for*="bg_input_underlay_color"]').closest('tr').addClass('psfs-hidden');
+                $('label[for*="show_submit_button"] .js-psfs-tooltip').addClass('psfs-hidden');
+                $('label[for*="search_submit_text"]').closest('tr').removeClass('psfs-hidden');
                 $('input[id*="search_submit_text"]').prop("disabled", false);
-                $inputSubmitBgColor.closest('tr').removeClass('dgwt-wcas-hidden');
-                $('label[for*="text_submit_color"] > span:nth-child(1)').removeClass('dgwt-wcas-hidden');
-                $('label[for*="text_submit_color"] > span:nth-child(2)').addClass('dgwt-wcas-hidden');
+                $inputSubmitBgColor.closest('tr').removeClass('psfs-hidden');
+                $('label[for*="text_submit_color"] > span:nth-child(1)').removeClass('psfs-hidden');
+                $('label[for*="text_submit_color"] > span:nth-child(2)').addClass('psfs-hidden');
                 $inputSubmitButton.prop("disabled", false);
-                $('.js-dgwt-wcas-submit-button-pirx-tooltip').removeClass('dgwt-wcas-hidden');
-                $('.dgwt-wcas-sf-wrapp').css('background-color', '');
+                $('.js-psfs-submit-button-pirx-tooltip').removeClass('psfs-hidden');
+                $('.psfs-sf-wrapp').css('background-color', '');
                 var $biucPicker = $('input[id*="bg_input_underlay_color"]').closest('tr').find('.wp-picker-clear');
                 if ($biucPicker.length > 0) {
                     $biucPicker[0].click();
@@ -1638,12 +1638,12 @@
             }
 
             if (value === 'pirx' || value === 'pirx-compact') {
-                $('label[for*="show_submit_button"] .js-dgwt-wcas-tooltip').removeClass('dgwt-wcas-hidden');
-                $('label[for*="search_submit_text"]').closest('tr').addClass('dgwt-wcas-hidden');
+                $('label[for*="show_submit_button"] .js-psfs-tooltip').removeClass('psfs-hidden');
+                $('label[for*="search_submit_text"]').closest('tr').addClass('psfs-hidden');
                 $('input[id*="search_submit_text"]').prop("disabled", true);
-                $('label[for*="bg_submit_color"]').closest('tr').addClass('dgwt-wcas-hidden');
-                $('label[for*="text_submit_color"] > span:nth-child(2)').removeClass('dgwt-wcas-hidden');
-                $('label[for*="text_submit_color"] > span:nth-child(1)').addClass('dgwt-wcas-hidden');
+                $('label[for*="bg_submit_color"]').closest('tr').addClass('psfs-hidden');
+                $('label[for*="text_submit_color"] > span:nth-child(2)').removeClass('psfs-hidden');
+                $('label[for*="text_submit_color"] > span:nth-child(1)').addClass('psfs-hidden');
                 $('input[id*="search_submit_text"]').val('');
 
                 var $cPicker = $inputSubmitBgColor.closest('tr').find('.wp-picker-clear');
@@ -1668,54 +1668,54 @@
         },
         onChangeSearchLayout: function ($el, value) {
             var _this = this,
-                $labels = $('.js-dgwt-wcas-preview-device-info'),
-                $barExample = $('.js-dgwt-wcas-preview-bar-example'),
-                $iconExample = $('.js-dgwt-wcas-preview-icon-example'),
+                $labels = $('.js-psfs-preview-device-info'),
+                $barExample = $('.js-psfs-preview-bar-example'),
+                $iconExample = $('.js-psfs-preview-icon-example'),
                 i;
 
-            $('.js-dgwt-wcas-preview-device-info > span').addClass('dgwt-wcas-hidden');
-            $iconExample.removeClass('dgwt-wcas-preview-icon-only');
+            $('.js-psfs-preview-device-info > span').addClass('psfs-hidden');
+            $iconExample.removeClass('psfs-preview-icon-only');
 
             switch (value) {
                 case 'classic':
-                    $labels.addClass('dgwt-wcas-hidden');
-                    $barExample.removeClass('dgwt-wcas-hidden');
-                    $iconExample.addClass('dgwt-wcas-hidden');
+                    $labels.addClass('psfs-hidden');
+                    $barExample.removeClass('psfs-hidden');
+                    $iconExample.addClass('psfs-hidden');
                     break;
                 case 'icon':
-                    $labels.addClass('dgwt-wcas-hidden');
-                    $barExample.addClass('dgwt-wcas-hidden');
-                    $iconExample.removeClass('dgwt-wcas-hidden');
-                    $('.dgwt-wcas-search-form').removeClass('dgwt-wcas-hidden');
-                    $('.dgwt-wcas-search-icon-arrow').removeClass('dgwt-wcas-hidden');
-                    $iconExample.addClass('dgwt-wcas-preview-icon-only');
+                    $labels.addClass('psfs-hidden');
+                    $barExample.addClass('psfs-hidden');
+                    $iconExample.removeClass('psfs-hidden');
+                    $('.psfs-search-form').removeClass('psfs-hidden');
+                    $('.psfs-search-icon-arrow').removeClass('psfs-hidden');
+                    $iconExample.addClass('psfs-preview-icon-only');
                     break;
                 case 'icon-flexible':
-                    $labels.removeClass('dgwt-wcas-hidden');
-                    $barExample.removeClass('dgwt-wcas-hidden');
-                    $iconExample.removeClass('dgwt-wcas-hidden');
-                    $iconExample.find('.dgwt-wcas-search-form').addClass('dgwt-wcas-hidden');
-                    $iconExample.find('.dgwt-wcas-search-icon-arrow').addClass('dgwt-wcas-hidden');
-                    $('.js-dgwt-wcas-preview-device-info[data-device="desktop"] span:nth-child(2)').removeClass('dgwt-wcas-hidden');
-                    $('.js-dgwt-wcas-preview-device-info[data-device="mobile"] span:nth-child(1)').removeClass('dgwt-wcas-hidden');
+                    $labels.removeClass('psfs-hidden');
+                    $barExample.removeClass('psfs-hidden');
+                    $iconExample.removeClass('psfs-hidden');
+                    $iconExample.find('.psfs-search-form').addClass('psfs-hidden');
+                    $iconExample.find('.psfs-search-icon-arrow').addClass('psfs-hidden');
+                    $('.js-psfs-preview-device-info[data-device="desktop"] span:nth-child(2)').removeClass('psfs-hidden');
+                    $('.js-psfs-preview-device-info[data-device="mobile"] span:nth-child(1)').removeClass('psfs-hidden');
                     break;
                 case 'icon-flexible-inv':
-                    $labels.removeClass('dgwt-wcas-hidden');
-                    $barExample.removeClass('dgwt-wcas-hidden');
-                    $iconExample.removeClass('dgwt-wcas-hidden');
-                    $iconExample.find('.dgwt-wcas-search-form').addClass('dgwt-wcas-hidden');
-                    $iconExample.find('.dgwt-wcas-search-icon-arrow').addClass('dgwt-wcas-hidden');
-                    $('.js-dgwt-wcas-preview-device-info[data-device="desktop"] span:nth-child(1)').removeClass('dgwt-wcas-hidden');
-                    $('.js-dgwt-wcas-preview-device-info[data-device="mobile"] span:nth-child(2)').removeClass('dgwt-wcas-hidden');
+                    $labels.removeClass('psfs-hidden');
+                    $barExample.removeClass('psfs-hidden');
+                    $iconExample.removeClass('psfs-hidden');
+                    $iconExample.find('.psfs-search-form').addClass('psfs-hidden');
+                    $iconExample.find('.psfs-search-icon-arrow').addClass('psfs-hidden');
+                    $('.js-psfs-preview-device-info[data-device="desktop"] span:nth-child(1)').removeClass('psfs-hidden');
+                    $('.js-psfs-preview-device-info[data-device="mobile"] span:nth-child(2)').removeClass('psfs-hidden');
                     break;
             }
         },
         onColorSearchIconColor: function ($el, value) {
             var _this = this;
             if (_this.isColor(value)) {
-                _this.searchWrapp.find('.dgwt-wcas-ico-magnifier-handler path').css('fill', value);
+                _this.searchWrapp.find('.psfs-ico-magnifier-handler path').css('fill', value);
             } else {
-                _this.searchWrapp.find('.dgwt-wcas-ico-magnifier-handler path').css('fill', '');
+                _this.searchWrapp.find('.psfs-ico-magnifier-handler path').css('fill', '');
             }
         },
         onColorBgInputColor: function ($el, value) {
@@ -1728,7 +1728,7 @@
         },
         onColorBgInputUnderlayColor: function ($el, value) {
             var _this = this,
-                $underlayEl = $('.dgwt-wcas-style-pirx .dgwt-wcas-sf-wrapp');
+                $underlayEl = $('.psfs-style-pirx .psfs-sf-wrapp');
             if (_this.isColor(value)) {
                 $underlayEl.css('background-color', value);
             } else {
@@ -1737,13 +1737,13 @@
         },
         onColorTextInputColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-placeholder-style';
+                styleClass = 'psfs-preview-placeholder-style';
 
             if (_this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-search-input {color:' + value + '!important;}';
-                style += '.dgwt-wcas-ico-magnifier path {fill:' + value + '}';
+                style += '.psfs-search-input {color:' + value + '!important;}';
+                style += '.psfs-ico-magnifier path {fill:' + value + '}';
                 style += '</style>';
 
                 $('head').append(style);
@@ -1768,17 +1768,17 @@
         },
         onColorBgSubmitColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-submit-style',
+                styleClass = 'psfs-preview-submit-style',
                 submitEnabled = this.isChecked($("input[id*='show_submit_button']"));
 
             if (submitEnabled && _this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-search-submit::before{border-color: transparent ' + value + '!important;}';
-                style += '.dgwt-wcas-search-submit:hover::before{border-right-color: ' + value + '!important;}';
-                style += '.dgwt-wcas-search-submit:focus::before{border-right-color: ' + value + '!important;}';
-                style += '.dgwt-wcas-search-submit{background-color: ' + value + '!important;}';
-                style += '.dgwt-wcas-om-bar .dgwt-wcas-om-return{background-color: ' + value + '!important;}';
+                style += '.psfs-search-submit::before{border-color: transparent ' + value + '!important;}';
+                style += '.psfs-search-submit:hover::before{border-right-color: ' + value + '!important;}';
+                style += '.psfs-search-submit:focus::before{border-right-color: ' + value + '!important;}';
+                style += '.psfs-search-submit{background-color: ' + value + '!important;}';
+                style += '.psfs-om-bar .psfs-om-return{background-color: ' + value + '!important;}';
                 style += '</style>';
 
                 $('head').append(style);
@@ -1796,25 +1796,25 @@
 
             if (submitEnabled && _this.isColor(value)) {
 
-                $('.js-dgwt-wcas-search-submit').css('color', value);
-                $('.dgwt-wcas-search-submit .dgwt-wcas-ico-magnifier path').css('fill', value);
+                $('.js-psfs-search-submit').css('color', value);
+                $('.psfs-search-submit .psfs-ico-magnifier path').css('fill', value);
 
             } else {
                 _this.searchInput.css('background-color', '');
 
-                $('.js-dgwt-wcas-search-submit').css('color', '');
-                $('.dgwt-wcas-search-submit .dgwt-wcas-ico-magnifier path').css('fill', '');
+                $('.js-psfs-search-submit').css('color', '');
+                $('.psfs-search-submit .psfs-ico-magnifier path').css('fill', '');
             }
         },
         onColorSugBgColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-sugbgcol-style';
+                styleClass = 'psfs-preview-sugbgcol-style';
 
             if (_this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-suggestions-wrapp,';
-                style += '.dgwt-wcas-details-wrapp';
+                style += '.psfs-suggestions-wrapp,';
+                style += '.psfs-details-wrapp';
                 style += '{background-color: ' + value + '!important;}';
                 style += '</style>';
 
@@ -1831,23 +1831,23 @@
             var _this = this;
             if (_this.isColor(value)) {
                 setTimeout(function () {
-                    $('.dgwt-wcas-suggestion-selected').css('background-color', value);
+                    $('.psfs-suggestion-selected').css('background-color', value);
                 }, 50);
             } else {
-                $('.dgwt-wcas-suggestion-selected').css('background-color', '');
+                $('.psfs-suggestion-selected').css('background-color', '');
             }
         },
         onColorSugTextColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-sugtextcol-style';
+                styleClass = 'psfs-preview-sugtextcol-style';
 
             if (_this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-suggestions-wrapp *,';
-                style += '.dgwt-wcas-details-wrapp *,';
-                style += '.dgwt-wcas-sd,';
-                style += '.dgwt-wcas-suggestion *';
+                style += '.psfs-suggestions-wrapp *,';
+                style += '.psfs-details-wrapp *,';
+                style += '.psfs-sd,';
+                style += '.psfs-suggestion *';
                 style += '{color: ' + value + '!important;}';
                 style += '</style>';
 
@@ -1862,13 +1862,13 @@
         },
         onColorSugHighlightColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-sughighlight-style';
+                styleClass = 'psfs-preview-sughighlight-style';
 
             if (_this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-st strong,';
-                style += '.dgwt-wcas-sd strong';
+                style += '.psfs-st strong,';
+                style += '.psfs-sd strong';
                 style += '{color: ' + value + '!important;}';
                 style += '</style>';
 
@@ -1883,16 +1883,16 @@
         },
         onColorSugBorderColor: function ($el, value) {
             var _this = this,
-                styleClass = 'dgwt-wcas-preview-sugborder-style';
+                styleClass = 'psfs-preview-sugborder-style';
 
             if (_this.isColor(value)) {
 
                 var style = '<style class="' + styleClass + '">';
-                style += '.dgwt-wcas-suggestions-wrapp,';
-                style += '.dgwt-wcas-details-wrapp,';
-                style += '.dgwt-wcas-suggestion,';
-                style += '.dgwt-wcas-datails-title,';
-                style += '.dgwt-wcas-details-more-products';
+                style += '.psfs-suggestions-wrapp,';
+                style += '.psfs-details-wrapp,';
+                style += '.psfs-suggestion,';
+                style += '.psfs-datails-title,';
+                style += '.psfs-details-more-products';
                 style += '{border-color: ' + value + '!important;}';
                 style += '</style>';
 
@@ -1907,8 +1907,8 @@
         },
         onTypeSearchSubmitText: function ($el, value) {
             var _this = this,
-                $label = $('.js-dgwt-wcas-search-submit-l'),
-                $icon = $('.js-dgwt-wcas-search-submit-m');
+                $label = $('.js-psfs-search-submit-l'),
+                $icon = $('.js-psfs-search-submit-m');
 
             if (value.length > 0) {
                 $label.text(value);
@@ -1925,7 +1925,7 @@
         onTypeSearchPlaceholder: function ($el, value) {
             var _this = this;
             if (value.length == 0) {
-                value = dgwt_wcas.labels.search_placeholder;
+                value = psfs.labels.search_placeholder;
             }
             _this.searchInput.attr('placeholder', value);
         },
@@ -1935,7 +1935,7 @@
 
             if (value.length == 0) {
                 try {
-                    html = JSON.parse(dgwt_wcas.labels.no_results);
+                    html = JSON.parse(psfs.labels.no_results);
                     // Fix invalid HTML
                     var tmpEl = document.createElement('div');
                     tmpEl.innerHTML = html;
@@ -1949,16 +1949,16 @@
                 html = 'You used invalid HTML tags or attributes!';
             }
 
-            $('.js-dgwt-wcas-suggestion-nores').html(html);
+            $('.js-psfs-suggestion-nores').html(html);
         },
         onTypeSearchSeeAllResultsText: function ($el, value) {
             if (value.length == 0) {
-                value = dgwt_wcas.labels.show_more;
+                value = psfs.labels.show_more;
             }
-            $('.js-dgwt-wcas-st-more-label').text(value);
+            $('.js-psfs-st-more-label').text(value);
         },
         positionPreloader: function () {
-            var $submit = $('.js-dgwt-wcas-search-wrapp:not(.dgwt-wcas-hidden) .js-dgwt-wcas-search-submit'),
+            var $submit = $('.js-psfs-search-wrapp:not(.psfs-hidden) .js-psfs-search-submit'),
                 visible = $submit.is(":visible"),
                 style = $("select[id*='search_style'] option:selected").val(),
                 right = ($submit.width() + 35);
@@ -1971,21 +1971,21 @@
                 right = 7;
             }
 
-            $('.dgwt-wcas-preloader').css('right', right + 'px');
+            $('.psfs-preloader').css('right', right + 'px');
         },
         fixSizesInit: function () {
             var _this = this;
 
-            $(document).on('click', '#dgwt_wcas_autocomplete-tab', function () {
+            $(document).on('click', '#psfs_autocomplete-tab', function () {
                 _this.onChangeShowDetailsBox($("input[id*='show_details_box']"));
             });
 
         },
         keepPreviewVisible: function () {
-            var $movingEl = $('.js-dgwt-wcas-preview-inner'),
-                $startEl = $('.js-dgwt-wcas-preview'),
-                $endEl = $('.js-dgwt-wcas-preview-source'),
-                $boundaryEl = $('.dgwt-eq-settings-form');
+            var $movingEl = $('.js-psfs-preview-inner'),
+                $startEl = $('.js-psfs-preview'),
+                $endEl = $('.js-psfs-preview-source'),
+                $boundaryEl = $('.psfs-eq-settings-form');
 
             $(window).on('scroll.autocomplete', function () {
                 var currentTop = $(document).scrollTop(),
@@ -2013,14 +2013,14 @@
             var that = this;
 
             $(window).on('load', function () {
-                var $searchBarSettings = $('#dgwt_wcas_form_body-tab');
+                var $searchBarSettings = $('#psfs_form_body-tab');
                 if ($searchBarSettings.length && $searchBarSettings.hasClass('nav-tab-active')) {
                     that.startAnimateTyping();
                 }
             });
 
-            $('.dgwt_wcas_settings-nav-tab-wrapper > a').on('click', function () {
-                if ($(this).attr('id') === 'dgwt_wcas_form_body-tab') {
+            $('.psfs_settings-nav-tab-wrapper > a').on('click', function () {
+                if ($(this).attr('id') === 'psfs_form_body-tab') {
                     that.stopAnimateTyping();
                     that.startAnimateTyping();
                 } else {
@@ -2028,8 +2028,8 @@
                 }
             });
 
-            $('.dgwt_wcas_settings-nav-tab-wrapper > a').on('click', function () {
-                if ($(this).attr('id') === 'dgwt_wcas_form_body-tab') {
+            $('.psfs_settings-nav-tab-wrapper > a').on('click', function () {
+                if ($(this).attr('id') === 'psfs_form_body-tab') {
                     that.stopAnimateTyping();
                     that.startAnimateTyping();
                 } else {
@@ -2053,13 +2053,13 @@
         startAnimateTyping: function () {
             var that = this,
                 frame = 0,
-                $wrapp = $('.js-dgwt-wcas-search-wrapp'),
-                $searchBar = $('.js-dgwt-wcas-search-input'),
-                $iconStyleForm = $('.js-dgwt-wcas-preview-icon-example .dgwt-wcas-search-form'),
-                $iconStyleArrow = $('.js-dgwt-wcas-preview-icon-example .dgwt-wcas-search-icon-arrow'),
-                $iconStyleIcon = $('.js-dgwt-wcas-preview-icon-example .dgwt-wcas-search-icon'),
-                $closeEl = $('.dgwt-wcas-preloader'),
-                closeSvg = $('.js-dgwt-wcas-preview-elements-close').html();
+                $wrapp = $('.js-psfs-search-wrapp'),
+                $searchBar = $('.js-psfs-search-input'),
+                $iconStyleForm = $('.js-psfs-preview-icon-example .psfs-search-form'),
+                $iconStyleArrow = $('.js-psfs-preview-icon-example .psfs-search-icon-arrow'),
+                $iconStyleIcon = $('.js-psfs-preview-icon-example .psfs-search-icon'),
+                $closeEl = $('.psfs-preloader'),
+                closeSvg = $('.js-psfs-preview-elements-close').html();
 
             // TODO [refactor] shorten it using a recursive function
             that.animateTypingInterval = setInterval(function () {
@@ -2068,27 +2068,27 @@
 
                 if (that.getSearchLayout() === 'icon') {
                     if (frame === 1) {
-                        $iconStyleForm.addClass('dgwt-wcas-hidden');
-                        $iconStyleArrow.addClass('dgwt-wcas-hidden');
+                        $iconStyleForm.addClass('psfs-hidden');
+                        $iconStyleArrow.addClass('psfs-hidden');
                     }
 
                     if (frame === 6) {
-                        $iconStyleIcon.addClass('dgwt-wcas-search-icon-handler-click');
+                        $iconStyleIcon.addClass('psfs-search-icon-handler-click');
                     }
 
 
                     if (frame === 7) {
-                        $iconStyleIcon.removeClass('dgwt-wcas-search-icon-handler-click');
-                        $iconStyleForm.removeClass('dgwt-wcas-hidden');
-                        $iconStyleArrow.removeClass('dgwt-wcas-hidden');
+                        $iconStyleIcon.removeClass('psfs-search-icon-handler-click');
+                        $iconStyleForm.removeClass('psfs-hidden');
+                        $iconStyleArrow.removeClass('psfs-hidden');
                     }
                 }
 
                 if (frame === 10) {
                     $searchBar.val('f');
-                    $wrapp.addClass('dgwt-wcas-search-filled');
-                    $wrapp.addClass('dgwt-wcas-search-focused');
-                    $closeEl.addClass('dgwt-wcas-close');
+                    $wrapp.addClass('psfs-search-filled');
+                    $wrapp.addClass('psfs-search-focused');
+                    $closeEl.addClass('psfs-close');
                 }
 
                 if (frame === 11) {
@@ -2149,7 +2149,7 @@
                 }
                 if (frame === 38) {
                     $searchBar.val('fi');
-                    $closeEl.removeClass('dgwt-wcas-close');
+                    $closeEl.removeClass('psfs-close');
                 }
                 if (frame === 39) {
                     $searchBar.val('f');
@@ -2157,7 +2157,7 @@
                 if (frame === 40) {
                     $searchBar.val('');
                     $closeEl.html('');
-                    $wrapp.removeClass('dgwt-wcas-search-filled');
+                    $wrapp.removeClass('psfs-search-filled');
                 }
                 if (frame === 45) {
                     frame = 0;
@@ -2166,14 +2166,14 @@
         },
         stopAnimateTyping: function () {
             var that = this,
-                $wrapp = $('.js-dgwt-wcas-search-wrapp'),
-                $searchBar = $('.js-dgwt-wcas-search-input'),
-                $closeEl = $('.dgwt-wcas-preloader');
+                $wrapp = $('.js-psfs-search-wrapp'),
+                $searchBar = $('.js-psfs-search-input'),
+                $closeEl = $('.psfs-preloader');
 
-            $closeEl.removeClass('dgwt-wcas-close');
+            $closeEl.removeClass('psfs-close');
             $searchBar.val('');
             $closeEl.html('');
-            $wrapp.removeClass('dgwt-wcas-search-filled');
+            $wrapp.removeClass('psfs-search-filled');
 
             clearInterval(that.animateTypingInterval);
         },
@@ -2220,49 +2220,49 @@
     };
 
     var TROUBLESHOOTING = {
-        settingsTab: '#dgwt_wcas_troubleshooting-tab',
-        noIssuesClass: '.js-dgwt-wcas-troubleshooting-no-issues',
-        counterClass: '.js-dgwt-wcas-troubleshooting-count',
-        issuesListClass: '.js-dgwt-wcas-troubleshooting-issues',
-        progressBar: '.dgwt-wcas-troubleshooting-wrapper .progress_bar',
-        progressBarInner: '.dgwt-wcas-troubleshooting-wrapper .progress-bar-inner',
-        fixOutofstockButtonName: 'dgwt-wcas-fix-out-of-stock-relationships',
-        maintenanceAnalyticsButtonName: 'dgwt-wcas-maintenance-analytics',
-        switchAlternativeEndpoint: 'dgwt-wcas-switch-alternative-endpoint',
-        asyncActionButtonNameBegining: 'dgwt-wcas-async-action-',
+        settingsTab: '#psfs_troubleshooting-tab',
+        noIssuesClass: '.js-psfs-troubleshooting-no-issues',
+        counterClass: '.js-psfs-troubleshooting-count',
+        issuesListClass: '.js-psfs-troubleshooting-issues',
+        progressBar: '.psfs-troubleshooting-wrapper .progress_bar',
+        progressBarInner: '.psfs-troubleshooting-wrapper .progress-bar-inner',
+        fixOutofstockButtonName: 'psfs-fix-out-of-stock-relationships',
+        maintenanceAnalyticsButtonName: 'psfs-maintenance-analytics',
+        switchAlternativeEndpoint: 'psfs-switch-alternative-endpoint',
+        asyncActionButtonNameBegining: 'psfs-async-action-',
         init: function () {
             var _this = this;
-            if (typeof dgwt_wcas['troubleshooting'] === 'undefined') {
+            if (typeof psfs['troubleshooting'] === 'undefined') {
                 return;
             }
 
-            const count = dgwt_wcas['troubleshooting']['tests']['issues']['critical'] + dgwt_wcas['troubleshooting']['tests']['issues']['recommended'];
+            const count = psfs['troubleshooting']['tests']['issues']['critical'] + psfs['troubleshooting']['tests']['issues']['recommended'];
             if (count > 0) {
                 $(_this.counterClass).text(count).addClass('active');
                 $(_this.settingsTab).addClass('enabled');
             }
 
-            if (dgwt_wcas.troubleshooting.tests.results_async.length > 0) {
-                $.each(dgwt_wcas.troubleshooting.tests.results_async, function () {
+            if (psfs.troubleshooting.tests.results_async.length > 0) {
+                $.each(psfs.troubleshooting.tests.results_async, function () {
                     _this.appendIssue(this, false);
                 });
             }
 
-            if (dgwt_wcas.troubleshooting.tests.direct.length > 0) {
-                $.each(dgwt_wcas.troubleshooting.tests.direct, function () {
+            if (psfs.troubleshooting.tests.direct.length > 0) {
+                $.each(psfs.troubleshooting.tests.direct, function () {
                     _this.appendIssue(this, false);
                 });
             }
 
-            if (dgwt_wcas.troubleshooting.tests.async.length > 0) {
+            if (psfs.troubleshooting.tests.async.length > 0) {
                 _this.maybeRunNextAsyncTest();
             }
 
             $(document).on('click', 'input[name="' + _this.fixOutofstockButtonName + '"]', function (e) {
                 $('input[name="' + _this.fixOutofstockButtonName + '"]').attr('disabled', 'disabled').next().addClass('loading');
                 var data = {
-                    'action': 'dgwt_wcas_troubleshooting_fix_outofstock',
-                    '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_fix_outofstock
+                    'action': 'psfs_troubleshooting_fix_outofstock',
+                    '_wpnonce': psfs.troubleshooting.nonce.troubleshooting_fix_outofstock
                 };
                 $.post(
                     ajaxurl,
@@ -2277,8 +2277,8 @@
             $(document).on('click', 'input[name="' + _this.maintenanceAnalyticsButtonName + '"]', function (e) {
                 $('input[name="' + _this.maintenanceAnalyticsButtonName + '"]').attr('disabled', 'disabled').next().addClass('loading');
                 var data = {
-                    'action': 'dgwt_wcas_troubleshooting_maintenance_analytics',
-                    '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_maintenance_analytics
+                    'action': 'psfs_troubleshooting_maintenance_analytics',
+                    '_wpnonce': psfs.troubleshooting.nonce.troubleshooting_maintenance_analytics
                 };
                 $.post(
                     ajaxurl,
@@ -2294,8 +2294,8 @@
                 var action = parseInt($(this).data('switch')) === 1 ? 'enable' : 'disable';
                 $('input[name="' + _this.switchAlternativeEndpoint + '"]').attr('disabled', 'disabled').next().addClass('loading');
                 var data = {
-                    'action': 'dgwt_wcas_troubleshooting_switch_alternative_endpoint',
-                    '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_switch_alternative_endpoint,
+                    'action': 'psfs_troubleshooting_switch_alternative_endpoint',
+                    '_wpnonce': psfs.troubleshooting.nonce.troubleshooting_switch_alternative_endpoint,
                     'switch': action,
                 };
                 $.post(
@@ -2310,12 +2310,12 @@
 
             $(document).on('click', 'input[name^="' + _this.asyncActionButtonNameBegining + '"]', function (e) {
                 var $el = $(this);
-                $el.attr('disabled', 'disabled').next('.dgwt-wcas-ajax-loader').addClass('loading');
+                $el.attr('disabled', 'disabled').next('.psfs-ajax-loader').addClass('loading');
                 var data = {
-                    'action': 'dgwt_wcas_troubleshooting_async_action',
+                    'action': 'psfs_troubleshooting_async_action',
                     'internal_action': $el.data('internal-action'),
                     'meta': $el.data('meta'),
-                    '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_async_action
+                    '_wpnonce': psfs.troubleshooting.nonce.troubleshooting_async_action
                 };
                 $.post(
                     ajaxurl,
@@ -2325,7 +2325,7 @@
                         var timeout = 0;
                         if (typeof response.data.message === "string" && response.data.message.length > 0) {
                             $el.next()
-                                .next('.dgwt-wcas-async-action-message')
+                                .next('.psfs-async-action-message')
                                 .text(response.data.message)
                                 .removeClass('success')
                                 .removeClass('error')
@@ -2347,8 +2347,8 @@
                 return false;
             });
 
-            $(document).on('change', '#dgwt-wcas-send-reports-in-feature', function () {
-                $('#dgwt-wcas-async-action-send-indexer-failure-report').data('meta', JSON.stringify({'auto_send': $(this).is(':checked')}));
+            $(document).on('change', '#psfs-send-reports-in-feature', function () {
+                $('#psfs-async-action-send-indexer-failure-report').data('meta', JSON.stringify({'auto_send': $(this).is(':checked')}));
             });
         },
         appendIssue: function (issue, incrementCounter) {
@@ -2357,7 +2357,7 @@
             // by ID on the whole page, and older WordPress versions accept any element with that ID (e.g. one
             // injected into an admin notice). The settings below are the same as in wp.template().
             var templateEl = document.querySelector(
-                'form.dgwt-eq-settings-form script#tmpl-dgwt-wcas-troubleshooting-issue[type="text/template"]'
+                'form.psfs-eq-settings-form script#tmpl-psfs-troubleshooting-issue[type="text/template"]'
             );
             if (!templateEl) {
                 return;
@@ -2379,10 +2379,10 @@
             $(_this.noIssuesClass).hide();
 
             if (incrementCounter) {
-                dgwt_wcas.troubleshooting.tests.issues[issue.status]++;
+                psfs.troubleshooting.tests.issues[issue.status]++;
             }
 
-            count = dgwt_wcas.troubleshooting.tests.issues['critical'] + dgwt_wcas.troubleshooting.tests.issues['recommended'];
+            count = psfs.troubleshooting.tests.issues['critical'] + psfs.troubleshooting.tests.issues['recommended'];
 
             if (count > 0) {
                 $(_this.counterClass).text(count).addClass('active');
@@ -2394,12 +2394,12 @@
         maybeRunNextAsyncTest: function () {
             var _this = this;
 
-            if (dgwt_wcas.troubleshooting.tests.async.length > 0) {
-                $.each(dgwt_wcas.troubleshooting.tests.async, function () {
+            if (psfs.troubleshooting.tests.async.length > 0) {
+                $.each(psfs.troubleshooting.tests.async, function () {
                     var data = {
-                        'action': 'dgwt_wcas_troubleshooting_test',
+                        'action': 'psfs_troubleshooting_test',
                         'test': this.test,
-                        '_wpnonce': dgwt_wcas.troubleshooting.nonce.troubleshooting_async_test
+                        '_wpnonce': psfs.troubleshooting.nonce.troubleshooting_async_test
                     };
 
                     if (this.completed) {
@@ -2429,10 +2429,10 @@
         },
         recalculateProgression: function () {
             var _this = this;
-            var total = dgwt_wcas.troubleshooting.tests.async.length;
+            var total = psfs.troubleshooting.tests.async.length;
             var completed = 0;
 
-            $.each(dgwt_wcas.troubleshooting.tests.async, function () {
+            $.each(psfs.troubleshooting.tests.async, function () {
                 if (this.completed) {
                     completed++;
                 }
@@ -2448,11 +2448,11 @@
     }
 
     var MOVE_OPTIONS = {
-        moveOptionClass: '.js-dgwt-wcas-move-option',
+        moveOptionClass: '.js-psfs-move-option',
         init: function () {
             // Move only options rendered inside the settings form. Elements with the same class injected elsewhere
             // on the page (e.g. in an admin notice) must never be cloned into the form.
-            var $form = $('form.dgwt-eq-settings-form');
+            var $form = $('form.psfs-eq-settings-form');
             var optionsToMove = $form.find(this.moveOptionClass);
             if (optionsToMove.length > 0) {
                 $.each(optionsToMove, function (index, el) {
@@ -2463,8 +2463,8 @@
                         return this.id === moveDestId;
                     }).first() : $();
                     if (moveDest.length > 0) {
-                        if ($(el).closest('tr').hasClass('dgwt-wcas-premium-only')) {
-                            $(el).addClass('dgwt-wcas-premium-only');
+                        if ($(el).closest('tr').hasClass('psfs-premium-only')) {
+                            $(el).addClass('psfs-premium-only');
                         }
                         $(el).clone().appendTo(moveDest.closest('td fieldset'));
                     }
@@ -2484,8 +2484,8 @@
             // Mount only inside the settings form and take the template only from a <script> element.
             // Vue compiles the markup of the mount element, so an element with the same ID injected elsewhere
             // on the page (e.g. in an admin notice) must never be used.
-            var filtersRulesEl = document.querySelector('form.dgwt-eq-settings-form #dgwt-wcas-settings-filters-rules');
-            var filtersRulesTemplate = document.querySelector('script#dgwt-wcas-settings-filters-rules-rule');
+            var filtersRulesEl = document.querySelector('form.psfs-eq-settings-form #psfs-settings-filters-rules');
+            var filtersRulesTemplate = document.querySelector('script#psfs-settings-filters-rules-rule');
 
             if (!filtersRulesEl || !filtersRulesTemplate) {
                 return;
@@ -2511,7 +2511,7 @@
                             url: ajaxurl,
                             method: 'POST',
                             data: {
-                                action: 'dgwt_wcas_settings_search_terms',
+                                action: 'psfs_settings_search_terms',
                                 query: query,
                                 type: type,
                                 _wpnonce: nonce
@@ -2527,7 +2527,7 @@
                 };
             };
 
-            Vue.component('dgwt-wcas-rule', {
+            Vue.component('psfs-rule', {
                 // Read the template from the <script type="text/x-template"> element, never from any element with this ID.
                 template: filtersRulesTemplate.innerHTML,
                 components: {
@@ -2566,7 +2566,7 @@
                         this.$emit('delete:rule', this.index)
                     },
                     getSelectizeSettings(type) {
-                        var options = (typeof dgwt_wcas_filters_rules_selected_options[type] === 'undefined') ? [] : dgwt_wcas_filters_rules_selected_options[type];
+                        var options = (typeof psfs_filters_rules_selected_options[type] === 'undefined') ? [] : psfs_filters_rules_selected_options[type];
                         return productSearchSettings({nonce: this.securitynonce, type: type, options: options});
                     },
                 },
@@ -2584,7 +2584,7 @@
                 },
                 mounted() {
                     try {
-                        const rules = JSON.parse(this.$refs['dgwt-wcas-settings-filters-rules-ref'].value);
+                        const rules = JSON.parse(this.$refs['psfs-settings-filters-rules-ref'].value);
                         $.each(rules, function (index, rule) {
                             rules[index].key = Math.random();
                         });
@@ -2610,7 +2610,7 @@
                     },
                     updateInput() {
                         const rules = JSON.parse(JSON.stringify(this.rules));
-                        this.$refs['dgwt-wcas-settings-filters-rules-ref'].value = JSON.stringify(rules.map(function (rule) {
+                        this.$refs['psfs-settings-filters-rules-ref'].value = JSON.stringify(rules.map(function (rule) {
                             if (typeof (rule['key'] !== 'undefined')) {
                                 delete (rule['key']);
                             }
@@ -2623,35 +2623,35 @@
     };
 
     function automateSettingsColspan() {
-        var $el = $('.js-dgwt-wcas-sgs-autocolspan');
+        var $el = $('.js-psfs-sgs-autocolspan');
         if ($el.length > 0) {
             $el.find('td').attr('colspan', 2);
         }
     }
 
     function moveOuterBorderOption() {
-        var $elToMove = $('.js-dgwt-wcas-settings-margin-nob');
+        var $elToMove = $('.js-psfs-settings-margin-nob');
 
         if ($elToMove.length > 0) {
 
             $elToMove.each(function () {
 
-                var $wrapp = $(this).find('td .dgwt-wcas-fieldset');
+                var $wrapp = $(this).find('td .psfs-fieldset');
 
                 if ($wrapp.length > 0) {
-                    var $parent = $(this).prev('.js-dgwt-wcas-settings-margin');
+                    var $parent = $(this).prev('.js-psfs-settings-margin');
                     if ($parent.length > 0) {
 
                         var classList = $(this).attr('class').split(/\s+/);
                         var className = '';
 
                         $.each(classList, function (index, item) {
-                            if (item.indexOf('js-dgwt-wcas-cbtgroup-') !== -1) {
+                            if (item.indexOf('js-psfs-cbtgroup-') !== -1) {
                                 className = item;
                             }
                         });
                         var $clone = $wrapp.clone(true, true);
-                        $clone.addClass('dgwt-wcas-settings-margin-nob');
+                        $clone.addClass('psfs-settings-margin-nob');
                         if (className) {
                             $clone.addClass(className);
                         }
@@ -2685,7 +2685,7 @@
         STATS_INTERFACE.init();
 
         SETTINGS_FILTERS_RULES.init();
-        window.DGWT_WCAS_SEARCH_PREVIEW.init();
+        window.PSFS_SEARCH_PREVIEW.init();
 
     });
 

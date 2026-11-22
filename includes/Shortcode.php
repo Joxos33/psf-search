@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Shortcode {
 
 	public static function register() {
-		add_shortcode( 'wcas-search-form', [ __CLASS__, 'addBody' ] );
-		add_shortcode( 'fibosearch', [ __CLASS__, 'addBody' ] );
-		add_shortcode( 'fibosearch_posts_results', [ __CLASS__, 'fibosearchPostsResultsBody__premium_only' ] );
+		add_shortcode( 'psfs-search-form', [ __CLASS__, 'addBody' ] );
+		add_shortcode( 'psfsearch', [ __CLASS__, 'addBody' ] );
+		add_shortcode( 'psfsearch_posts_results', [ __CLASS__, 'psfsearchPostsResultsBody__premium_only' ] );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class Shortcode {
 
 		$searchArgs['class'] .= empty( $searchArgs['class'] ) ? 'woocommerce' : ' woocommerce';
 
-		$args = apply_filters( 'dgwt/wcas/shortcode/args', $searchArgs );
+		$args = apply_filters( 'psfs/shortcode/args', $searchArgs );
 
 		return self::getForm( $args );
 	}
@@ -66,8 +66,8 @@ class Shortcode {
 	public static function getForm( $args ) {
 		// Enqueue required scripts (only if AMP is not active)
 		if ( ! Helpers::isAMPEndpoint() ) {
-			wp_enqueue_script( 'jquery-dgwt-wcas' );
-			if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+			wp_enqueue_script( 'jquery-psfs' );
+			if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
 				wp_enqueue_script( 'woocommerce-general' );
 			}
 		}
@@ -76,11 +76,11 @@ class Shortcode {
 
 		$args = self::applyCondtitionalFormArgs( $args );
 
-		$filename = apply_filters( 'dgwt/wcas/form/partial_path', DGWT_WCAS_DIR . 'partials/search-form.php' );
+		$filename = apply_filters( 'psfs/form/partial_path', PSFS_DIR . 'partials/search-form.php' );
 
 		$html = self::getTemplatePart( $filename, $args );
 
-		return apply_filters( 'dgwt/wcas/form/html', $html, $args );
+		return apply_filters( 'psfs/form/html', $html, $args );
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Shortcode {
 	 *
 	 * @return string
 	 */
-	public static function fibosearchPostsResultsBody__premium_only( $atts, $content, $tag ) {
+	public static function psfsearchPostsResultsBody__premium_only( $atts, $content, $tag ) {
 		// Break early when we are not on the search page.
 		if ( ! Helpers::isProductSearchPage() ) {
 			return '';
@@ -102,7 +102,7 @@ class Shortcode {
 			[
 				'post_type'  => 'post',
 				'headline'   => '',
-				'no_results' => __( 'Nothing found', 'ajax-search-for-woocommerce' ),
+				'no_results' => __( 'Nothing found', 'psf-search' ),
 				'layout'     => 'list', // supported layouts: grid, list
 				'limit'      => '12',
 				'show_image' => '1',
@@ -119,18 +119,18 @@ class Shortcode {
 
 		if ( empty( $shortcodeArgs['headline'] ) ) {
 			/* translators: %s: Post type name in plural form e.g. Posts, Pages */
-			$shortcodeArgs['headline'] = sprintf( __( 'Search results for %s:', 'ajax-search-for-woocommerce' ), $pluralPostTypeLabel );
+			$shortcodeArgs['headline'] = sprintf( __( 'Search results for %s:', 'psf-search' ), $pluralPostTypeLabel );
 		}
 
-		$args = apply_filters( 'dgwt/wcas/shortcode/fibosearch_posts_results/args', $shortcodeArgs );
+		$args = apply_filters( 'psfs/shortcode/psfsearch_posts_results/args', $shortcodeArgs );
 
 		if ( ! in_array( $args['layout'], [ 'list', 'grid' ] ) ) {
 			return '';
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$phrase = $_GET['s'] ?? ''; // FiboSearch takes care of the security of the phrase on its side.
+		$phrase = $_GET['s'] ?? ''; // PSF Search takes care of the security of the phrase on its side.
 
-		$results = DGWT_WCAS()->searchPosts(
+		$results = PSFS()->searchPosts(
 			$phrase,
 			[
 				'post_type' => $args['post_type'],
@@ -147,7 +147,7 @@ class Shortcode {
 
 		$args['results'] = $results;
 
-		$filename = apply_filters( 'dgwt/wcas/shortcode/fibosearch_posts_results/partial_path', DGWT_WCAS_DIR . 'partials/search-results-page/posts-results.php' );
+		$filename = apply_filters( 'psfs/shortcode/psfsearch_posts_results/partial_path', PSFS_DIR . 'partials/search-results-page/posts-results.php' );
 
 		return self::getTemplatePart( $filename, $args );
 	}

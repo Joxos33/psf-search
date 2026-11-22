@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Integrations;
+namespace PsfSearch\Integrations;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Term;
+use PsfSearch\Helpers;
+use PsfSearch\Term;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Brands
  *
- * @package DgoraWcas\Integrations
+ * @package PsfSearch\Integrations
  *
  * Support for plugins:
  * 1. WooCommerce Brands since v1.6.9 by WooCommerce
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 5. Brands for WooCommerce since v3.5.2 by BeRocket
  * 6. WP Bingo by wpbingo
  * 7. Premmerce Brands for WooCommerce since v1.2.11 by premmerce
- * 8. WooCommerce Core (since v9.4) -> The integration was added in \DgoraWcas\Integrations\Plugins\WooCommerce\WooCommerce
+ * 8. WooCommerce Core (since v9.4) -> The integration was added in \PsfSearch\Integrations\Plugins\WooCommerce\WooCommerce
  */
 class Brands {
 	/**
@@ -62,9 +62,9 @@ class Brands {
 			100
 		);
 
-		add_filter( 'dgwt/wcas/suggestion_details/taxonomy/headline', [ $this, 'rebuildDetailsHeader' ], 10, 4 );
-		add_filter( 'dgwt/wcas/term/thumbnail_src', [ $this, 'termThumbnailSrc' ], 10, 4 );
-		add_filter( 'dgwt/wcas/indexer/taxonomies', [ $this, 'addBrandToCollectionOfTaxonomies' ], 5 );
+		add_filter( 'psfs/suggestion_details/taxonomy/headline', [ $this, 'rebuildDetailsHeader' ], 10, 4 );
+		add_filter( 'psfs/term/thumbnail_src', [ $this, 'termThumbnailSrc' ], 10, 4 );
+		add_filter( 'psfs/indexer/taxonomies', [ $this, 'addBrandToCollectionOfTaxonomies' ], 5 );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class Brands {
 			}
 		}
 
-		$brandTaxonomy = apply_filters( 'dgwt/wcas/brands/taxonomy', $brandTaxonomy );
+		$brandTaxonomy = apply_filters( 'psfs/brands/taxonomy', $brandTaxonomy );
 
 		if ( ! empty( $brandTaxonomy ) && taxonomy_exists( $brandTaxonomy ) ) {
 			$this->brandTaxonomy = $brandTaxonomy;
@@ -188,7 +188,7 @@ class Brands {
 	private function addSettings() {
 		if ( $this->hasBrands() ) {
 			add_filter(
-				'dgwt/wcas/settings/section=search',
+				'psfs/settings/section=search',
 				function ( $settingsScope ) {
 
 					$label = '';
@@ -197,13 +197,13 @@ class Brands {
 
 					if ( ! empty( $pluginName ) ) {
 						$pluginInfo = $pluginName . ' v' . $this->getPluginVersion();
-						$label      = ' ' . Helpers::createQuestionMark( 'search-in-brands', sprintf( __( 'Based on the plugin %s', 'ajax-search-for-woocommerce' ), $pluginInfo ) );
+						$label      = ' ' . Helpers::createQuestionMark( 'search-in-brands', sprintf( __( 'Based on the plugin %s', 'psf-search' ), $pluginInfo ) );
 					}
 
 					$settingsScope[220] = [
 						'name'    => 'search_in_product_tax_' . $this->getBrandTaxonomy(),
-						'label'   => __( 'Search in brands', 'ajax-search-for-woocommerce' ) . $label,
-						'class'   => 'dgwt-wcas-premium-only',
+						'label'   => __( 'Search in brands', 'psf-search' ) . $label,
+						'class'   => 'psfs-premium-only',
 						'type'    => 'checkbox',
 						'default' => 'off',
 					];
@@ -213,7 +213,7 @@ class Brands {
 			);
 
 			add_filter(
-				'dgwt/wcas/settings/section=autocomplete',
+				'psfs/settings/section=autocomplete',
 				function ( $settingsScope ) {
 
 					$label = '';
@@ -222,13 +222,13 @@ class Brands {
 
 					if ( ! empty( $pluginName ) ) {
 						$pluginInfo = $pluginName . ' v' . $this->getPluginVersion();
-						$label      = ' ' . Helpers::createQuestionMark( 'show-matching-brands', sprintf( __( 'Based on the plugin %s', 'ajax-search-for-woocommerce' ), $pluginInfo ) );
+						$label      = ' ' . Helpers::createQuestionMark( 'show-matching-brands', sprintf( __( 'Based on the plugin %s', 'psf-search' ), $pluginInfo ) );
 					}
 
 					$settingsScope[1260] = [
 						'name'       => 'show_product_tax_' . $this->getBrandTaxonomy(),
-						'label'      => __( 'Show brands', 'ajax-search-for-woocommerce' ) . $label,
-						'class'      => 'dgwt-wcas-premium-only js-dgwt-wcas-options-toggle-sibling',
+						'label'      => __( 'Show brands', 'psf-search' ) . $label,
+						'class'      => 'psfs-premium-only js-psfs-options-toggle-sibling',
 						'type'       => 'checkbox',
 						'default'    => 'off',
 						'input_data' => 'data-option-trigger="show_matching_brands"',
@@ -237,11 +237,11 @@ class Brands {
 					if ( $this->doesPluginSupportImages() ) {
 						$settingsScope[1270] = [
 							'name'       => 'show_product_tax_' . $this->getBrandTaxonomy() . '_images',
-							'label'      => __( 'show images', 'ajax-search-for-woocommerce' ),
-							'class'      => 'dgwt-wcas-premium-only',
+							'label'      => __( 'show images', 'psf-search' ),
+							'class'      => 'psfs-premium-only',
 							'type'       => 'checkbox',
 							'default'    => 'off',
-							'desc'       => __( 'show images', 'ajax-search-for-woocommerce' ),
+							'desc'       => __( 'show images', 'psf-search' ),
 							'move_dest'  => 'show_product_tax_' . $this->getBrandTaxonomy(),
 							'input_data' => 'data-option-trigger="show_brands_images"',
 						];
@@ -267,8 +267,8 @@ class Brands {
 
 		if ( ! empty( $taxonomy ) && $taxonomy === $this->getBrandTaxonomy() ) {
 
-			$title  = '<span class="dgwt-wcas-datails-title">';
-			$title .= '<span class="dgwt-wcas-details-title-tax">';
+			$title  = '<span class="psfs-datails-title">';
+			$title .= '<span class="psfs-details-title-tax">';
 			$title .= Helpers::getLabel( 'tax_' . $this->getBrandTaxonomy() ) . ': ';
 			$title .= '</span>';
 			$title .= $termName;
@@ -331,8 +331,8 @@ class Brands {
 		$taxonomies[] = [
 			'taxonomy'      => $this->getBrandTaxonomy(),
 			'labels'        => [
-				'name'          => __( 'Brands', 'ajax-search-for-woocommerce' ),
-				'singular_name' => __( 'Brand', 'ajax-search-for-woocommerce' ),
+				'name'          => __( 'Brands', 'psf-search' ),
+				'singular_name' => __( 'Brand', 'psf-search' ),
 			],
 			'image_support' => $this->doesPluginSupportImages(),
 		];
@@ -359,6 +359,6 @@ class Brands {
 			]
 		);
 
-		return apply_filters( 'dgwt/wcas/brands/image_support', $result );
+		return apply_filters( 'psfs/brands/image_support', $result );
 	}
 }

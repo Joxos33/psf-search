@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Support;
+namespace PsfSearch\Engines\TNTSearchMySQL\Support;
 
 use ArrayIterator;
 use Countable;

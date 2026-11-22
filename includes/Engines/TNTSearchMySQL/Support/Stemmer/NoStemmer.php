@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer;
 
 class NoStemmer implements StemmerInterface {
 	public static function stem( $word ) {

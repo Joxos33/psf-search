@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\WordPressNative;
+namespace PsfSearch\Engines\WordPressNative;
 
-use DgoraWcas\Analytics\Recorder;
-use DgoraWcas\Multilingual;
-use DgoraWcas\Product;
-use DgoraWcas\Helpers;
+use PsfSearch\Analytics\Recorder;
+use PsfSearch\Multilingual;
+use PsfSearch\Product;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,13 +59,13 @@ class Search {
 	public function __construct() {
 
 		// Run only if index isn't completed
-		if ( DGWT_WCAS()->engine !== 'native' ) {
+		if ( PSFS()->engine !== 'native' ) {
 			return;
 		}
 
 		// Limit the number of fields to be searched using the native engine when the index is not ready
 		add_filter(
-			'dgwt/wcas/native/search_in',
+			'psfs/native/search_in',
 			function () {
 				return [ 'title' ];
 			},
@@ -74,10 +74,10 @@ class Search {
 
 		// Set 'placeholder' if the index is being built
 		add_filter(
-			'dgwt/wcas/search_results/output',
+			'psfs/search_results/output',
 			function ( $output ) {
-				$status  = \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() );
-				$startTs = absint( \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'start_ts', \DgoraWcas\Engines\TNTSearchMySQL\Config::getIndexRole() ) );
+				$status  = \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'status', \PsfSearch\Engines\TNTSearchMySQL\Config::getIndexRole() );
+				$startTs = absint( \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::getInfo( 'start_ts', \PsfSearch\Engines\TNTSearchMySQL\Config::getIndexRole() ) );
 				if ( in_array(
 					$status,
 					[
@@ -94,7 +94,7 @@ class Search {
 		);
 
 		$this->searchIn = apply_filters(
-			'dgwt/wcas/native/search_in',
+			'psfs/native/search_in',
 			[
 				'title',
 				'content',
@@ -112,21 +112,21 @@ class Search {
 		add_action(
 			'init',
 			function () {
-				if ( apply_filters( 'dgwt/wcas/override_search_results_page', true ) && ! Helpers::isNoFiboSearchModeActive() ) {
+				if ( apply_filters( 'psfs/override_search_results_page', true ) && ! Helpers::isNoPsfSearchModeActive() ) {
 					add_filter( 'pre_get_posts', [ $this, 'overwriteSearchPage' ], 900001 );
-					add_filter( 'posts_search', [ 'DgoraWcas\Helpers', 'clearSearchQuery' ], 1000, 2 );
-					add_filter( 'the_posts', [ 'DgoraWcas\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
-					add_filter( 'dgwt/wcas/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
+					add_filter( 'posts_search', [ 'PsfSearch\Helpers', 'clearSearchQuery' ], 1000, 2 );
+					add_filter( 'the_posts', [ 'PsfSearch\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
+					add_filter( 'psfs/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
 				}
 			}
 		);
 
 		// Search results ajax action
-		if ( DGWT_WCAS_WC_AJAX_ENDPOINT ) {
-			add_action( 'wc_ajax_' . DGWT_WCAS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+		if ( PSFS_WC_AJAX_ENDPOINT ) {
+			add_action( 'wc_ajax_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
 		} else {
-			add_action( 'wp_ajax_nopriv_' . DGWT_WCAS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
-			add_action( 'wp_ajax_' . DGWT_WCAS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wp_ajax_nopriv_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
+			add_action( 'wp_ajax_' . PSFS_SEARCH_ACTION, [ $this, 'getSearchResults' ] );
 		}
 
 		// Labels
@@ -138,21 +138,21 @@ class Search {
 
 		// Add "No results" suggestion if all results have been removed in earlier filters.
 		add_filter(
-			'dgwt/wcas/search_results/output',
+			'psfs/search_results/output',
 			[
-				'DgoraWcas\Helpers',
+				'PsfSearch\Helpers',
 				'noResultsSuggestion',
 			],
 			PHP_INT_MAX - 10
 		);
 
 		// Init Search Analytics
-		if ( DGWT_WCAS()->settings->getOption( 'analytics_enabled' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'analytics_enabled' ) === 'on' ) {
 			$stats = new Recorder();
 			$stats->listen();
 		}
 
-		Helpers::maybeInjectFiboDebugFields( 'score' );
+		Helpers::maybeInjectPsfDebugFields( 'score' );
 	}
 
 	/**
@@ -169,7 +169,7 @@ class Search {
 			$context = 'product-ids';
 		}
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['dgwt_wcas_product_ids_only'] ) && $_GET['dgwt_wcas_product_ids_only'] == '1' ) {
+		if ( isset( $_GET['psfs_product_ids_only'] ) && $_GET['psfs_product_ids_only'] == '1' ) {
 			$context = 'product-ids-ff';
 		}
 
@@ -180,16 +180,16 @@ class Search {
 			$lang = Multilingual::getCurrentLanguage();
 		}
 
-		if ( ! defined( 'DGWT_WCAS_AJAX' ) ) {
-			define( 'DGWT_WCAS_AJAX', true );
+		if ( ! defined( 'PSFS_AJAX' ) ) {
+			define( 'PSFS_AJAX', true );
 		}
 
 		$this->groups         = $this->searchResultsGroups();
-		$this->flexibleLimits = apply_filters( 'dgwt/wcas/flexible_limits', true );
+		$this->flexibleLimits = apply_filters( 'psfs/flexible_limits', true );
 		$this->showHeadings   = Helpers::canGroupSuggestions();
 
 		if ( $this->flexibleLimits ) {
-			$totalLimit       = DGWT_WCAS()->settings->getOption( 'suggestions_limit', 7 );
+			$totalLimit       = PSFS()->settings->getOption( 'suggestions_limit', 7 );
 			$this->totalLimit = $totalLimit === - 1 ? $this->calcFreeSlots() : $totalLimit;
 		}
 
@@ -202,8 +202,8 @@ class Search {
 		} else {
 			// Compatible with v1.1.7
 			//phpcs:disable WordPress.Security.NonceVerification.Recommended
-			if ( ! empty( $_REQUEST['dgwt_wcas_keyword'] ) ) {
-				$keyword = sanitize_text_field( $_REQUEST['dgwt_wcas_keyword'] );
+			if ( ! empty( $_REQUEST['psfs_keyword'] ) ) {
+				$keyword = sanitize_text_field( $_REQUEST['psfs_keyword'] );
 			}
 
 			if ( ! empty( $_REQUEST['s'] ) ) {
@@ -212,7 +212,7 @@ class Search {
 			//phpcs:enable
 		}
 
-		$keyword = apply_filters( 'dgwt/wcas/phrase', $keyword );
+		$keyword = apply_filters( 'psfs/phrase', $keyword );
 
 		// Break early if keyword contains blacklisted phrase.
 		if ( Helpers::phraseContainsBlacklistedTerm( $keyword ) ) {
@@ -250,7 +250,7 @@ class Search {
 
 		/* SEARCH IN PRODUCTS */
 		$totalProducts = 0;
-		if ( apply_filters( 'dgwt/wcas/search_in_products', true ) ) {
+		if ( apply_filters( 'psfs/search_in_products', true ) ) {
 
 			$args = [
 				's'                   => $keyword,
@@ -269,16 +269,16 @@ class Search {
 				$args['tax_query'] = $this->getTaxQuery();
 			}
 
-			$args = apply_filters( 'dgwt/wcas/search_query/args', $args );
+			$args = apply_filters( 'psfs/search_query/args', $args );
 
-			add_filter( 'posts_where', [ 'DgoraWcas\Helpers', 'excludePasswordProtectedProducts' ], 90, 2 );
+			add_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90, 2 );
 			$products = get_posts( $args );
-			remove_filter( 'posts_where', [ 'DgoraWcas\Helpers', 'excludePasswordProtectedProducts' ], 90 );
+			remove_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90 );
 
-			$products      = apply_filters( 'dgwt/wcas/search_results/products_raw', $products );
+			$products      = apply_filters( 'psfs/search_results/products_raw', $products );
 			$totalProducts = count( $products );
 			$hits         += $totalProducts;
-			do_action( 'dgwt/wcas/analytics/after_searching', $keyword, $hits, $lang );
+			do_action( 'psfs/analytics/after_searching', $keyword, $hits, $lang );
 
 			if ( ! empty( $products ) ) {
 				$orderedProducts = [];
@@ -293,19 +293,19 @@ class Search {
 					}
 
 					$score                        = Helpers::calcScore( $keyword, $post->post_title );
-					$orderedProducts[ $i ]->score = apply_filters( 'dgwt/wcas/search_results/product/score', $score, $keyword, $post->ID, $post );
+					$orderedProducts[ $i ]->score = apply_filters( 'psfs/search_results/product/score', $score, $keyword, $post->ID, $post );
 
 					$i ++;
 				}
 
 				// Sort by relevance
-				usort( $orderedProducts, [ 'DgoraWcas\Helpers', 'cmpSimilarity' ] );
+				usort( $orderedProducts, [ 'PsfSearch\Helpers', 'cmpSimilarity' ] );
 
 				// Response that returns all results.
 				if ( $context === 'product-ids' ) {
 					$output['suggestions'] = $orderedProducts;
 					$output['time']        = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
-					$result                = apply_filters( 'dgwt/wcas/page_search_results/output', $output );
+					$result                = apply_filters( 'psfs/page_search_results/output', $output );
 
 					if ( $return ) {
 						return $result;
@@ -318,7 +318,7 @@ class Search {
 					$output['results'] = wp_list_pluck( $orderedProducts, 'ID' );
 					$output['engine']  = 'free';
 					$output['time']    = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
-					$result            = apply_filters( 'dgwt/wcas/page_search_results/output/product_ids_only', $output );
+					$result            = apply_filters( 'psfs/page_search_results/output/product_ids_only', $output );
 
 					if ( $return ) {
 						return $result;
@@ -330,13 +330,13 @@ class Search {
 				$productsSlots = $this->flexibleLimits ? $this->totalLimit : $this->groups['product']['limit'];
 
 				$fields = [];
-				if ( DGWT_WCAS()->settings->getOption( 'show_product_image' ) === 'on' ) {
+				if ( PSFS()->settings->getOption( 'show_product_image' ) === 'on' ) {
 					$fields[] = 'thumb_html';
 				}
-				if ( DGWT_WCAS()->settings->getOption( 'show_product_price' ) === 'on' ) {
+				if ( PSFS()->settings->getOption( 'show_product_price' ) === 'on' ) {
 					$fields[] = 'price';
 				}
-				if ( DGWT_WCAS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
+				if ( PSFS()->settings->getOption( 'show_product_sku' ) === 'on' ) {
 					$fields[] = 'sku';
 				}
 
@@ -357,7 +357,7 @@ class Search {
 			$results = $this->convertGroupsToSuggestions();
 
 			// Show more
-			$showMoreProductsLink = apply_filters( 'dgwt/wcas/search_results/show_more_products_link', false );
+			$showMoreProductsLink = apply_filters( 'psfs/search_results/show_more_products_link', false );
 
 			if (
 				! empty( $this->groups['product']['results'] ) &&
@@ -370,7 +370,7 @@ class Search {
 						[
 							's'         => $keyword,
 							'post_type' => 'product',
-							'dgwt_wcas' => '1',
+							'psfs' => '1',
 						],
 						home_url()
 					),
@@ -384,7 +384,7 @@ class Search {
 					'results' => [],
 					'engine'  => 'free',
 				];
-				$result = apply_filters( 'dgwt/wcas/search_results/output/product_ids_only', $output );
+				$result = apply_filters( 'psfs/search_results/output/product_ids_only', $output );
 
 				if ( $return ) {
 					return $result;
@@ -410,9 +410,9 @@ class Search {
 		$output['time'] = number_format( ( microtime( true ) - $start ), 2, '.', '' ) . ' sec';
 
 		$output['engine'] = 'free';
-		$output['v']      = DGWT_WCAS_VERSION;
+		$output['v']      = PSFS_VERSION;
 
-		$result = apply_filters( 'dgwt/wcas/search_results/output', $output );
+		$result = apply_filters( 'psfs/search_results/output', $output );
 
 		if ( $return ) {
 			return $result;
@@ -472,9 +472,9 @@ class Search {
 			}
 
 			// Get description
-			if ( DGWT_WCAS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
+			if ( PSFS()->settings->getOption( 'show_product_desc' ) === 'on' ) {
 				$wordsLimit = 0;
-				if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+				if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
 					$wordsLimit = 15;
 				}
 				$r['desc'] = $product->getDescription( 'suggestions', $wordsLimit );
@@ -485,21 +485,21 @@ class Search {
 				$r['sku'] = $product->getSKU();
 			}
 
-			if ( Helpers::isFiboDebugEnabled( 'score' ) ) {
+			if ( Helpers::isPsfDebugEnabled( 'score' ) ) {
 				$r['score'] = round( $post->score, 2 );
 			}
 
 			// Is on sale
-			// if ( DGWT_WCAS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
+			// if ( PSFS()->settings->getOption( 'show_sale_badge' ) === 'on' ) {
 			// $r[ 'on_sale' ] = $product->is_on_sale();
 			// }
 
 			// Is featured
-			// if ( DGWT_WCAS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
+			// if ( PSFS()->settings->getOption( 'show_featured_badge' ) === 'on' ) {
 			// $r[ 'featured' ] = $product->is_featured();
 			// }
 
-			$relevantProducts[] = apply_filters( 'dgwt/wcas/search_results/products', $r, $product );
+			$relevantProducts[] = apply_filters( 'psfs/search_results/products', $r, $product );
 
 			$limit --;
 
@@ -538,7 +538,7 @@ class Search {
 		];
 
 		// Exclude out of stock products from suggestions
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$meta_query[] = [
 				'key'     => '_stock_status',
 				'value'   => 'outofstock',
@@ -572,7 +572,7 @@ class Search {
 		];
 
 		// Exclude out of stock products from suggestions
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$tax_query[] = [
 				'taxonomy' => 'product_visibility',
 				'field'    => 'term_taxonomy_id',
@@ -610,7 +610,7 @@ class Search {
 			return $results;
 		}
 
-		$productCategories = get_terms( 'product_cat', apply_filters( 'dgwt/wcas/search/product_cat/args', $args ) );
+		$productCategories = get_terms( 'product_cat', apply_filters( 'psfs/search/product_cat/args', $args ) );
 
 		// Compare keyword and term name
 		$i = 0;
@@ -674,7 +674,7 @@ class Search {
 			return $results;
 		}
 
-		$productTags = get_terms( 'product_tag', apply_filters( 'dgwt/wcas/search/product_tag/args', $args ) );
+		$productTags = get_terms( 'product_tag', apply_filters( 'psfs/search/product_tag/args', $args ) );
 
 		// Compare keyword and term name
 		$i = 0;
@@ -747,21 +747,21 @@ class Search {
 					}
 
 					// Search in content
-					if ( DGWT_WCAS()->settings->getOption( 'search_in_product_content' ) === 'on' && in_array( 'content', $this->searchIn ) ) {
+					if ( PSFS()->settings->getOption( 'search_in_product_content' ) === 'on' && in_array( 'content', $this->searchIn ) ) {
 						$search .= $wpdb->prepare( " OR ($wpdb->posts.post_content LIKE %s)", $like );
 					}
 
 					// Search in excerpt
-					if ( DGWT_WCAS()->settings->getOption( 'search_in_product_excerpt' ) === 'on' && in_array( 'excerpt', $this->searchIn ) ) {
+					if ( PSFS()->settings->getOption( 'search_in_product_excerpt' ) === 'on' && in_array( 'excerpt', $this->searchIn ) ) {
 						$search .= $wpdb->prepare( " OR ($wpdb->posts.post_excerpt LIKE %s)", $like );
 					}
 
 					// Search in SKU
-					if ( DGWT_WCAS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
-						$search .= $wpdb->prepare( " OR (dgwt_wcasmsku.meta_key='_sku' AND dgwt_wcasmsku.meta_value LIKE %s)", $like );
+					if ( PSFS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
+						$search .= $wpdb->prepare( " OR (psfsmsku.meta_key='_sku' AND psfsmsku.meta_value LIKE %s)", $like );
 					}
 
-					$search = apply_filters( 'dgwt/wcas/native/search_query/search_or', $search, $like, $this );
+					$search = apply_filters( 'psfs/native/search_query/search_or', $search, $like, $this );
 
 					$search .= ')';
 
@@ -803,11 +803,11 @@ class Search {
 
 		if ( $this->isAjaxSearch() ) {
 
-			if ( DGWT_WCAS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
-				$join .= " INNER JOIN $wpdb->postmeta AS dgwt_wcasmsku ON ( $wpdb->posts.ID = dgwt_wcasmsku.post_id )";
+			if ( PSFS()->settings->getOption( 'search_in_product_sku' ) === 'on' && in_array( 'sku', $this->searchIn ) ) {
+				$join .= " INNER JOIN $wpdb->postmeta AS psfsmsku ON ( $wpdb->posts.ID = psfsmsku.post_id )";
 			}
 
-			$join = apply_filters( 'dgwt/wcas/native/search_query/join', $join );
+			$join = apply_filters( 'psfs/native/search_query/join', $join );
 		}
 
 		return $join;
@@ -830,7 +830,7 @@ class Search {
 			return $where;
 		}
 
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_excerpt' ) !== 'on' && in_array( 'excerpt', $this->searchIn ) ) {
+		if ( PSFS()->settings->getOption( 'search_in_product_excerpt' ) !== 'on' && in_array( 'excerpt', $this->searchIn ) ) {
 
 			$where = preg_replace(
 				"/OR \(post_excerpt\s+LIKE\s*(\'\%[^\%]+\%\')\)/",
@@ -862,7 +862,7 @@ class Search {
 		 *
 		 * @since 1.26.0
 		 */
-		if ( apply_filters( 'dgwt/wcas/native/hook_query_once', true ) ) {
+		if ( apply_filters( 'psfs/native/hook_query_once', true ) ) {
 			$this->hooked = true;
 		}
 
@@ -874,7 +874,7 @@ class Search {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'dgwt_wcas', $query->query_vars['s'] );
+		$query->set( 'psfs', $query->query_vars['s'] );
 
 		$phrase = $query->query_vars['s'];
 
@@ -930,7 +930,7 @@ class Search {
 	 * @since 1.1.3
 	 */
 	public function isAjaxSearch() {
-		if ( defined( 'DGWT_WCAS_AJAX' ) && DGWT_WCAS_AJAX ) {
+		if ( defined( 'PSFS_AJAX' ) && PSFS_AJAX ) {
 			return true;
 		}
 
@@ -1056,7 +1056,7 @@ class Search {
 		}
 
 		// Remove products headline when there are only product type suggestion
-		$alwaysShowProductHeadline = apply_filters( 'dgwt/wcas/search_results/always_show_product_headline', false );
+		$alwaysShowProductHeadline = apply_filters( 'psfs/search_results/always_show_product_headline', false );
 
 		if ( ! $alwaysShowProductHeadline && $totalHeadlines === 1 ) {
 			$i     = 0;
@@ -1091,13 +1091,13 @@ class Search {
 	public function searchResultsGroups() {
 		$groups = [];
 
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_tax_product_cat' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'show_product_tax_product_cat' ) === 'on' ) {
 			$groups['tax_product_cat'] = [
 				'limit' => 3,
 			];
 		}
 
-		if ( DGWT_WCAS()->settings->getOption( 'show_product_tax_product_tag' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'show_product_tax_product_tag' ) === 'on' ) {
 			$groups['tax_product_tag'] = [
 				'limit' => 3,
 			];
@@ -1107,7 +1107,7 @@ class Search {
 			'limit' => 7,
 		];
 
-		return apply_filters( 'dgwt/wcas/search_groups', $groups );
+		return apply_filters( 'psfs/search_groups', $groups );
 	}
 
 	/**
@@ -1206,7 +1206,7 @@ class Search {
 			'suggestions' => [],
 			'time'        => '0 sec',
 			'total'       => 0,
-			'v'           => DGWT_WCAS_VERSION,
+			'v'           => PSFS_VERSION,
 		];
 
 		return $output;

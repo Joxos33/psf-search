@@ -1,40 +1,40 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSFS_FILE' ) ) {
 	exit;
 }
 
-$prefix = 'fibosearch-debug_page-';
+$prefix = 'psfsearch-debug_page-';
 ?>
-<div class="wrap dgwt-wcas-settings dgwt-wcas-debug">
+<div class="wrap psfs-settings psfs-debug">
 
-	<h2 class="dgwt-wcas-settings__head">
-		<div class="dgwt-wcas-settings__title">
-			<div class="dgwt-wcas-settings__title-top">
-				<div class="dgwt-wcas-settings-logo-wrapper">
-					<img class="dgwt-wcas-settings-logo" src="<?php echo DGWT_WCAS_URL . 'assets/img/logo-30.png'; ?>"/>
-					<span class="dgwt-wcas-settings-logo-pro">Pro</span>
+	<h2 class="psfs-settings__head">
+		<div class="psfs-settings__title">
+			<div class="psfs-settings__title-top">
+				<div class="psfs-settings-logo-wrapper">
+					<img class="psfs-settings-logo" src="<?php echo PSFS_URL . 'assets/img/logo-30.png'; ?>"/>
+					<span class="psfs-settings-logo-pro">Pro</span>
 				</div>
-				<span class="dgwt-wcas-settings__title-core"><?php _e( 'Debug page', 'ajax-search-for-woocommerce' ); ?></span>
+				<span class="psfs-settings__title-core"><?php _e( 'Debug page', 'psf-search' ); ?></span>
 			</div>
 		</div>
 	</h2>
 
-	<h2 class="nav-tab-wrapper fibosearch-debug_page-nav-tab-wrapper">
+	<h2 class="nav-tab-wrapper psfsearch-debug_page-nav-tab-wrapper">
 		<?php  ?>
-		<a href="#dgwt_wcas_deb_search" class="nav-tab" id="dgwt_wcas_deb_search-tab">Search</a>
-		<a href="#dgwt_wcas_deb_indexer" class="nav-tab" id="dgwt_wcas_deb_indexer-tab">Indexer</a>
-		<a href="#dgwt_wcas_deb_product" class="nav-tab" id="dgwt_wcas_deb_product-tab">Product</a>
-		<a href="#dgwt_wcas_deb_term" class="nav-tab" id="dgwt_wcas_deb_term-tab">Term</a>
-		<a href="#dgwt_wcas_deb_source-query" class="nav-tab" id="dgwt_wcas_deb_source-query-tab">Source Query</a>
-		<a href="#dgwt_wcas_deb_visibility" class="nav-tab" id="dgwt_wcas_deb_visibility-tab">Products Visibility</a>
-		<a href="#dgwt_wcas_deb_missing_products" class="nav-tab" id="dgwt_wcas_deb_missing_products-tab">Missing Products</a>
-		<a href="#dgwt_wcas_deb_hooks" class="nav-tab" id="dgwt_wcas_deb_hooks-tab">Hooks</a>
+		<a href="#psfs_deb_search" class="nav-tab" id="psfs_deb_search-tab">Search</a>
+		<a href="#psfs_deb_indexer" class="nav-tab" id="psfs_deb_indexer-tab">Indexer</a>
+		<a href="#psfs_deb_product" class="nav-tab" id="psfs_deb_product-tab">Product</a>
+		<a href="#psfs_deb_term" class="nav-tab" id="psfs_deb_term-tab">Term</a>
+		<a href="#psfs_deb_source-query" class="nav-tab" id="psfs_deb_source-query-tab">Source Query</a>
+		<a href="#psfs_deb_visibility" class="nav-tab" id="psfs_deb_visibility-tab">Products Visibility</a>
+		<a href="#psfs_deb_missing_products" class="nav-tab" id="psfs_deb_missing_products-tab">Missing Products</a>
+		<a href="#psfs_deb_hooks" class="nav-tab" id="psfs_deb_hooks-tab">Hooks</a>
 	<?php  ?>
-		<a href="#dgwt_wcas_deb_anatytics" class="nav-tab" id="dgwt_wcas_deb_anatytics-tab">Analytics</a>
-		<a href="#dgwt_wcas_deb_maintenance" class="nav-tab" id="dgwt_wcas_deb_maintenance-tab">Maintenance</a>
-		<a href="#dgwt_wcas_deb_active_integrations" class="nav-tab" id="dgwt_wcas_deb_active_integrations-tab">Integrations</a>
+		<a href="#psfs_deb_anatytics" class="nav-tab" id="psfs_deb_anatytics-tab">Analytics</a>
+		<a href="#psfs_deb_maintenance" class="nav-tab" id="psfs_deb_maintenance-tab">Maintenance</a>
+		<a href="#psfs_deb_active_integrations" class="nav-tab" id="psfs_deb_active_integrations-tab">Integrations</a>
 	</h2>
 
 	<?php
@@ -42,49 +42,49 @@ $prefix = 'fibosearch-debug_page-';
 	$active = 'search';
 	?>
 
-	<div class="dgwt-wcas-settings-body js-dgwt-wcas-settings-body" data-dgwt-wcas-active="<?php echo esc_attr( $active ); ?>">
+	<div class="psfs-settings-body js-psfs-settings-body" data-psfs-active="<?php echo esc_attr( $active ); ?>">
 		<?php  ?>
-		<div id="dgwt_wcas_deb_search" class="fibosearch-debug_page-group dgwt-wcas-group-active">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-search.php'; ?>
+		<div id="psfs_deb_search" class="psfsearch-debug_page-group psfs-group-active">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-search.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_indexer" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-indexer.php'; ?>
+		<div id="psfs_deb_indexer" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-indexer.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_product" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-product.php'; ?>
+		<div id="psfs_deb_product" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-product.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_term" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-term.php'; ?>
+		<div id="psfs_deb_term" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-term.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_source-query" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-source-query.php'; ?>
+		<div id="psfs_deb_source-query" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-source-query.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_visibility" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-catalog-visibility.php'; ?>
+		<div id="psfs_deb_visibility" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-catalog-visibility.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_missing_products" class="fibosearch-debug_page-group">
-			<?php include_once DGWT_WCAS_DIR . 'partials/admin/debug/body-missing-products.php'; ?>
+		<div id="psfs_deb_missing_products" class="psfsearch-debug_page-group">
+			<?php include_once PSFS_DIR . 'partials/admin/debug/body-missing-products.php'; ?>
 		</div>
 
-		<div id="dgwt_wcas_deb_hooks" class="fibosearch-debug_page-group">
-			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/hooks.php'; ?>
+		<div id="psfs_deb_hooks" class="psfsearch-debug_page-group">
+			<?php require_once PSFS_DIR . 'partials/admin/debug/hooks.php'; ?>
 		</div>
 	<?php  ?>
 
-		<div id="dgwt_wcas_deb_anatytics" class="fibosearch-debug_page-group">
-			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/body-analytics.php'; ?>
+		<div id="psfs_deb_anatytics" class="psfsearch-debug_page-group">
+			<?php require_once PSFS_DIR . 'partials/admin/debug/body-analytics.php'; ?>
 		</div>
-		<div id="dgwt_wcas_deb_maintenance" class="fibosearch-debug_page-group">
-			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/body-maintenance.php'; ?>
+		<div id="psfs_deb_maintenance" class="psfsearch-debug_page-group">
+			<?php require_once PSFS_DIR . 'partials/admin/debug/body-maintenance.php'; ?>
 		</div>
-		<div id="dgwt_wcas_deb_active_integrations" class="fibosearch-debug_page-group">
-			<?php require_once DGWT_WCAS_DIR . 'partials/admin/debug/active-integrations.php'; ?>
+		<div id="psfs_deb_active_integrations" class="psfsearch-debug_page-group">
+			<?php require_once PSFS_DIR . 'partials/admin/debug/active-integrations.php'; ?>
 		</div>
 	</div>
 </div>
@@ -93,15 +93,15 @@ $prefix = 'fibosearch-debug_page-';
 	jQuery(document).ready(function ($) {
 
 		function markActiveGroup($group) {
-			var name = $group.attr('id').replace('dgwt_wcas_', '');
+			var name = $group.attr('id').replace('psfs_', '');
 
-			$group.addClass('dgwt-wcas-group-active');
-			$group.closest('.js-dgwt-wcas-settings-body').attr('data-dgwt-wcas-active', name)
+			$group.addClass('psfs-group-active');
+			$group.closest('.js-psfs-settings-body').attr('data-psfs-active', name)
 		}
 
 		// A tab href reaches jQuery's $(); only allow "#id" selectors so a forged tab
 		// (e.g. injected into an admin notice) cannot smuggle an HTML string into $().
-		function dgwtWcasIsSafeTabHref(href) {
+		function psfsIsSafeTabHref(href) {
 			return typeof href === 'string' && /^#[A-Za-z0-9_-]+$/.test(href);
 		}
 
@@ -116,7 +116,7 @@ $prefix = 'fibosearch-debug_page-';
 				// Check if tabs exists
 				$('.<?php echo $prefix; ?>nav-tab-wrapper a:not(.js-nav-tab-minor)').each(function () {
 
-					if ($(this).attr('href') === maybe_active && dgwtWcasIsSafeTabHref(maybe_active)) {
+					if ($(this).attr('href') === maybe_active && psfsIsSafeTabHref(maybe_active)) {
 						activetab = maybe_active;
 					}
 				});
@@ -150,7 +150,7 @@ $prefix = 'fibosearch-debug_page-';
 
 		$('.<?php echo $prefix; ?>nav-tab-wrapper a:not(.js-nav-tab-minor)').on('click', function (evt) {
 
-			if (!dgwtWcasIsSafeTabHref($(this).attr('href'))) {
+			if (!psfsIsSafeTabHref($(this).attr('href'))) {
 				evt.preventDefault();
 				return;
 			}

@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL;
+namespace PsfSearch\Engines\TNTSearchMySQL;
 
-use \DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use \DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
-use \DgoraWcas\Helpers;
-use \DgoraWcas\Multilingual;
+use \PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use \PsfSearch\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
+use \PsfSearch\Helpers;
+use \PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Class SearchPage
  *
- * @package DgoraWcas\Engines\TNTSearchMySQL
+ * @package PsfSearch\Engines\TNTSearchMySQL
  */
 class SearchPage {
 
@@ -29,24 +29,24 @@ class SearchPage {
 	private $postsIDsBuffer = null;
 
 	public function init() {
-		// Break early if the "nofibosearch" mode is active.
-		if ( Helpers::isNoFiboSearchModeActive() ) {
+		// Break early if the "nopsfsearch" mode is active.
+		if ( Helpers::isNoPsfSearchModeActive() ) {
 			return;
 		}
 
-		Helpers::maybeInjectFiboDebugFields( 'score' );
+		Helpers::maybeInjectPsfDebugFields( 'score' );
 
 		// Override default search
 		add_action( 'pre_get_posts', [ $this, 'searchProducts' ], 900001 );
 
 		// Clear default search query
-		add_filter( 'posts_search', [ 'DgoraWcas\Helpers', 'clearSearchQuery' ], 1000, 2 );
+		add_filter( 'posts_search', [ 'PsfSearch\Helpers', 'clearSearchQuery' ], 1000, 2 );
 
 		// Restore search phrase
-		add_filter( 'the_posts', [ 'DgoraWcas\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
+		add_filter( 'the_posts', [ 'PsfSearch\Helpers', 'rollbackSearchPhrase' ], 1000, 2 );
 
 		// Return product IDs that have been found
-		add_filter( 'dgwt/wcas/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
+		add_filter( 'psfs/search_page/result_post_ids', [ $this, 'getProductIds' ], 10, 2 );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class SearchPage {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'dgwt_wcas', $query->query_vars['s'] );
+		$query->set( 'psfs', $query->query_vars['s'] );
 
 		$phrase = $query->query_vars['s'];
 
@@ -101,7 +101,7 @@ class SearchPage {
 
 		$lang = Multilingual::isMultilingual() ? Multilingual::getCurrentLanguage() : '';
 		if ( ! Builder::searchableCacheExists( $lang ) ) {
-			add_filter( 'dgwt/wcas/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
+			add_filter( 'psfs/tnt/search_cache', '__return_false', PHP_INT_MAX - 5 );
 		}
 
 		$search = new SearchResultsPageQuery();
@@ -118,7 +118,7 @@ class SearchPage {
 		$postIn = array_map( 'intval', wp_list_pluck( $results, 'post_id' ) );
 
 		// Analytics
-		do_action( 'dgwt/wcas/analytics/after_searching', $phrase, count( $postIn ), $lang );
+		do_action( 'psfs/analytics/after_searching', $phrase, count( $postIn ), $lang );
 
 		// Integration with FiboFilters.
 		if ( $query->get( 'fibofilters' ) ) {

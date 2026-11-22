@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Integrations\Themes;
+namespace PsfSearch\Integrations\Themes;
 
-use DgoraWcas\Abstracts\ThemeIntegration;
+use PsfSearch\Abstracts\ThemeIntegration;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

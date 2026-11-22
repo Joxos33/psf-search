@@ -190,11 +190,11 @@
                     return selected
                 },
                 getActiveInstance: function () {
-                    var $el = $('.dgwt-wcas-search-wrapp.dgwt-wcas-active'),
+                    var $el = $('.psfs-search-wrapp.psfs-active'),
                         instance;
                     if ($el.length > 0) {
                         $el.each(function () {
-                            var $input = $(this).find('.dgwt-wcas-search-input');
+                            var $input = $(this).find('.psfs-search-input');
                             if (typeof $input.data('autocomplete') == 'object') {
                                 instance = $input.data('autocomplete');
                                 return false;
@@ -270,7 +270,7 @@
         },
         noop = $.noop;
 
-    function DgwtWcasAutocompleteSearch(el, options) {
+    function PsfsAutocompleteSearch(el, options) {
         var that = this;
 
         // Shared variables:
@@ -294,15 +294,15 @@
         that.noSuggestionsContainer = null;
         that.latestActivateSource = '';
         that.actionTriggerSource = '';
-        that.options = $.extend(true, {}, DgwtWcasAutocompleteSearch.defaults, options);
+        that.options = $.extend(true, {}, PsfsAutocompleteSearch.defaults, options);
         that.classes = {
-            selected: 'dgwt-wcas-suggestion-selected',
-            suggestion: 'dgwt-wcas-suggestion',
-            suggestionsContainerOrientTop: 'dgwt-wcas-suggestions-wrapp--top',
-            inputFilled: 'dgwt-wcas-search-filled',
-            darkenOverlayMounted: 'js-dgwt-wcas-search-darkoverl-mounted',
-            fixed: 'dgwt-wcas-suggestions-wrapp-fixed',
-            initialized: 'dgwt-wcas-suggestions-wrapp-initialized'
+            selected: 'psfs-suggestion-selected',
+            suggestion: 'psfs-suggestion',
+            suggestionsContainerOrientTop: 'psfs-suggestions-wrapp--top',
+            inputFilled: 'psfs-search-filled',
+            darkenOverlayMounted: 'js-psfs-search-darkoverl-mounted',
+            fixed: 'psfs-suggestions-wrapp-fixed',
+            initialized: 'psfs-suggestions-wrapp-initialized'
         };
         that.hint = null;
         that.hintValue = '';
@@ -317,8 +317,8 @@
         that.voiceSearchStarted = null;
 
         // Search history
-        that.recentlyViewedProductsKey = 'fibosearch_recently_viewed_products';
-        that.recentlySearchedPhrasesKey = 'fibosearch_recently_searched_phrases';
+        that.recentlyViewedProductsKey = 'psfsearch_recently_viewed_products';
+        that.recentlySearchedPhrasesKey = 'psfsearch_recently_searched_phrases';
 
         // Initialize and set options:
         that.initialize();
@@ -326,11 +326,11 @@
 
     }
 
-    DgwtWcasAutocompleteSearch.utils = utils;
+    PsfsAutocompleteSearch.utils = utils;
 
-    $.DgwtWcasAutocompleteSearch = DgwtWcasAutocompleteSearch;
+    $.PsfsAutocompleteSearch = PsfsAutocompleteSearch;
 
-    DgwtWcasAutocompleteSearch.defaults = {
+    PsfsAutocompleteSearch.defaults = {
         ajaxSettings: {},
         autoSelectFirst: false,
         appendTo: 'body',
@@ -363,19 +363,19 @@
         onSearchComplete: noop,
         onSearchError: noop,
         preserveInput: false,
-        searchFormClass: 'dgwt-wcas-search-wrapp',
-        containerClass: 'dgwt-wcas-suggestions-wrapp',
-        containerDetailsClass: 'dgwt-wcas-details-wrapp',
-        preSuggestionsWrappClass: 'dgwt-wcas-pre-suggestions-wrapp',
-        darkenedOverlayClass: 'dgwt-wcas-darkened-overlay',
-        searchInputClass: 'dgwt-wcas-search-input',
-        preloaderClass: 'dgwt-wcas-preloader',
-        closeTrigger: 'dgwt-wcas-close',
-        formClass: 'dgwt-wcas-search-form',
-        voiceSearchClass: 'dgwt-wcas-voice-search',
-        voiceSearchSupportedClass: 'dgwt-wcas-voice-search-supported',
-        voiceSearchActiveClass: 'dgwt-wcas-voice-search-active',
-        voiceSearchDisabledClass: 'dgwt-wcas-voice-search-disabled',
+        searchFormClass: 'psfs-search-wrapp',
+        containerClass: 'psfs-suggestions-wrapp',
+        containerDetailsClass: 'psfs-details-wrapp',
+        preSuggestionsWrappClass: 'psfs-pre-suggestions-wrapp',
+        darkenedOverlayClass: 'psfs-darkened-overlay',
+        searchInputClass: 'psfs-search-input',
+        preloaderClass: 'psfs-preloader',
+        closeTrigger: 'psfs-close',
+        formClass: 'psfs-search-form',
+        voiceSearchClass: 'psfs-voice-search',
+        voiceSearchSupportedClass: 'psfs-voice-search-supported',
+        voiceSearchActiveClass: 'psfs-voice-search-active',
+        voiceSearchDisabledClass: 'psfs-voice-search-disabled',
         tabDisabled: false,
         dataType: 'text',
         currentRequest: null,
@@ -417,7 +417,7 @@
         return utils.formatHtml(suggestionValue);
     }
 
-    DgwtWcasAutocompleteSearch.prototype = {
+    PsfsAutocompleteSearch.prototype = {
         initialize: function () {
             var that = this;
 
@@ -449,9 +449,9 @@
             // Fix position on resize
             $(window).on('resize.autocomplete', function () {
                 var that = utils.getActiveInstance();
-                clearTimeout(window.dgwt_wcas.resizeOnlyOnce);
+                clearTimeout(window.psfs.resizeOnlyOnce);
                 if (typeof that != 'undefined') {
-                    window.dgwt_wcas.resizeOnlyOnce = setTimeout(function () {
+                    window.psfs.resizeOnlyOnce = setTimeout(function () {
                         that.fixPosition();
                     }, 100);
                 }
@@ -460,9 +460,9 @@
             // Fix position on scroll
             $(window).on('scroll.autocomplete', function () {
                 var that = utils.getActiveInstance();
-                clearTimeout(window.dgwt_wcas.scrollOnlyOnce);
+                clearTimeout(window.psfs.scrollOnlyOnce);
                 if (typeof that != 'undefined') {
-                    window.dgwt_wcas.scrollOnlyOnce = setTimeout(function () {
+                    window.psfs.scrollOnlyOnce = setTimeout(function () {
                         that.fixPosition();
                     }, 100);
                 }
@@ -486,10 +486,10 @@
 
             that.getFormWrapper().addClass(that.classes.initialized);
 
-            that.suggestionsContainer.addClass('js-dgwt-wcas-initialized');
+            that.suggestionsContainer.addClass('js-psfs-initialized');
 
             if (that.detailsContainer && that.detailsContainer.length > 0) {
-                that.detailsContainer.addClass('js-dgwt-wcas-initialized');
+                that.detailsContainer.addClass('js-psfs-initialized');
             }
         },
         createContainers: function (type) {
@@ -499,7 +499,7 @@
             // Suggestions
             if ($('.' + options.containerClass).length == 0) {
 
-                that.suggestionsContainer = $(DgwtWcasAutocompleteSearch.utils.createNode(options.containerClass));
+                that.suggestionsContainer = $(PsfsAutocompleteSearch.utils.createNode(options.containerClass));
 
                 that.suggestionsContainer.appendTo(options.appendTo || 'body');
 
@@ -507,27 +507,27 @@
 
                 // Add conditional classes
                 if (options.showImage === true) {
-                    that.suggestionsContainer.addClass('dgwt-wcas-has-img');
+                    that.suggestionsContainer.addClass('psfs-has-img');
                 }
 
                 // Price
                 if (options.showPrice === true) {
-                    that.suggestionsContainer.addClass('dgwt-wcas-has-price');
+                    that.suggestionsContainer.addClass('psfs-has-price');
                 }
 
                 // Description
                 if (options.showDescription === true) {
-                    that.suggestionsContainer.addClass('dgwt-wcas-has-desc');
+                    that.suggestionsContainer.addClass('psfs-has-desc');
                 }
 
                 // SKU
                 if (options.showSKU === true) {
-                    that.suggestionsContainer.addClass('dgwt-wcas-has-sku');
+                    that.suggestionsContainer.addClass('psfs-has-sku');
                 }
 
                 // Headings
                 if (options.showHeadings === true) {
-                    that.suggestionsContainer.addClass('dgwt-wcas-has-headings');
+                    that.suggestionsContainer.addClass('psfs-has-headings');
                 }
 
             } else {
@@ -540,7 +540,7 @@
             if (that.canShowDetailsPanel()) {
 
                 if ($('.' + options.containerDetailsClass).length == 0) {
-                    that.detailsContainer = $(DgwtWcasAutocompleteSearch.utils.createNode(options.containerDetailsClass));
+                    that.detailsContainer = $(PsfsAutocompleteSearch.utils.createNode(options.containerDetailsClass));
                     that.detailsContainer.appendTo(options.appendTo || 'body');
 
                     that.detailsContainer.addClass('woocommerce');
@@ -556,8 +556,8 @@
             var that = this;
 
             // The Control event that checks if other listeners work
-            that.el.on('fibosearch/ping', function () {
-                that.el.addClass('fibosearch-pong');
+            that.el.on('psfsearch/ping', function () {
+                that.el.addClass('psfsearch-pong');
             });
 
             // Extra tasks on submit
@@ -631,7 +631,7 @@
                 suggestionsContainer = that.getSuggestionsContainer();
 
             // Register these events only once
-            if (suggestionsContainer.hasClass('js-dgwt-wcas-initialized')) {
+            if (suggestionsContainer.hasClass('js-psfs-initialized')) {
                 return;
             }
 
@@ -644,7 +644,7 @@
                 }
 
                 var currentIndex = $(this).data('index');
-                var selector = '.dgwt-wcas-suggestion[data-index="' + currentIndex + '"]';
+                var selector = '.psfs-suggestion[data-index="' + currentIndex + '"]';
 
                 var timeOffset = that.canShowDetailsPanel() ? 100 : 1;
 
@@ -706,7 +706,7 @@
                 that.isMouseDownOnSearchElements = true;
             });
 
-            $(document).on('click', '.js-dgwt-wcas-sugg-hist-clear', function () {
+            $(document).on('click', '.js-psfs-sugg-hist-clear', function () {
                 that.resetPreSuggestions();
             });
         },
@@ -714,13 +714,13 @@
             var that = this,
                 detailsContainer = that.getDetailsContainer();
 
-            if (!that.canShowDetailsPanel() || detailsContainer.hasClass('js-dgwt-wcas-initialized')) {
+            if (!that.canShowDetailsPanel() || detailsContainer.hasClass('js-psfs-initialized')) {
                 return;
             }
 
             // Update quantity
-            $(document).on('change.autocomplete', '[name="js-dgwt-wcas-quantity"]', function (e) {
-                var $input = $(this).closest('.js-dgwt-wcas-pd-addtc').find('[data-quantity]');
+            $(document).on('change.autocomplete', '[name="js-psfs-quantity"]', function (e) {
+                var $input = $(this).closest('.js-psfs-pd-addtc').find('[data-quantity]');
                 $input.attr('data-quantity', $(this).val());
             });
 
@@ -736,22 +736,22 @@
                 $formWrapper = that.getFormWrapper(),
                 $form = that.getForm();
 
-            $formWrapper.on('click.autocomplete', '.js-dgwt-wcas-search-icon-handler', function (e) {
+            $formWrapper.on('click.autocomplete', '.js-psfs-search-icon-handler', function (e) {
 
                 var $input = $formWrapper.find('.' + that.options.searchInputClass);
 
-                if ($formWrapper.hasClass('dgwt-wcas-layout-icon-open')) {
+                if ($formWrapper.hasClass('psfs-layout-icon-open')) {
                     that.hide();
                     $form.hide(true);
 
-                    $formWrapper.removeClass('dgwt-wcas-layout-icon-open');
+                    $formWrapper.removeClass('psfs-layout-icon-open');
 
 
                 } else {
-                    var $arrow = $formWrapper.find('.dgwt-wcas-search-icon-arrow');
+                    var $arrow = $formWrapper.find('.psfs-search-icon-arrow');
                     $form.hide();
                     $arrow.hide();
-                    $formWrapper.addClass('dgwt-wcas-layout-icon-open');
+                    $formWrapper.addClass('psfs-layout-icon-open');
                     that.positionIconSearchMode($formWrapper);
 
                     $form.fadeIn(50, function () {
@@ -774,18 +774,18 @@
                 return false;
             });
 
-            if ($('.js-dgwt-wcas-initialized').length == 0 && $('.js-dgwt-wcas-search-icon-handler').length > 0) {
+            if ($('.js-psfs-initialized').length == 0 && $('.js-psfs-search-icon-handler').length > 0) {
 
                 $(document).on('click.autocomplete', function (event) {
 
-                    if ($('.dgwt-wcas-layout-icon-open').length) {
+                    if ($('.psfs-layout-icon-open').length) {
 
                         var $target = $(event.target);
 
                         if (!($target.closest('.' + that.options.searchFormClass).length > 0
                             || $target.closest('.' + that.options.containerClass).length > 0
                             || $target.closest('.' + that.options.containerDetailsClass).length > 0
-                            || $target.hasClass('js-dgwt-wcas-sugg-hist-clear')
+                            || $target.hasClass('js-psfs-sugg-hist-clear')
                         )) {
                             that.hideIconModeSearch();
                         }
@@ -816,24 +816,24 @@
         activateMobileOverlayMode: function () {
             var that = this,
                 $formWrapper = that.getFormWrapper(),
-                $iconHandler = $formWrapper.find('.js-dgwt-wcas-search-icon-handler');
+                $iconHandler = $formWrapper.find('.js-psfs-search-icon-handler');
 
             if (
-                $formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')
-                && !$formWrapper.find('.js-dgwt-wcas-enable-mobile-form').length
+                $formWrapper.hasClass('js-psfs-mobile-overlay-enabled')
+                && !$formWrapper.find('.js-psfs-enable-mobile-form').length
             ) {
 
-                var aria = typeof dgwt_wcas.labels.mob_overlay_label === 'string' ? dgwt_wcas.labels.mob_overlay_label : '';
+                var aria = typeof psfs.labels.mob_overlay_label === 'string' ? psfs.labels.mob_overlay_label : '';
 
-                $formWrapper.prepend('<a href="#" aria-label="' + aria + '" class="js-dgwt-wcas-enable-mobile-form dgwt-wcas-enable-mobile-form"></a>');
-                $formWrapper.addClass('dgwt-wcas-mobile-overlay-trigger-active');
+                $formWrapper.prepend('<a href="#" aria-label="' + aria + '" class="js-psfs-enable-mobile-form psfs-enable-mobile-form"></a>');
+                $formWrapper.addClass('psfs-mobile-overlay-trigger-active');
 
                 // Don't focus an icon handler when mobile overlay handler is displayed.
                 if ($iconHandler.length) {
                     $iconHandler.attr('tabindex', '-1');
                 }
 
-                var $el = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
+                var $el = $formWrapper.find('.js-psfs-enable-mobile-form');
 
                 $el.on('click.autocomplete', function (e) {
 
@@ -853,16 +853,16 @@
         deactivateMobileOverlayMode: function () {
             var that = this,
                 $formWrapper = that.getFormWrapper(),
-                $iconHandler = $formWrapper.find('.js-dgwt-wcas-search-icon-handler');
+                $iconHandler = $formWrapper.find('.js-psfs-search-icon-handler');
 
-            var $el = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
+            var $el = $formWrapper.find('.js-psfs-enable-mobile-form');
 
-            if ($formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')
+            if ($formWrapper.hasClass('js-psfs-mobile-overlay-enabled')
                 && $el.length
             ) {
                 that.closeOverlayMobile();
                 $el.remove();
-                $formWrapper.removeClass('dgwt-wcas-mobile-overlay-trigger-active');
+                $formWrapper.removeClass('psfs-mobile-overlay-trigger-active');
 
                 // Focus an icon handler when mobile overlay is deactivated.
                 if ($iconHandler.length) {
@@ -877,12 +877,12 @@
                 isMobOverlayEnabled = false;
 
             // Break early if this search bar shouldn't open in overlay mobile mode
-            if (!$formWrapper.hasClass('js-dgwt-wcas-mobile-overlay-enabled')) {
+            if (!$formWrapper.hasClass('js-psfs-mobile-overlay-enabled')) {
                 return;
             }
 
             // Determine the search should open in mobile overlay
-            if ($formWrapper.find('.js-dgwt-wcas-enable-mobile-form').length) {
+            if ($formWrapper.find('.js-psfs-enable-mobile-form').length) {
                 isMobOverlayEnabled = true;
             }
 
@@ -928,13 +928,13 @@
                 $overlayWrap,
                 html = '';
 
-            $('html').addClass('dgwt-wcas-overlay-mobile-on');
-            $('html').addClass('dgwt-wcas-open-' + that.getSearchStyle());
-            html += '<div class="js-dgwt-wcas-overlay-mobile dgwt-wcas-overlay-mobile">';
-            html += '<div class="dgwt-wcas-om-bar js-dgwt-wcas-om-bar">';
-            html += '<button class="dgwt-wcas-om-return js-dgwt-wcas-om-return">'
-            if (typeof dgwt_wcas.back_icon == 'string') {
-                html += dgwt_wcas.back_icon;
+            $('html').addClass('psfs-overlay-mobile-on');
+            $('html').addClass('psfs-open-' + that.getSearchStyle());
+            html += '<div class="js-psfs-overlay-mobile psfs-overlay-mobile">';
+            html += '<div class="psfs-om-bar js-psfs-om-bar">';
+            html += '<button class="psfs-om-return js-psfs-om-return">'
+            if (typeof psfs.back_icon == 'string') {
+                html += psfs.back_icon;
             }
             html += '</button>';
             html += '</div>';
@@ -942,59 +942,59 @@
 
             // Create overlay
             $(that.options.mobileOverlayWrapper).append(html);
-            $overlayWrap = $('.js-dgwt-wcas-overlay-mobile');
+            $overlayWrap = $('.js-psfs-overlay-mobile');
             $overlayWrap.css('zIndex', zIndex);
 
-            $wrapper.after('<span class="js-dgwt-wcas-om-hook"></span>');
-            $wrapper.appendTo('.js-dgwt-wcas-om-bar');
-            $suggestionsWrapp.appendTo('.js-dgwt-wcas-om-bar');
-            $wrapper.addClass('dgwt-wcas-search-wrapp-mobile');
+            $wrapper.after('<span class="js-psfs-om-hook"></span>');
+            $wrapper.appendTo('.js-psfs-om-bar');
+            $suggestionsWrapp.appendTo('.js-psfs-om-bar');
+            $wrapper.addClass('psfs-search-wrapp-mobile');
 
-            if ($wrapper.hasClass('dgwt-wcas-has-submit')) {
-                $wrapper.addClass('dgwt-wcas-has-submit-off');
-                $wrapper.removeClass('dgwt-wcas-has-submit');
+            if ($wrapper.hasClass('psfs-has-submit')) {
+                $wrapper.addClass('psfs-has-submit-off');
+                $wrapper.removeClass('psfs-has-submit');
             }
 
             $wrapper.find('.' + that.options.searchInputClass).trigger('focus');
 
-            $(document).on('click.autocomplete', '.js-dgwt-wcas-om-return', function (e) {
+            $(document).on('click.autocomplete', '.js-psfs-om-return', function (e) {
                 that.closeOverlayMobile($overlayWrap);
             });
-            document.dispatchEvent(new CustomEvent('fibosearch/show-mobile-overlay', {
+            document.dispatchEvent(new CustomEvent('psfsearch/show-mobile-overlay', {
                 detail: that
             }));
         },
         closeOverlayMobile: function ($overlayWrap) {
             var that = this;
 
-            if (!$('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+            if (!$('html').hasClass('psfs-overlay-mobile-on')) {
                 that.overlayMobileState = 'off';
                 return;
             }
 
             var $suggestionsWrapp = that.getSuggestionsContainer();
 
-            var $clonedForm = $('.js-dgwt-wcas-om-bar').find('.' + that.options.searchFormClass);
+            var $clonedForm = $('.js-psfs-om-bar').find('.' + that.options.searchFormClass);
 
-            if ($clonedForm.hasClass('dgwt-wcas-has-submit-off')) {
-                $clonedForm.removeClass('dgwt-wcas-has-submit-off');
-                $clonedForm.addClass('dgwt-wcas-has-submit');
+            if ($clonedForm.hasClass('psfs-has-submit-off')) {
+                $clonedForm.removeClass('psfs-has-submit-off');
+                $clonedForm.addClass('psfs-has-submit');
             }
 
-            $clonedForm.removeClass('dgwt-wcas-search-wrapp-mobile');
-            $('html').removeClass('dgwt-wcas-overlay-mobile-on');
-            $('html').removeClass('dgwt-wcas-open-' + that.getSearchStyle());
+            $clonedForm.removeClass('psfs-search-wrapp-mobile');
+            $('html').removeClass('psfs-overlay-mobile-on');
+            $('html').removeClass('psfs-open-' + that.getSearchStyle());
             $suggestionsWrapp.appendTo('body');
             $suggestionsWrapp.removeAttr('body-scroll-lock-ignore');
-            $('.js-dgwt-wcas-om-hook').after($clonedForm);
-            $('.js-dgwt-wcas-overlay-mobile').remove();
-            $('.js-dgwt-wcas-om-hook').remove();
+            $('.js-psfs-om-hook').after($clonedForm);
+            $('.js-psfs-overlay-mobile').remove();
+            $('.js-psfs-om-hook').remove();
 
             setTimeout(function () {
                 $clonedForm.find('.' + that.options.searchInputClass).val('');
-                var $closeBtn = $clonedForm.find('.dgwt-wcas-close');
+                var $closeBtn = $clonedForm.find('.psfs-close');
                 if ($clonedForm.length > 0) {
-                    $closeBtn.removeClass('dgwt-wcas-close');
+                    $closeBtn.removeClass('psfs-close');
                     $closeBtn.html('');
                 }
 
@@ -1005,7 +1005,7 @@
 
             that.overlayMobileState = 'off';
 
-            document.dispatchEvent(new CustomEvent('fibosearch/hide-mobile-overlay', {
+            document.dispatchEvent(new CustomEvent('psfsearch/hide-mobile-overlay', {
                 detail: that
             }));
         },
@@ -1013,7 +1013,7 @@
             var that = this,
                 $searchWrapp = that.getFormWrapper(),
                 flexibleMode = 0,
-                $iconPreloader = $searchWrapp.find('.dgwt-wcas-icon-preloader');
+                $iconPreloader = $searchWrapp.find('.psfs-icon-preloader');
 
             /**
              * flexibleMode
@@ -1022,11 +1022,11 @@
              * 2 = Icon on desktop, search bar on mobile
              */
 
-            if ($searchWrapp.hasClass('js-dgwt-wcas-layout-icon-flexible')) {
+            if ($searchWrapp.hasClass('js-psfs-layout-icon-flexible')) {
                 flexibleMode = 1;
             }
 
-            if ($searchWrapp.hasClass('js-dgwt-wcas-layout-icon-flexible-inv')) {
+            if ($searchWrapp.hasClass('js-psfs-layout-icon-flexible-inv')) {
                 flexibleMode = 2;
             }
             if (flexibleMode > 0) {
@@ -1035,14 +1035,14 @@
                     (flexibleMode === 1 && that.isBreakpointReached('search-layout'))
                     || (flexibleMode === 2 && !that.isBreakpointReached('search-layout'))
                 ) {
-                    $searchWrapp.addClass('js-dgwt-wcas-layout-icon');
-                    $searchWrapp.addClass('dgwt-wcas-layout-icon');
+                    $searchWrapp.addClass('js-psfs-layout-icon');
+                    $searchWrapp.addClass('psfs-layout-icon');
                 } else {
-                    $searchWrapp.removeClass('js-dgwt-wcas-layout-icon');
-                    $searchWrapp.removeClass('dgwt-wcas-layout-icon');
+                    $searchWrapp.removeClass('js-psfs-layout-icon');
+                    $searchWrapp.removeClass('psfs-layout-icon');
                 }
 
-                $searchWrapp.addClass('dgwt-wcas-layout-icon-flexible-loaded');
+                $searchWrapp.addClass('psfs-layout-icon-flexible-loaded');
                 if ($iconPreloader.length) {
                     $iconPreloader.remove();
                 }
@@ -1053,14 +1053,14 @@
                 $formWrapper = that.getFormWrapper(),
                 options = that.options;
             // Mark as active
-            $('.' + options.searchFormClass).removeClass('dgwt-wcas-active');
-            $formWrapper.addClass('dgwt-wcas-active');
+            $('.' + options.searchFormClass).removeClass('psfs-active');
+            $formWrapper.addClass('psfs-active');
 
             // Mark as focus
-            $('body').addClass('dgwt-wcas-focused');
-            $formWrapper.addClass('dgwt-wcas-search-focused');
+            $('body').addClass('psfs-focused');
+            $formWrapper.addClass('psfs-search-focused');
 
-            if ($(e.target).closest('.dgwt-wcas-search-wrapp-mobile').length == 0) {
+            if ($(e.target).closest('.psfs-search-wrapp-mobile').length == 0) {
                 that.enableOverlayDarkened();
             }
 
@@ -1082,10 +1082,10 @@
                 isMobileOverlayOnIPhone = false;
 
             // Remove focused classes
-            $('body').removeClass('dgwt-wcas-focused');
-            $('.' + options.searchFormClass).removeClass('dgwt-wcas-search-focused');
+            $('body').removeClass('psfs-focused');
+            $('.' + options.searchFormClass).removeClass('psfs-search-focused');
 
-            if (utils.isIOS() && $('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+            if (utils.isIOS() && $('html').hasClass('psfs-overlay-mobile-on')) {
                 isMobileOverlayOnIPhone = true;
             }
 
@@ -1097,7 +1097,7 @@
                 }
             }
 
-            document.dispatchEvent(new CustomEvent('fibosearch/close', {
+            document.dispatchEvent(new CustomEvent('psfsearch/close', {
                 detail: that
             }));
         },
@@ -1136,8 +1136,8 @@
 
             options.onSearchComplete = function () {
                 var $searchForm = that.getFormWrapper();
-                $searchForm.removeClass('dgwt-wcas-processing');
-                that.preloader('hide', 'form', 'dgwt-wcas-inner-preloader');
+                $searchForm.removeClass('psfs-processing');
+                that.preloader('hide', 'form', 'psfs-inner-preloader');
                 that.showCloseButton();
             };
 
@@ -1218,11 +1218,11 @@
             // Stick the details panel to the right side of the suggestion wrapper and to the bottom border of the search form
             $detailsPanel.css(offset);
 
-            $('body').removeClass('dgwt-wcas-full-width dgwt-wcas-details-outside dgwt-wcas-details-right dgwt-wcas-details-left dgwt-wcas-details-notfit');
+            $('body').removeClass('psfs-full-width psfs-details-outside psfs-details-right psfs-details-left psfs-details-notfit');
 
             // Details Panel Mode 1: Both suggestions wrapper and details panel wrapper have the same width as the search bar
             if ($searchBar.outerWidth() >= that.options.dpusbBreakpoint) {
-                $('body').addClass('dgwt-wcas-full-width');
+                $('body').addClass('psfs-full-width');
 
                 if (that.options.isRtl === true) {
                     offset.left = formData.left + $detailsPanel.outerWidth(false);
@@ -1239,23 +1239,23 @@
                 cDWidth = $detailsPanel.outerWidth(),
                 cOffset = $detailsPanel.offset();
 
-            $('body').addClass('dgwt-wcas-details-outside dgwt-wcas-details-right');
+            $('body').addClass('psfs-details-outside psfs-details-right');
 
             // Is the details panel fits the space of the right side?
             // Not? Try to move to the left side
             if (windowWidth < (cOffset.left + cDWidth)) {
-                $('body').removeClass('dgwt-wcas-details-right');
-                $('body').addClass('dgwt-wcas-details-left');
+                $('body').removeClass('psfs-details-right');
+                $('body').addClass('psfs-details-left');
                 offset.left = $suggestions.offset().left - $detailsPanel.outerWidth(false);
                 $detailsPanel.css('left', offset.left);
                 cOffset = $detailsPanel.offset();
             }
 
             // Is the details' panel fits the space of the left side?
-            // Not? Try to hide it by adding class "dgwt-wcas-details-notfit"
+            // Not? Try to hide it by adding class "psfs-details-notfit"
             if (cOffset.left < 1) {
-                $('body').removeClass('dgwt-wcas-details-left dgwt-wcas-details-right');
-                $('body').addClass('dgwt-wcas-details-notfit');
+                $('body').removeClass('psfs-details-left psfs-details-right');
+                $('body').addClass('psfs-details-notfit');
             }
         },
         fixHeight: function () {
@@ -1276,13 +1276,13 @@
                 dH = $detailsWrapp.outerHeight(false),
                 minHeight = 340;
 
-            $suggestionsWrapp.find('.dgwt-wcas-suggestion:last-child').removeClass('dgwt-wcas-suggestion-no-border-bottom');
+            $suggestionsWrapp.find('.psfs-suggestion:last-child').removeClass('psfs-suggestion-no-border-bottom');
 
             if (sH <= minHeight && dH <= minHeight) {
                 return false;
             }
 
-            $suggestionsWrapp.find('.dgwt-wcas-suggestion:last-child').addClass('dgwt-wcas-suggestion-no-border-bottom');
+            $suggestionsWrapp.find('.psfs-suggestion:last-child').addClass('psfs-suggestion-no-border-bottom');
 
             if (dH < sH) {
                 $detailsWrapp.css('height', (sH) + 'px');
@@ -1296,7 +1296,7 @@
         },
         automaticAlignment: function () {
             var that = this,
-                $input = that.getFormWrapper().find('.dgwt-wcas-search-input'),
+                $input = that.getFormWrapper().find('.psfs-search-input'),
                 $suggestionsContainer = that.getSuggestionsContainer(),
                 $detailsWrapp = that.getDetailsContainer();
 
@@ -1330,7 +1330,7 @@
 
                 if (that.canShowDetailsPanel()) {
 
-                    var innerDetailsHeight = $detailsWrapp.find('.dgwt-wcas-details-inner').height();
+                    var innerDetailsHeight = $detailsWrapp.find('.psfs-details-inner').height();
 
 
                     if ((innerDetailsHeight - $detailsWrapp.height()) > 2) {
@@ -1411,7 +1411,7 @@
 
             if (!that.visible) {
                 // Hide the search icon mode on ESC when there are no suggestions
-                if (e.keyCode === keys.ESC && $wrapp.hasClass('dgwt-wcas-layout-icon-open')) {
+                if (e.keyCode === keys.ESC && $wrapp.hasClass('psfs-layout-icon-open')) {
                     that.hideIconModeSearch();
                 }
 
@@ -1422,7 +1422,7 @@
                 }
 
                 // Hide the mobile overlay on ESC.
-                if (e.keyCode === keys.ESC && $('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+                if (e.keyCode === keys.ESC && $('html').hasClass('psfs-overlay-mobile-on')) {
                     that.closeOverlayMobile();
                 }
 
@@ -1646,12 +1646,12 @@
 
             options.params[options.paramName] = q;
 
-            if (typeof dgwt_wcas.current_lang != 'undefined') {
-                options.params['l'] = dgwt_wcas.current_lang;
+            if (typeof psfs.current_lang != 'undefined') {
+                options.params['l'] = psfs.current_lang;
             }
 
-            that.preloader('show', 'form', 'dgwt-wcas-inner-preloader');
-            searchForm.addClass('dgwt-wcas-processing');
+            that.preloader('show', 'form', 'psfs-inner-preloader');
+            searchForm.addClass('psfs-processing');
 
             if (options.onSearchStart.call(that.element, options.params) === false) {
                 return;
@@ -1669,8 +1669,8 @@
                 return;
             }
 
-            if (!$('body').hasClass('dgwt-wcas-open')) {
-                document.dispatchEvent(new CustomEvent('fibosearch/open', {
+            if (!$('body').hasClass('psfs-open')) {
+                document.dispatchEvent(new CustomEvent('psfsearch/open', {
                     detail: that
                 }));
             }
@@ -1694,11 +1694,11 @@
 				that.updatePrices();
 
                 if (that.isNoResults(response.suggestions)) {
-                    document.dispatchEvent(new CustomEvent('fibosearch/no-results', {
+                    document.dispatchEvent(new CustomEvent('psfsearch/no-results', {
                         detail: that
                     }));
                 } else {
-                    document.dispatchEvent(new CustomEvent('fibosearch/show-suggestions', {
+                    document.dispatchEvent(new CustomEvent('psfsearch/show-suggestions', {
                         detail: that
                     }));
                 }
@@ -1752,11 +1752,11 @@
                         that.updatePrices();
 
                         if (that.isNoResults(result.suggestions)) {
-                            document.dispatchEvent(new CustomEvent('fibosearch/no-results', {
+                            document.dispatchEvent(new CustomEvent('psfsearch/no-results', {
                                 detail: that
                             }));
                         } else {
-                            document.dispatchEvent(new CustomEvent('fibosearch/show-suggestions', {
+                            document.dispatchEvent(new CustomEvent('psfsearch/show-suggestions', {
                                 detail: that
                             }));
                         }
@@ -1810,7 +1810,7 @@
             } else {
 
                 var data = {
-                    action: dgwt_wcas.action_result_details,
+                    action: psfs.action_result_details,
                     items: []
                 };
 
@@ -1843,7 +1843,7 @@
                 $.ajax({
                     data: data,
                     type: 'post',
-                    url: dgwt_wcas.ajax_details_endpoint,
+                    url: psfs.ajax_details_endpoint,
                     success: function (response) {
 
                         var result = typeof response === 'string' ? JSON.parse(response) : response;
@@ -1886,7 +1886,7 @@
                 });
             }
 
-            $(document).trigger('dgwtWcasDetailsPanelLoaded', that);
+            $(document).trigger('psfsDetailsPanelLoaded', that);
 
         },
         updatePrices: function (noAjax) {
@@ -1938,14 +1938,14 @@
             if (!noAjax && productsToLoad.length > 0) {
 
                 var data = {
-                    action: typeof dgwt_wcas.action_get_prices == 'undefined' ? 'dgwt_wcas_get_prices' : dgwt_wcas.action_get_prices,
+                    action: typeof psfs.action_get_prices == 'undefined' ? 'psfs_get_prices' : psfs.action_get_prices,
                     items: productsToLoad
                 };
 
                 $.ajax({
                     data: data,
                     type: 'post',
-                    url: dgwt_wcas.ajax_prices_endpoint,
+                    url: psfs.ajax_prices_endpoint,
                     success: function (response) {
                         if (
                             typeof response.success != 'undefined'
@@ -1991,7 +1991,7 @@
 
                 that.suggestions[index].price = price;
 
-                var $price = $('.dgwt-wcas-suggestions-wrapp').find('[data-index="' + index + '"] .dgwt-wcas-sp');
+                var $price = $('.psfs-suggestions-wrapp').find('[data-index="' + index + '"] .psfs-sp');
 
                 if ($price.length) {
                     $price.html(price);
@@ -2003,8 +2003,8 @@
             var that = this;
 
             // Custom params (global)
-            if (typeof dgwt_wcas.custom_params == 'object') {
-                var cp = dgwt_wcas.custom_params;
+            if (typeof psfs.custom_params == 'object') {
+                var cp = psfs.custom_params;
                 for (var property in cp) {
                     params[property] = cp[property];
                 }
@@ -2033,9 +2033,9 @@
             var that = this;
 
             if (typeof that.suggestions[index] != 'undefined') {
-                var $price = $('.dgwt-wcas-suggestions-wrapp').find('[data-index="' + index + '"] .dgwt-wcas-sp');
+                var $price = $('.psfs-suggestions-wrapp').find('[data-index="' + index + '"] .psfs-sp');
                 if ($price.length) {
-                    $price.html('<div class="dgwt-wcas-preloader-price"><div class="dgwt-wcas-preloader-price-inner"> <div></div><div></div><div></div></div></div>');
+                    $price.html('<div class="psfs-preloader-price"><div class="psfs-preloader-price-inner"> <div></div><div></div><div></div></div></div>');
                 }
             }
         },
@@ -2071,16 +2071,16 @@
             var that = this,
                 $containerDetails = that.getDetailsContainer(),
                 objectHash = utils.hashCode(objectID),
-                $el = $containerDetails.find('.dgwt-wcas-details-inner[data-object="' + objectHash + '"]');
+                $el = $containerDetails.find('.psfs-details-inner[data-object="' + objectHash + '"]');
 
-            document.dispatchEvent(new CustomEvent('fibosearch/show-details-panel', {
+            document.dispatchEvent(new CustomEvent('psfsearch/show-details-panel', {
                 detail: that
             }));
 
             if ($el.length) {
                 that.preloader('hide', 'details', '');
                 that.detailsPanelClearScene();
-                $el.addClass('dgwt-wcas-details-inner-active');
+                $el.addClass('psfs-details-inner-active');
             }
         },
         detailsPanelAddToScene: function (objectID) {
@@ -2094,17 +2094,17 @@
                 html = object.html.replace('<div ', '<div data-object="' + objectHash + '" ');
             }
 
-            if ($containerDetails.find('.dgwt-wcas-details-inner[data-object="' + objectHash + '"]').length == 0) {
+            if ($containerDetails.find('.psfs-details-inner[data-object="' + objectHash + '"]').length == 0) {
                 $containerDetails.append(html);
             }
         },
         detailsPanelClearScene: function () {
             var that = this,
                 $containerDetails = that.getDetailsContainer(),
-                $views = $containerDetails.find('.dgwt-wcas-details-inner');
+                $views = $containerDetails.find('.psfs-details-inner');
 
             if ($views.length) {
-                $views.removeClass('dgwt-wcas-details-inner-active');
+                $views.removeClass('psfs-details-inner-active');
             }
         },
         selectFirstSuggestion: function (suggestions) {
@@ -2184,21 +2184,21 @@
 
             that.hidePreSuggestions();
 
-            $('body').removeClass('dgwt-wcas-open');
-            if (!$('html').hasClass('dgwt-wcas-overlay-mobile-on')) {
+            $('body').removeClass('psfs-open');
+            if (!$('html').hasClass('psfs-overlay-mobile-on')) {
                 var searchStyle = that.getSearchStyle();
-                $('html').removeClass('dgwt-wcas-open-' + searchStyle);
+                $('html').removeClass('psfs-open-' + searchStyle);
                 if (searchStyle === 'pirx') {
-                    $('html').removeClass('dgwt-wcas-open-pirx-compact');
+                    $('html').removeClass('psfs-open-pirx-compact');
                 }
             }
-            $('body').removeClass('dgwt-wcas-block-scroll');
-            $('body').removeClass('dgwt-wcas-is-details');
-            $('body').removeClass('dgwt-wcas-full-width');
-            $('body').removeClass('dgwt-wcas-nores');
-            $('body').removeClass('dgwt-wcas-details-outside');
-            $('body').removeClass('dgwt-wcas-details-right');
-            $('body').removeClass('dgwt-wcas-details-left');
+            $('body').removeClass('psfs-block-scroll');
+            $('body').removeClass('psfs-is-details');
+            $('body').removeClass('psfs-full-width');
+            $('body').removeClass('psfs-nores');
+            $('body').removeClass('psfs-details-outside');
+            $('body').removeClass('psfs-details-right');
+            $('body').removeClass('psfs-details-left');
 
             if (that.autoAligmentprocess != null) {
                 clearInterval(that.autoAligmentprocess);
@@ -2237,7 +2237,7 @@
         },
         isActiveIconModeSearch: function () {
             var active = false,
-                $openedElements = $('.dgwt-wcas-layout-icon-open');
+                $openedElements = $('.psfs-layout-icon-open');
             if ($openedElements.length > 0) {
                 active = true;
             }
@@ -2247,7 +2247,7 @@
             var that = this;
 
             if (that.isActiveIconModeSearch() && !utils.isTextSelected()) {
-                $('.dgwt-wcas-layout-icon-open').removeClass('dgwt-wcas-layout-icon-open');
+                $('.psfs-layout-icon-open').removeClass('psfs-layout-icon-open');
             }
         },
         hideAfterClickOutsideListener: function () {
@@ -2318,7 +2318,7 @@
                 return;
             }
 
-            $('body').removeClass('dgwt-wcas-nores');
+            $('body').removeClass('psfs-nores');
 
             // Build suggestions inner HTML:
             $.each(that.suggestions, function (i, suggestion) {
@@ -2332,7 +2332,7 @@
                 if (typeof suggestion.type == 'undefined' || (suggestion.type != 'product') && suggestion.type != 'product_variation') {
 
                     var classes = className,
-                        innerClass = 'dgwt-wcas-st',
+                        innerClass = 'psfs-st',
                         prepend = '',
                         append = '',
                         title = '',
@@ -2341,57 +2341,57 @@
                         noResults = false;
 
                     if (suggestion.taxonomy === 'product_cat') {
-                        classes += ' dgwt-wcas-suggestion-tax dgwt-wcas-suggestion-cat';
+                        classes += ' psfs-suggestion-tax psfs-suggestion-cat';
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels['tax_' + suggestion.taxonomy] + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels['tax_' + suggestion.taxonomy] + '</span>';
                         }
                         if (typeof suggestion.breadcrumbs != 'undefined' && suggestion.breadcrumbs) {
                             title = suggestion.breadcrumbs + ' > ' + suggestion.value;
-                            append += '<span class="dgwt-wcas-st-breadcrumbs"><span class="dgwt-wcas-st-label-in">' + dgwt_wcas.labels.in + ' </span>' + utils.escHtml(suggestion.breadcrumbs) + '</span>';
+                            append += '<span class="psfs-st-breadcrumbs"><span class="psfs-st-label-in">' + psfs.labels.in + ' </span>' + utils.escHtml(suggestion.breadcrumbs) + '</span>';
                             //@TODO RTL support
                         }
 
                     } else if (suggestion.taxonomy === 'product_tag') {
-                        classes += ' dgwt-wcas-suggestion-tax dgwt-wcas-suggestion-tag';
+                        classes += ' psfs-suggestion-tax psfs-suggestion-tag';
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels['tax_' + suggestion.taxonomy] + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels['tax_' + suggestion.taxonomy] + '</span>';
                         }
                     } else if (options.isPremium && suggestion.taxonomy === options.taxonomyBrands) {
-                        classes += ' dgwt-wcas-suggestion-tax dgwt-wcas-suggestion-brand';
+                        classes += ' psfs-suggestion-tax psfs-suggestion-brand';
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels['tax_' + suggestion.taxonomy] + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels['tax_' + suggestion.taxonomy] + '</span>';
                         }
                     } else if (options.isPremium && suggestion.type === 'taxonomy') {
-                        classes += ' dgwt-wcas-suggestion-tax dgwt-wcas-suggestion-tax-' + suggestion.taxonomy;
+                        classes += ' psfs-suggestion-tax psfs-suggestion-tax-' + suggestion.taxonomy;
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels['tax_' + suggestion.taxonomy] + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels['tax_' + suggestion.taxonomy] + '</span>';
                         }
                     } else if (options.isPremium && suggestion.type === 'vendor') {
-                        classes += ' dgwt-wcas-suggestion-vendor dgwt-wcas-suggestion-vendor';
+                        classes += ' psfs-suggestion-vendor psfs-suggestion-vendor';
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels.vendor + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels.vendor + '</span>';
                         }
                     } else if (options.isPremium && suggestion.type === 'post' && typeof suggestion.post_type !== 'undefined') {
-                        classes += ' dgwt-wcas-suggestion-pt dgwt-wcas-suggestion-pt-' + suggestion.post_type;
+                        classes += ' psfs-suggestion-pt psfs-suggestion-pt-' + suggestion.post_type;
                         if (!options.showHeadings) {
-                            prepend += '<span class="dgwt-wcas-st--direct-headline">' + dgwt_wcas.labels['post_type_' + suggestion.post_type] + '</span>';
+                            prepend += '<span class="psfs-st--direct-headline">' + psfs.labels['post_type_' + suggestion.post_type] + '</span>';
                         }
                     } else if (suggestion.type === 'more_products') {
-                        classes += ' js-dgwt-wcas-suggestion-more dgwt-wcas-suggestion-more';
-                        innerClass = 'dgwt-wcas-st-more';
-                        suggestion.value = dgwt_wcas.labels.show_more + '<span class="dgwt-wcas-st-more-total"> (' + suggestion.total + ')</span>';
+                        classes += ' js-psfs-suggestion-more psfs-suggestion-more';
+                        innerClass = 'psfs-st-more';
+                        suggestion.value = psfs.labels.show_more + '<span class="psfs-st-more-total"> (' + suggestion.total + ')</span>';
                         highlight = false;
                     } else if (options.showHeadings && suggestion.type === 'headline') {
-                        classes += ' js-dgwt-wcas-suggestion-headline dgwt-wcas-suggestion-headline';
-                        if (typeof dgwt_wcas.labels[suggestion.value + '_plu'] != 'undefined') {
-                            suggestion.value = dgwt_wcas.labels[suggestion.value + '_plu'];
+                        classes += ' js-psfs-suggestion-headline psfs-suggestion-headline';
+                        if (typeof psfs.labels[suggestion.value + '_plu'] != 'undefined') {
+                            suggestion.value = psfs.labels[suggestion.value + '_plu'];
                         }
                         highlight = false;
                     }
 
                     if (suggestion.type === 'no-results') {
 
-                        $('body').addClass('dgwt-wcas-nores');
+                        $('body').addClass('psfs-nores');
                         if (containerDetails.length) {
                             that.detailsPanelClearScene();
                             containerDetails.hide();
@@ -2421,23 +2421,23 @@
 
                         if (isImg) {
                             const imgSrc = suggestion.image_src ? suggestion.image_src : suggestion.image;
-                            html += '<span class="dgwt-wcas-si"><img src="' + utils.escHtml(imgSrc) + '" /></span>';
-                            html += '<div class="dgwt-wcas-content-wrapp">';
+                            html += '<span class="psfs-si"><img src="' + utils.escHtml(imgSrc) + '" /></span>';
+                            html += '<div class="psfs-content-wrapp">';
                         }
 
                         html += '<span' + title + ' class="' + innerClass + '">';
 
                         if (suggestion.type === 'vendor') {
-                            html += '<span class="dgwt-wcas-st-title">' + prepend + formatResult(suggestion.value, value, highlight, options) + append + '</span>';
+                            html += '<span class="psfs-st-title">' + prepend + formatResult(suggestion.value, value, highlight, options) + append + '</span>';
 
                             // Vendor city
                             if (suggestion.shop_city) {
-                                html += '<span class="dgwt-wcas-vendor-city"><span> - </span>' + formatResult(suggestion.shop_city, value, true, options) + '</span>';
+                                html += '<span class="psfs-vendor-city"><span> - </span>' + formatResult(suggestion.shop_city, value, true, options) + '</span>';
                             }
 
                             // Description
                             if (typeof suggestion.desc != 'undefined' && suggestion.desc) {
-                                html += '<span class="dgwt-wcas-sd">' + formatResult(suggestion.desc, value, true, options) + '</span>';
+                                html += '<span class="psfs-sd">' + formatResult(suggestion.desc, value, true, options) + '</span>';
                             }
 
                         } else {
@@ -2469,11 +2469,11 @@
             container.show();
 
             // Add class on show
-            $('body').addClass('dgwt-wcas-open');
+            $('body').addClass('psfs-open');
             var searchStyle = that.getSearchStyle();
-            $('html').addClass('dgwt-wcas-open-' + searchStyle);
+            $('html').addClass('psfs-open-' + searchStyle);
             if (searchStyle === 'pirx') {
-                $('html').addClass('dgwt-wcas-open-pirx-compact');
+                $('html').addClass('psfs-open-pirx-compact');
             }
 
             // Reset the latest mousedown position
@@ -2482,7 +2482,7 @@
             that.automaticAlignment();
 
             if (that.canShowDetailsPanel()) {
-                $('body').addClass('dgwt-wcas-is-details');
+                $('body').addClass('psfs-is-details');
                 containerDetails.show();
                 that.fixHeight();
             }
@@ -2498,12 +2498,12 @@
             that.fixPosition();
         },
         createNoResultsContent: function () {
-            var html = '<div class="dgwt-wcas-suggestion-nores">',
-                defaultHtml = typeof dgwt_wcas.labels.no_results_default != 'undefined' ? dgwt_wcas.labels.no_results_default : '',
+            var html = '<div class="psfs-suggestion-nores">',
+                defaultHtml = typeof psfs.labels.no_results_default != 'undefined' ? psfs.labels.no_results_default : '',
                 noResultsHtml = defaultHtml;
 
             try {
-                noResultsHtml = JSON.parse(dgwt_wcas.labels.no_results);
+                noResultsHtml = JSON.parse(psfs.labels.no_results);
                 // Fix invalid HTML
                 var tmpEl = document.createElement('div');
                 tmpEl.innerHTML = noResultsHtml;
@@ -2540,24 +2540,24 @@
                 isImg = true;
             }
 
-            var sugVarClass = suggestion.type === 'product_variation' ? ' dgwt-wcas-suggestion-product-var' : '';
+            var sugVarClass = suggestion.type === 'product_variation' ? ' psfs-suggestion-product-var' : '';
             // One suggestion HTML
             dataAttrs += typeof suggestion.post_id != 'undefined' ? 'data-post-id="' + suggestion.post_id + '" ' : '';
             dataAttrs += typeof suggestion.taxonomy != 'undefined' ? 'data-taxonomy="' + suggestion.taxonomy + '" ' : '';
             dataAttrs += typeof suggestion.term_id != 'undefined' ? 'data-term-id="' + suggestion.term_id + '" ' : '';
-            html += '<a href="' + utils.escHtml(url) + '" class="' + className + ' dgwt-wcas-suggestion-product' + sugVarClass + '" data-index="' + index + '" ' + dataAttrs + '>';
+            html += '<a href="' + utils.escHtml(url) + '" class="' + className + ' psfs-suggestion-product' + sugVarClass + '" data-index="' + index + '" ' + dataAttrs + '>';
 
             // Image
             if (isImg) {
-                html += '<span class="dgwt-wcas-si">' + suggestion.thumb_html + '</span>';
+                html += '<span class="psfs-si">' + suggestion.thumb_html + '</span>';
             }
 
 
-            html += isImg ? '<div class="dgwt-wcas-content-wrapp">' : '';
+            html += isImg ? '<div class="psfs-content-wrapp">' : '';
 
 
             // Open Title wrapper
-            html += '<div class="dgwt-wcas-st">';
+            html += '<div class="psfs-st">';
 
 
 
@@ -2565,27 +2565,27 @@
             html += that.apply3rdPartyPlaceholder('title_before', suggestion);
 
             // Title
-            html += '<span class="dgwt-wcas-st-title">' + formatResult(suggestion.value, value, true, options) + parent + '</span>';
+            html += '<span class="psfs-st-title">' + formatResult(suggestion.value, value, true, options) + parent + '</span>';
 
             // Custom content after title (3rd party)
             html += that.apply3rdPartyPlaceholder('title_after', suggestion);
 
             // SKU
             if (options.showSKU === true && typeof suggestion.sku != 'undefined' && suggestion.sku.length > 0) {
-                html += '<span class="dgwt-wcas-sku">(' + dgwt_wcas.labels.sku_label + ' ' + formatResult(suggestion.sku, value, true, options) + ')</span>';
+                html += '<span class="psfs-sku">(' + psfs.labels.sku_label + ' ' + formatResult(suggestion.sku, value, true, options) + ')</span>';
             }
 
             // Description
             if (options.showDescription === true && typeof suggestion.desc != 'undefined' && suggestion.desc) {
-                html += '<span class="dgwt-wcas-sd">' + formatResult(suggestion.desc, value, true, options) + '</span>';
+                html += '<span class="psfs-sd">' + formatResult(suggestion.desc, value, true, options) + '</span>';
             }
 
             // Custom content after description (3rd party)
             html += that.apply3rdPartyPlaceholder('content_after', suggestion);
 
-            // Display score (only visible in debug mode with ?fibodebug=score)
+            // Display score (only visible in debug mode with ?psfdebug=score)
             if (typeof suggestion.score !== 'undefined') {
-                html += '<div class="dgwt-wcas-score">Score: ' + suggestion.score + '</div>';
+                html += '<div class="psfs-score">Score: ' + suggestion.score + '</div>';
             }
 
             // Close title wrapper
@@ -2599,7 +2599,7 @@
             // @todo show sale and featured badges
 
             // Meta
-            html += showMeta ? '<div class="dgwt-wcas-meta">' : '';
+            html += showMeta ? '<div class="psfs-meta">' : '';
 
             // Custom content before meta (3rd party)
             if (showMetaBefore) {
@@ -2608,7 +2608,7 @@
 
             // Price
             if (showPrice) {
-                html += '<span class="dgwt-wcas-sp">' + suggestion.price + '</span>';
+                html += '<span class="psfs-sp">' + suggestion.price + '</span>';
             }
 
             // Custom content after meta (3rd party)
@@ -2641,8 +2641,8 @@
              }
 
             $($searchWrapp?.attr('class')?.split(/\s+/)).each(function (index) {
-                if (/dgwt-wcas-style-/i.test(this)) {
-                    style = this.replace(/dgwt-wcas-style-/i, '');
+                if (/psfs-style-/i.test(this)) {
+                    style = this.replace(/psfs-style-/i, '');
                 }
             });
 
@@ -2685,24 +2685,24 @@
         positionPreloaderAndMic: function ($formWrapper) {
             var that = this;
 
-            var $submit = typeof $formWrapper == 'object' ? $formWrapper.find('.dgwt-wcas-search-submit') : $('.dgwt-wcas-search-submit');
+            var $submit = typeof $formWrapper == 'object' ? $formWrapper.find('.psfs-search-submit') : $('.psfs-search-submit');
 
             if ($submit.length > 0) {
                 $submit.each(function () {
-                    var $preloader = $(this).closest('.dgwt-wcas-search-wrapp').find('.dgwt-wcas-preloader'),
-                        isSolarisStyle = $(this).closest('.dgwt-wcas-search-wrapp').hasClass('dgwt-wcas-style-solaris'),
-                        isVoiceSearchSupported = $(this).closest('.dgwt-wcas-search-wrapp').hasClass(that.options.voiceSearchSupportedClass),
-                        $voiceSearch = $(this).closest('.dgwt-wcas-search-wrapp').find('.' + that.options.voiceSearchClass);
+                    var $preloader = $(this).closest('.psfs-search-wrapp').find('.psfs-preloader'),
+                        isSolarisStyle = $(this).closest('.psfs-search-wrapp').hasClass('psfs-style-solaris'),
+                        isVoiceSearchSupported = $(this).closest('.psfs-search-wrapp').hasClass(that.options.voiceSearchSupportedClass),
+                        $voiceSearch = $(this).closest('.psfs-search-wrapp').find('.' + that.options.voiceSearchClass);
 
                     if (isVoiceSearchSupported && isSolarisStyle) {
-                        if (dgwt_wcas.is_rtl == 1) {
+                        if (psfs.is_rtl == 1) {
                             $voiceSearch.css('transform', 'translateX(' + $(this).outerWidth() + 'px)');
                         } else {
                             $voiceSearch.css('transform', 'translateX(-' + $(this).outerWidth() + 'px)');
                         }
                     }
 
-                    if (dgwt_wcas.is_rtl == 1) {
+                    if (psfs.is_rtl == 1) {
                         $preloader.css('left', $(this).outerWidth() + 'px');
                     } else {
                         $preloader.css('right', $(this).outerWidth() + 'px');
@@ -2723,17 +2723,17 @@
             var that = this,
                 html,
                 $container,
-                defaultClass = 'dgwt-wcas-preloader-wrapp',
+                defaultClass = 'psfs-preloader-wrapp',
                 cssClasses = cssClass == null ? defaultClass : defaultClass + ' ' + cssClass;
 
             if (place === 'form') {
 
                 // Return early if the preloader is disable via the settings for a search bar
-                if (dgwt_wcas.show_preloader != 1) {
+                if (psfs.show_preloader != 1) {
                     return;
                 }
 
-                $container = that.getFormWrapper().find('.dgwt-wcas-preloader');
+                $container = that.getFormWrapper().find('.psfs-preloader');
             } else if (place === 'details') {
                 $container = that.getDetailsContainer();
             }
@@ -2749,8 +2749,8 @@
                     $container.html('');
                 } else {
                     $container.addClass(cssClass);
-                    if (typeof dgwt_wcas.preloader_icon == 'string') {
-                        $container.html(dgwt_wcas.preloader_icon);
+                    if (typeof psfs.preloader_icon == 'string') {
+                        $container.html(psfs.preloader_icon);
                     }
                 }
                 return;
@@ -2770,7 +2770,7 @@
             // Action show
             if (action === 'show') {
                 var rtlSuffix = that.options.isRtl ? '-rtl' : '';
-                html = '<div class="' + cssClasses + '"><img class="dgwt-wcas-placeholder-preloader" src="' + dgwt_wcas.img_url + 'placeholder' + rtlSuffix + '.png" /></div>';
+                html = '<div class="' + cssClasses + '"><img class="psfs-placeholder-preloader" src="' + psfs.img_url + 'placeholder' + rtlSuffix + '.png" /></div>';
                 that.detailsPanelClearScene();
                 if ($preloader.length) {
                     $preloader.remove();
@@ -3022,7 +3022,7 @@
                 $el = that.el,
                 $formWrapper = that.getFormWrapper(),
                 $suggestionsWrapper = that.getSuggestionsContainer(),
-                $mobileHandler = $formWrapper.find('.js-dgwt-wcas-enable-mobile-form');
+                $mobileHandler = $formWrapper.find('.js-psfs-enable-mobile-form');
 
             // Remove all events
             if ($formWrapper.length) {
@@ -3032,14 +3032,14 @@
                 });
             }
 
-            $el.off('fibosearch/ping');
+            $el.off('psfsearch/ping');
 
-            $formWrapper.off('click.autocomplete', '.js-dgwt-wcas-search-icon-handler');
+            $formWrapper.off('click.autocomplete', '.js-psfs-search-icon-handler');
 
             $el.removeData('autocomplete');
             $(window).off('resize.autocomplete', that.fixPosition);
 
-            $formWrapper.removeClass('dgwt-wcas-active');
+            $formWrapper.removeClass('psfs-active');
 
             that.close(false);
 
@@ -3073,8 +3073,8 @@
 
             $formWrapper = that.getFormWrapper();
 
-            $formWrapper.addClass('dgwt-wcas-search-darkoverl-on');
-            $('body').addClass('dgwt-wcas-darkoverl-on');
+            $formWrapper.addClass('psfs-search-darkoverl-on');
+            $('body').addClass('psfs-darkoverl-on');
 
             // Create node
             if ($('.' + options.darkenedOverlayClass).length == 0) {
@@ -3102,12 +3102,12 @@
                 return;
             }
 
-            $wrapps = $('.dgwt-wcas-search-darkoverl-on');
+            $wrapps = $('.psfs-search-darkoverl-on');
 
             if ($wrapps.length) {
-                $wrapps.removeClass('dgwt-wcas-search-darkoverl-on');
+                $wrapps.removeClass('psfs-search-darkoverl-on');
             }
-            $('body').removeClass('dgwt-wcas-darkoverl-on');
+            $('body').removeClass('psfs-darkoverl-on');
 
 
             var $el = $('.' + options.darkenedOverlayClass);
@@ -3125,9 +3125,9 @@
 
                 if (that.ancestorHasPositionFixed(that.getFormWrapper())) {
                     fixed = true;
-                    $darkenedOverlay.addClass('dgwt-wcas-suggestions-wrapp-fixed');
+                    $darkenedOverlay.addClass('psfs-suggestions-wrapp-fixed');
                 } else {
-                    $darkenedOverlay.removeClass('dgwt-wcas-suggestions-wrapp-fixed');
+                    $darkenedOverlay.removeClass('psfs-suggestions-wrapp-fixed');
                 }
 
                 $darkenedOverlay.children('div').each(function (i) {
@@ -3144,7 +3144,7 @@
 
 
             // Different position for search icon layout
-            if ($baseEl.hasClass('js-dgwt-wcas-layout-icon')) {
+            if ($baseEl.hasClass('js-psfs-layout-icon')) {
                 $baseEl = that.getForm();
             }
 
@@ -3201,7 +3201,7 @@
         },
         showCloseButton: function () {
             var that = this,
-                iconBody = typeof dgwt_wcas.close_icon != 'undefined' ? dgwt_wcas.close_icon : '',
+                iconBody = typeof psfs.close_icon != 'undefined' ? psfs.close_icon : '',
                 $actionsEl = that.getFormWrapper().find('.' + that.options.preloaderClass);
 
             if (that.el.val().length < that.options.minChars) {
@@ -3255,9 +3255,9 @@
             that.isPreSuggestionsMode = true;
 
             that.suggestions = [];
-            that.suggestionsContainer.addClass('dgwt-wcas-has-img');
+            that.suggestionsContainer.addClass('psfs-has-img');
             if (!origShowImageOpt) {
-                that.suggestionsContainer.addClass('dgwt-wcas-has-img-forced');
+                that.suggestionsContainer.addClass('psfs-has-img-forced');
             }
 
             that.options.showImage = true;
@@ -3277,11 +3277,11 @@
 
             // Show headline
             that.suggestions.push({type: 'headline-v2', value: '',});
-            html += '<span class="dgwt-wcas-suggestion dgwt-wcas-suggestion-headline-v2" data-index="' + suggestionsIndex + '">';
-            if (typeof dgwt_wcas.labels['search_hist'] != 'undefined') {
-                var label = dgwt_wcas.labels['search_hist'];
-                label += ' <span class="js-dgwt-wcas-sugg-hist-clear dgwt-wcas-sugg-hist-clear">' + dgwt_wcas.labels['search_hist_clear'] + '</span>';
-                html += '<span className="dgwt-wcas-st">' + label + '</span>';
+            html += '<span class="psfs-suggestion psfs-suggestion-headline-v2" data-index="' + suggestionsIndex + '">';
+            if (typeof psfs.labels['search_hist'] != 'undefined') {
+                var label = psfs.labels['search_hist'];
+                label += ' <span class="js-psfs-sugg-hist-clear psfs-sugg-hist-clear">' + psfs.labels['search_hist_clear'] + '</span>';
+                html += '<span className="psfs-st">' + label + '</span>';
             }
             html += '</span>';
             suggestionsIndex++;
@@ -3289,7 +3289,7 @@
             // History: products
             if (historyProducts.length > 0) {
                 for (i = 0; i < historyProducts.length; i++) {
-                    html += that.createProductSuggestion(historyProducts[i], suggestionsIndex, 'dgwt-wcas-suggestion-history-product');
+                    html += that.createProductSuggestion(historyProducts[i], suggestionsIndex, 'psfs-suggestion-history-product');
                     that.suggestions.push(historyProducts[i]);
                     suggestionsIndex++;
                 }
@@ -3303,19 +3303,19 @@
                         type: 'history-search',
                         value: historySearches[i],
                         url: '#',
-                        thumb_html: dgwt_wcas.magnifier_icon
+                        thumb_html: psfs.magnifier_icon
                     };
 
-                    if ($searchBar.hasClass('dgwt-wcas-style-pirx')) {
-                        suggestion.thumb_html = dgwt_wcas.magnifier_icon_pirx;
+                    if ($searchBar.hasClass('psfs-style-pirx')) {
+                        suggestion.thumb_html = psfs.magnifier_icon_pirx;
                     }
 
                     that.suggestions.push(suggestion);
 
-                    html += '<a href="' + suggestion.url + '" class="' + that.classes.suggestion + ' dgwt-wcas-suggestion-history-search" data-index="' + suggestionsIndex + '">';
-                    html += '<span class="dgwt-wcas-si">' + suggestion.thumb_html + '</span>';
-                    html += '<div class="dgwt-wcas-content-wrapp">';
-                    html += '<div class="dgwt-wcas-st"><span class="dgwt-wcas-st-title">' + utils.formatHtml(suggestion.value) + '</span></div>'
+                    html += '<a href="' + suggestion.url + '" class="' + that.classes.suggestion + ' psfs-suggestion-history-search" data-index="' + suggestionsIndex + '">';
+                    html += '<span class="psfs-si">' + suggestion.thumb_html + '</span>';
+                    html += '<div class="psfs-content-wrapp">';
+                    html += '<div class="psfs-st"><span class="psfs-st-title">' + utils.formatHtml(suggestion.value) + '</span></div>'
                     html += '</div>';
                     html += '</a>';
 
@@ -3328,12 +3328,12 @@
             $suggestionsWrapper.show();
 
             // Add class on show
-            $('body').addClass('dgwt-wcas-open');
-            $('body').addClass('dgwt-wcas-open-pre-suggestions');
+            $('body').addClass('psfs-open');
+            $('body').addClass('psfs-open-pre-suggestions');
             var searchStyle = that.getSearchStyle();
-            $('html').addClass('dgwt-wcas-open-' + that.getSearchStyle());
+            $('html').addClass('psfs-open-' + that.getSearchStyle());
             if (searchStyle === 'pirx') {
-                $('html').addClass('dgwt-wcas-open-pirx-compact');
+                $('html').addClass('psfs-open-pirx-compact');
             }
 
             // Reset the latest mousedown position
@@ -3344,11 +3344,11 @@
             that.options.showImage = origShowImageOpt;
 
 
-            document.dispatchEvent(new CustomEvent('fibosearch/open', {
+            document.dispatchEvent(new CustomEvent('psfsearch/open', {
                 detail: that
             }));
 
-            document.dispatchEvent(new CustomEvent('fibosearch/show-pre-suggestions', {
+            document.dispatchEvent(new CustomEvent('psfsearch/show-pre-suggestions', {
                 detail: that
             }));
         },
@@ -3362,7 +3362,7 @@
 
             that.suggestions = [];
             $suggestionsWrapp.html('');
-            $('body').removeClass('dgwt-wcas-open-pre-suggestions');
+            $('body').removeClass('psfs-open-pre-suggestions');
 
             activeInstance.el.trigger('focus');
         },
@@ -3370,9 +3370,9 @@
             var that = this;
 
             if (!that.options.showImage) {
-                that.suggestionsContainer.removeClass('dgwt-wcas-has-img');
+                that.suggestionsContainer.removeClass('psfs-has-img');
             }
-            that.suggestionsContainer.removeClass('dgwt-wcas-has-img-forced');
+            that.suggestionsContainer.removeClass('psfs-has-img-forced');
 
             that.isPreSuggestionsMode = false;
         },
@@ -3387,7 +3387,7 @@
                 }
 
                 if (!that.options.showImage) {
-                    item['thumb_html'] = dgwt_wcas.history_icon;
+                    item['thumb_html'] = psfs.history_icon;
                 }
                 return [item['post_id'], item];
             })).values()];
@@ -3406,13 +3406,13 @@
             if (
                 typeof activeEl == 'object'
                 && $(activeEl).length
-                && $(activeEl).hasClass('dgwt-wcas-search-input')
+                && $(activeEl).hasClass('psfs-search-input')
             ) {
 
-                var $search = $(activeEl).closest('.dgwt-wcas-search-wrapp');
+                var $search = $(activeEl).closest('.psfs-search-wrapp');
 
-                if ($search.length && !$search.hasClass('dgwt-wcas-active')) {
-                    $search.addClass('dgwt-wcas-active');
+                if ($search.length && !$search.hasClass('psfs-active')) {
+                    $search.addClass('psfs-active');
                 }
             }
         },
@@ -3456,12 +3456,12 @@
                 try {
                     if (typeof gtag !== 'undefined') {
                         gtag('event', 'page_view', {
-                            'page_path': '/?s=' + encodeURI(label) + '&post_type=product&dgwt_wcas=1',
+                            'page_path': '/?s=' + encodeURI(label) + '&post_type=product&psfs=1',
                         });
                     } else if (gaObj !== false) {
                         var tracker2 = gaObj.getAll()[0];
                         if (tracker2) {
-                            tracker2.set('page', '/?s=' + encodeURI(label) + '&post_type=product&dgwt_wcas=1');
+                            tracker2.set('page', '/?s=' + encodeURI(label) + '&post_type=product&psfs=1');
                             tracker2.send('pageview');
                         }
                     }
@@ -3469,7 +3469,7 @@
                 }
             }
 
-            $(document).trigger('dgwtWcasGAEvent', {'term': label, 'category': category});
+            $(document).trigger('psfsGAEvent', {'term': label, 'category': category});
         },
         initVoiceSearch: function () {
             var that = this;
@@ -3510,10 +3510,10 @@
 
             $voiceSearch.on('click', function () {
                 if (
-                    $formWrapper.hasClass('dgwt-wcas-mobile-overlay-trigger-active') &&
-                    !$('html').hasClass('dgwt-wcas-overlay-mobile-on')
+                    $formWrapper.hasClass('psfs-mobile-overlay-trigger-active') &&
+                    !$('html').hasClass('psfs-overlay-mobile-on')
                 ) {
-                    $formWrapper.find('.js-dgwt-wcas-enable-mobile-form').trigger('click');
+                    $formWrapper.find('.js-psfs-enable-mobile-form').trigger('click');
                     $formWrapper.find('.' + that.options.searchInputClass).trigger('blur');
                 }
                 if (that.voiceSearchStarted) {
@@ -3583,23 +3583,23 @@
             switch (state) {
                 case 'active':
                     that.voiceSearchStarted = true;
-                    if (typeof dgwt_wcas.voice_search_active_icon == 'string') {
-                        $voiceSearch.html(dgwt_wcas.voice_search_active_icon);
+                    if (typeof psfs.voice_search_active_icon == 'string') {
+                        $voiceSearch.html(psfs.voice_search_active_icon);
                     }
                     // $voiceSearch.removeClass(that.options.voiceSearchDisabledClass).addClass(that.options.voiceSearchActiveClass);
                     break;
                 case 'inactive':
                     that.voiceSearchStarted = false;
-                    if (typeof dgwt_wcas.voice_search_inactive_icon == 'string') {
-                        $voiceSearch.html(dgwt_wcas.voice_search_inactive_icon);
+                    if (typeof psfs.voice_search_inactive_icon == 'string') {
+                        $voiceSearch.html(psfs.voice_search_inactive_icon);
                     }
                     // $voiceSearch.removeClass(that.options.voiceSearchActiveClass + ' ' + that.options.voiceSearchDisabledClass);
                     break;
                 case 'off':
                     that.voiceSearchStarted = false;
                     // $voiceSearch.removeClass(that.options.voiceSearchActiveClass).addClass(that.options.voiceSearchDisabledClass);
-                    if (typeof dgwt_wcas.voice_search_disabled_icon == 'string') {
-                        $voiceSearch.html(dgwt_wcas.voice_search_disabled_icon);
+                    if (typeof psfs.voice_search_disabled_icon == 'string') {
+                        $voiceSearch.html(psfs.voice_search_disabled_icon);
                     }
                     break;
             }
@@ -3607,7 +3607,7 @@
     };
 
     // Create chainable jQuery plugin:
-    $.fn.dgwtWcasAutocomplete = function (options, args) {
+    $.fn.psfsAutocomplete = function (options, args) {
         var dataKey = 'autocomplete';
         // If function invoked without argument return
         // instance of the first matched element:
@@ -3629,7 +3629,7 @@
                     instance.dispose();
                 }
 
-                instance = new DgwtWcasAutocompleteSearch(this, options);
+                instance = new PsfsAutocompleteSearch(this, options);
                 inputElement.data(dataKey, instance);
             }
         });
@@ -3637,7 +3637,7 @@
 
     // Don't overwrite if it already exists
     if (!$.fn.autocomplete) {
-        $.fn.autocomplete = $.fn.dgwtWcasAutocomplete;
+        $.fn.autocomplete = $.fn.psfsAutocomplete;
     }
 
     (function () {
@@ -3810,58 +3810,58 @@
             /* Mobile detection
             /*-----------------------------------------------------------------*/
             if (utils.isIOS()) {
-                $('html').addClass('dgwt-wcas-is-ios');
+                $('html').addClass('psfs-is-ios');
             }
 
             /*-----------------------------------------------------------------
             /* Set some global variables
             /*-----------------------------------------------------------------*/
-            window.dgwt_wcas.resizeOnlyOnce = null;
-            window.dgwt_wcas.scrollOnlyOnce = null;
+            window.psfs.resizeOnlyOnce = null;
+            window.psfs.scrollOnlyOnce = null;
 
             /*-----------------------------------------------------------------
             /* Fire autocomplete
             /*-----------------------------------------------------------------*/
 
-            window.dgwt_wcas.config = {
-                minChars: dgwt_wcas.min_chars,
-                width: dgwt_wcas.sug_width,
+            window.psfs.config = {
+                minChars: psfs.min_chars,
+                width: psfs.sug_width,
                 autoSelectFirst: false,
                 triggerSelectOnValidInput: false,
-                serviceUrl: dgwt_wcas.ajax_search_endpoint,
+                serviceUrl: psfs.ajax_search_endpoint,
                 paramName: 's',
-                showDetailsPanel: dgwt_wcas.show_details_panel == 1 ? true : false,
-                showImage: dgwt_wcas.show_images == 1 ? true : false,
-                showPrice: dgwt_wcas.show_price == 1 ? true : false,
-                showDescription: dgwt_wcas.show_desc == 1 ? true : false,
-                showSKU: dgwt_wcas.show_sku == 1 ? true : false,
-                showSaleBadge: dgwt_wcas.show_sale_badge == 1 ? true : false,
-                showFeaturedBadge: dgwt_wcas.show_featured_badge == 1 ? true : false,
-                dynamicPrices: typeof dgwt_wcas.dynamic_prices != 'undefined' && dgwt_wcas.dynamic_prices ? true : false,
-                saleBadgeText: dgwt_wcas.labels.sale_badge,
-                featuredBadgeText: dgwt_wcas.labels.featured_badge,
-                isRtl: dgwt_wcas.is_rtl == 1 ? true : false,
-                showHeadings: dgwt_wcas.show_headings == 1 ? true : false,
-                isPremium: dgwt_wcas.is_premium == 1 ? true : false,
-                taxonomyBrands: dgwt_wcas.taxonomy_brands,
-                layoutBreakpoint: dgwt_wcas.layout_breakpoint,
-                mobileOverlayBreakpoint: dgwt_wcas.mobile_overlay_breakpoint,
-                mobileOverlayWrapper: dgwt_wcas.mobile_overlay_wrapper,
-                mobileOverlayDelay: dgwt_wcas.mobile_overlay_delay,
-                debounceWaitMs: dgwt_wcas.debounce_wait_ms,
-                sendGAEvents: dgwt_wcas.send_ga_events,
-                enableGASiteSearchModule: dgwt_wcas.enable_ga_site_search_module,
-                appendTo: typeof dgwt_wcas.suggestions_wrapper != 'undefined' ? dgwt_wcas.suggestions_wrapper : 'body',
-                disableHits: typeof dgwt_wcas.disable_hits != 'undefined' && dgwt_wcas.disable_hits ? true : false,
-                disableSubmit: typeof dgwt_wcas.disable_submit != 'undefined' && dgwt_wcas.disable_submit ? true : false,
-                voiceSearchEnabled: typeof dgwt_wcas.voice_search_enabled != 'undefined' && dgwt_wcas.voice_search_enabled ? true : false,
-                voiceSearchLang: typeof dgwt_wcas.voice_search_lang != 'undefined' ? dgwt_wcas.voice_search_lang : '',
-                showRecentlySearchedProducts: typeof dgwt_wcas.show_recently_searched_products != 'undefined' ? dgwt_wcas.show_recently_searched_products : false,
-                showRecentlySearchedPhrases: typeof dgwt_wcas.show_recently_searched_phrases != 'undefined' ? dgwt_wcas.show_recently_searched_phrases : false,
-                goToFirstVariationOnSubmit: typeof dgwt_wcas.go_to_first_variation_on_submit != 'undefined' ? dgwt_wcas.go_to_first_variation_on_submit : false,
+                showDetailsPanel: psfs.show_details_panel == 1 ? true : false,
+                showImage: psfs.show_images == 1 ? true : false,
+                showPrice: psfs.show_price == 1 ? true : false,
+                showDescription: psfs.show_desc == 1 ? true : false,
+                showSKU: psfs.show_sku == 1 ? true : false,
+                showSaleBadge: psfs.show_sale_badge == 1 ? true : false,
+                showFeaturedBadge: psfs.show_featured_badge == 1 ? true : false,
+                dynamicPrices: typeof psfs.dynamic_prices != 'undefined' && psfs.dynamic_prices ? true : false,
+                saleBadgeText: psfs.labels.sale_badge,
+                featuredBadgeText: psfs.labels.featured_badge,
+                isRtl: psfs.is_rtl == 1 ? true : false,
+                showHeadings: psfs.show_headings == 1 ? true : false,
+                isPremium: psfs.is_premium == 1 ? true : false,
+                taxonomyBrands: psfs.taxonomy_brands,
+                layoutBreakpoint: psfs.layout_breakpoint,
+                mobileOverlayBreakpoint: psfs.mobile_overlay_breakpoint,
+                mobileOverlayWrapper: psfs.mobile_overlay_wrapper,
+                mobileOverlayDelay: psfs.mobile_overlay_delay,
+                debounceWaitMs: psfs.debounce_wait_ms,
+                sendGAEvents: psfs.send_ga_events,
+                enableGASiteSearchModule: psfs.enable_ga_site_search_module,
+                appendTo: typeof psfs.suggestions_wrapper != 'undefined' ? psfs.suggestions_wrapper : 'body',
+                disableHits: typeof psfs.disable_hits != 'undefined' && psfs.disable_hits ? true : false,
+                disableSubmit: typeof psfs.disable_submit != 'undefined' && psfs.disable_submit ? true : false,
+                voiceSearchEnabled: typeof psfs.voice_search_enabled != 'undefined' && psfs.voice_search_enabled ? true : false,
+                voiceSearchLang: typeof psfs.voice_search_lang != 'undefined' ? psfs.voice_search_lang : '',
+                showRecentlySearchedProducts: typeof psfs.show_recently_searched_products != 'undefined' ? psfs.show_recently_searched_products : false,
+                showRecentlySearchedPhrases: typeof psfs.show_recently_searched_phrases != 'undefined' ? psfs.show_recently_searched_phrases : false,
+                goToFirstVariationOnSubmit: typeof psfs.go_to_first_variation_on_submit != 'undefined' ? psfs.go_to_first_variation_on_submit : false,
             };
 
-            $('.dgwt-wcas-search-input').dgwtWcasAutocomplete(window.dgwt_wcas.config);
+            $('.psfs-search-input').psfsAutocomplete(window.psfs.config);
 
             /**
              * If a user clicked on the search bar o an icon before it finished initializing,
@@ -3869,9 +3869,9 @@
              */
             var $focusedElement = $(document.activeElement);
             if ($focusedElement.length) {
-                if ($focusedElement.hasClass('dgwt-wcas-search-input')) {
+                if ($focusedElement.hasClass('psfs-search-input')) {
                     $focusedElement.trigger('focus');
-                } else if ($focusedElement.hasClass('js-dgwt-wcas-search-icon-handler')) {
+                } else if ($focusedElement.hasClass('js-psfs-search-icon-handler')) {
                     $focusedElement.trigger('click');
                 }
             }
@@ -3882,13 +3882,13 @@
          * UI Fixer. Fixes several known UX issues related to search bars
          */
         var UI_FIXER = {
-            brokenSearchUi: typeof dgwt_wcas.fixer.broken_search_ui != 'undefined' && dgwt_wcas.fixer.broken_search_ui ? true : false,
-            brokenSearchUiAjax: typeof dgwt_wcas.fixer.broken_search_ui_ajax != 'undefined' && dgwt_wcas.fixer.broken_search_ui_ajax ? true : false,
-            brokenSearchUiHard: typeof dgwt_wcas.fixer.broken_search_ui_hard != 'undefined' && dgwt_wcas.fixer.broken_search_ui_hard ? true : false,
-            brokenSearchElementorPopups: typeof dgwt_wcas.fixer.broken_search_elementor_popups != 'undefined' && dgwt_wcas.fixer.broken_search_elementor_popups ? true : false,
-            brokenSearchJetMobileMenu: typeof dgwt_wcas.fixer.broken_search_jet_mobile_menu != 'undefined' && dgwt_wcas.fixer.broken_search_jet_mobile_menu ? true : false,
-            brokenSearchBrowserBackArrow: typeof dgwt_wcas.fixer.broken_search_browsers_back_arrow != 'undefined' && dgwt_wcas.fixer.broken_search_browsers_back_arrow ? true : false,
-            forceRefreshCheckout: typeof dgwt_wcas.fixer.force_refresh_checkout != 'undefined' && dgwt_wcas.fixer.force_refresh_checkout ? true : false,
+            brokenSearchUi: typeof psfs.fixer.broken_search_ui != 'undefined' && psfs.fixer.broken_search_ui ? true : false,
+            brokenSearchUiAjax: typeof psfs.fixer.broken_search_ui_ajax != 'undefined' && psfs.fixer.broken_search_ui_ajax ? true : false,
+            brokenSearchUiHard: typeof psfs.fixer.broken_search_ui_hard != 'undefined' && psfs.fixer.broken_search_ui_hard ? true : false,
+            brokenSearchElementorPopups: typeof psfs.fixer.broken_search_elementor_popups != 'undefined' && psfs.fixer.broken_search_elementor_popups ? true : false,
+            brokenSearchJetMobileMenu: typeof psfs.fixer.broken_search_jet_mobile_menu != 'undefined' && psfs.fixer.broken_search_jet_mobile_menu ? true : false,
+            brokenSearchBrowserBackArrow: typeof psfs.fixer.broken_search_browsers_back_arrow != 'undefined' && psfs.fixer.broken_search_browsers_back_arrow ? true : false,
+            forceRefreshCheckout: typeof psfs.fixer.force_refresh_checkout != 'undefined' && psfs.fixer.force_refresh_checkout ? true : false,
             searchBars: [],
             init: function () {
                 var that = this;
@@ -3942,7 +3942,7 @@
                 /**
                  * Fix broken search bars after click browser's back arrow.
                  * Not worked for some browsers especially Safari and FF
-                 * Add dgwt-wcas-active class if wasn't added for some reason
+                 * Add psfs-active class if wasn't added for some reason
                  */
                 if (that.brokenSearchBrowserBackArrow) {
                     that.fixbrokenSearchBrowserBackArrow();
@@ -3974,12 +3974,12 @@
                 var that = this;
                 $(document).ajaxSuccess(function (event, request, settings) {
 
-                    // Exclude FiboSearch and WooCommerce AJAX requests
+                    // Exclude PSF Search and WooCommerce AJAX requests
                     if (typeof settings.url == 'string' && new RegExp('search\.php|wc-ajax').test(settings.url)) {
                         return;
                     }
 
-                    if (typeof request.responseText == 'string' && request.responseText.includes('dgwt-wcas-search-input')) {
+                    if (typeof request.responseText == 'string' && request.responseText.includes('psfs-search-input')) {
                         setTimeout(function () {
                             that.pullAndReconditionSearchBars();
                         }, 500);
@@ -4047,7 +4047,7 @@
                     ) {
 
                         setTimeout(function () {
-                            var $search = $(".jet-mobile-menu__container .dgwt-wcas-search-input");
+                            var $search = $(".jet-mobile-menu__container .psfs-search-input");
 
                             if ($search.length > 0) {
                                 that.pullAndReconditionSearchBars();
@@ -4062,7 +4062,7 @@
                 $(document.body).on('added_to_cart', function () {
                     if (
                         $(document.body).hasClass('woocommerce-checkout') &&
-                        $('.dgwt-wcas-search-input').length > 0
+                        $('.psfs-search-input').length > 0
                     ) {
                         $(document.body).trigger('update_checkout');
                     }
@@ -4077,13 +4077,13 @@
                         if (
                             typeof activeEl == 'object'
                             && $(activeEl).length
-                            && $(activeEl).hasClass('dgwt-wcas-search-input')
+                            && $(activeEl).hasClass('psfs-search-input')
                         ) {
 
-                            var $search = $(activeEl).closest('.dgwt-wcas-search-wrapp');
+                            var $search = $(activeEl).closest('.psfs-search-wrapp');
 
-                            if ($search.length && !$search.hasClass('dgwt-wcas-active')) {
-                                $search.addClass('dgwt-wcas-active');
+                            if ($search.length && !$search.hasClass('psfs-active')) {
+                                $search.addClass('psfs-active');
                                 clearInterval(interval);
                             }
                         }
@@ -4100,7 +4100,7 @@
             },
             pullAndReconditionSearchBars: function () {
                 var that = this,
-                    $inputs = $('.dgwt-wcas-search-input'),
+                    $inputs = $('.psfs-search-input'),
                     firstPull = that.searchBars.length == 0;
 
                 if ($inputs.length > 0) {
@@ -4142,11 +4142,11 @@
             },
             hasEvents: function ($searchBarInput) {
                 var hasEvents = false;
-                $searchBarInput.trigger('fibosearch/ping');
-                if ($searchBarInput.hasClass('fibosearch-pong')) {
+                $searchBarInput.trigger('psfsearch/ping');
+                if ($searchBarInput.hasClass('psfsearch-pong')) {
                     hasEvents = true;
                 }
-                $('.fibosearch-pong').removeClass('fibosearch-pong');
+                $('.psfsearch-pong').removeClass('psfsearch-pong');
                 return hasEvents;
             },
             isInitialized: function ($searchBarInput) {
@@ -4168,20 +4168,20 @@
                 if (typeof $searchBarInput.data('autocomplete') == 'object') {
                     $searchBarInput.data('autocomplete').dispose();
                 }
-                $searchBarInput.dgwtWcasAutocomplete(window.dgwt_wcas.config);
+                $searchBarInput.psfsAutocomplete(window.psfs.config);
             },
             makeUniqueID: function ($searchBarInput) {
                 var newID = Math.random().toString(36).substring(2, 6);
-                newID = 'dgwt-wcas-search-input-' + newID;
+                newID = 'psfs-search-input-' + newID;
 
                 $searchBarInput.attr('id', newID);
                 $searchBarInput.closest('form').find('label').attr('for', newID);
             },
         }
 
-        if (typeof dgwt_wcas.fixer.core == 'undefined') {
-            dgwt_wcas.fixer.core = UI_FIXER;
-            dgwt_wcas.fixer.core.init();
+        if (typeof psfs.fixer.core == 'undefined') {
+            psfs.fixer.core = UI_FIXER;
+            psfs.fixer.core.init();
         }
 
     }());

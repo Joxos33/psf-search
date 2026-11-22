@@ -1,13 +1,13 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Maintenance {
-	const HOOK                         = 'dgwt_wcas_analytics_maintenance';
+	const HOOK                         = 'psfs_analytics_maintenance';
 	const ANALYTICS_EXPIRATION_IN_DAYS = 30;
 
 	public function init() {
@@ -56,10 +56,10 @@ class Maintenance {
 		$expiration = self::ANALYTICS_EXPIRATION_IN_DAYS;
 
 		if (
-			defined( 'DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
-			intval( DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
+			defined( 'PSFS_ANALYTICS_EXPIRATION_IN_DAYS' ) &&
+			intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS ) > 0
 		) {
-			$expiration = intval( DGWT_WCAS_ANALYTICS_EXPIRATION_IN_DAYS );
+			$expiration = intval( PSFS_ANALYTICS_EXPIRATION_IN_DAYS );
 		}
 
 		Database::wipeOldRecords( $expiration );

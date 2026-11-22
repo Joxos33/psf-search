@@ -9,7 +9,7 @@ const transforms = {
 			type: 'block',
 			blocks: [ 'core/navigation-link' ],
 			transform: () => {
-				return createBlock( 'fibosearch/search-nav', {
+				return createBlock( 'psfsearch/search-nav', {
 					inheritPluginSettings: false,
 					layout: 'icon',
 				} );
@@ -19,7 +19,7 @@ const transforms = {
 			type: 'block',
 			blocks: [ 'core/search' ],
 			transform: () => {
-				return createBlock( 'fibosearch/search-nav', {
+				return createBlock( 'psfsearch/search-nav', {
 					inheritPluginSettings: false,
 					layout: 'icon',
 				} );

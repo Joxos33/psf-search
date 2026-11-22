@@ -1,6 +1,6 @@
 import { SVG } from '@wordpress/primitives';
 
-const fibosearch = (
+const psfsearch = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88.000000 88.000000" fill="none">
 		<g transform="translate(0.000000,88.000000) scale(0.100000,-0.100000)">
 			<path
@@ -33,4 +33,4 @@ const fibosearch = (
 	</SVG>
 );
 
-export default fibosearch;
+export default psfsearch;

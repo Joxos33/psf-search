@@ -1,10 +1,10 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\SearchQuery;
+namespace PsfSearch\Engines\TNTSearchMySQL\SearchQuery;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -128,7 +128,7 @@ class CustomPost {
 
 				$score     = Helpers::calcScore( $this->phrase, $item->name );
 				$showImage = $this->getOption( 'show_post_type_' . $this->postType . '_images' ) === 'on';
-				$showImage = apply_filters( "dgwt/wcas/search_results/{$this->postType}/show_image", $showImage, $this->phrase, $item );
+				$showImage = apply_filters( "psfs/search_results/{$this->postType}/show_image", $showImage, $this->phrase, $item );
 				$name      = html_entity_decode( $item->name );
 
 				$itemData = [
@@ -136,7 +136,7 @@ class CustomPost {
 					'value'     => $name,
 					'name'      => $name,
 					'image'     => $showImage && ! empty( $item->image ) ? esc_url( $item->image ) : '',
-					'url'       => apply_filters( "dgwt/wcas/search_results/{$this->postType}/url", $item->url, $this->phrase, $item ),
+					'url'       => apply_filters( "psfs/search_results/{$this->postType}/url", $item->url, $this->phrase, $item ),
 					'type'      => 'post',
 					'post_type' => $this->postType,
 					'score'     => $score,
@@ -152,7 +152,7 @@ class CustomPost {
 			}
 		}
 
-		$this->documents = apply_filters( 'dgwt/wcas/tnt/search_results/' . $this->postType, $documents, $this->phrase, $this->getLang() );
+		$this->documents = apply_filters( 'psfs/tnt/search_results/' . $this->postType, $documents, $this->phrase, $this->getLang() );
 	}
 
 	/**
@@ -167,11 +167,11 @@ class CustomPost {
 			$score  = 0;
 			$score += Helpers::calcScore( $this->phrase, $post['name'] );
 
-			$this->documents[ $i ]['score'] = apply_filters( "dgwt/wcas/tnt/{$this->postType}/score", (float) $score, $post['post_id'], $post, $this );
+			$this->documents[ $i ]['score'] = apply_filters( "psfs/tnt/{$this->postType}/score", (float) $score, $post['post_id'], $post, $this );
 
 			$i ++;
 		}
 
-		usort( $this->documents, [ 'DgoraWcas\Helpers', 'cmpSimilarity' ] );
+		usort( $this->documents, [ 'PsfSearch\Helpers', 'cmpSimilarity' ] );
 	}
 }

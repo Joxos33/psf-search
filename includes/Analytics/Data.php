@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
-use DgoraWcas\Multilingual;
+use PsfSearch\Multilingual;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -200,7 +200,7 @@ class Data {
 		//phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare(
 			"SELECT $select
-                                     FROM $wpdb->dgwt_wcas_stats
+                                     FROM $wpdb->psfs_stats
                                      WHERE 1=1
                                      $where
                                      AND created_at > %s AND created_at < %s",
@@ -262,7 +262,7 @@ class Data {
 		$sql = $wpdb->prepare(
 			"SELECT COUNT(*) AS total FROM (
                                      SELECT phrase, COUNT(id) AS qty
-                                     FROM $wpdb->dgwt_wcas_stats
+                                     FROM $wpdb->psfs_stats
                                      WHERE 1=1
                                      AND created_at > %s AND created_at < %s
                                      AND autocomplete = 1
@@ -303,7 +303,7 @@ class Data {
 		//phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare(
 			"SELECT phrase, COUNT(id) AS qty
-                                     FROM $wpdb->dgwt_wcas_stats
+                                     FROM $wpdb->psfs_stats
                                      WHERE hits = 0
                                      AND created_at > %s AND created_at < %s
                                      AND autocomplete = 1
@@ -379,7 +379,7 @@ class Data {
 		//phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare(
 			"SELECT phrase, COUNT(id) AS qty
-                                     FROM $wpdb->dgwt_wcas_stats
+                                     FROM $wpdb->psfs_stats
                                      WHERE 1=1
                                      AND created_at > %s AND created_at < %s
                                      $where
@@ -424,7 +424,7 @@ class Data {
 			$format[]      = '%s';
 		}
 
-		if ( $wpdb->update( $wpdb->dgwt_wcas_stats, $data, $where, $format ) ) {
+		if ( $wpdb->update( $wpdb->psfs_stats, $data, $where, $format ) ) {
 			$success = true;
 		}
 

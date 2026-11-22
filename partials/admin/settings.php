@@ -4,46 +4,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$advSettings = DGWT_WCAS()->settings->canSeeAdvSettings();
+$advSettings = PSFS()->settings->canSeeAdvSettings();
 
 $classes = [];
-$classes[] = 'dgwt-wcas-settings-pro';
-if ( DGWT_WCAS()->themeCompatibility->isCurrentThemeSupported() ) {
-	$classes[] = 'dgwt-wcas-settings-theme-supported';
+$classes[] = 'psfs-settings-pro';
+if ( PSFS()->themeCompatibility->isCurrentThemeSupported() ) {
+	$classes[] = 'psfs-settings-theme-supported';
 }
 ?>
-<div class="wrap dgwt-wcas-settings <?php echo implode( ' ', $classes ); ?>">
+<div class="wrap psfs-settings <?php echo implode( ' ', $classes ); ?>">
 
 
-	<h2 class="dgwt-wcas-settings__head">
-		<div class="dgwt-wcas-settings__title">
-			<div class="dgwt-wcas-settings__title-top">
-				<div class="dgwt-wcas-settings-logo-wrapper">
-					<img class="dgwt-wcas-settings-logo" src="<?php echo DGWT_WCAS_URL . 'assets/img/logo-30.png'; ?>"/>
-					<span class="dgwt-wcas-settings-logo-pro">Pro</span>
+	<h2 class="psfs-settings__head">
+		<div class="psfs-settings__title">
+			<div class="psfs-settings__title-top">
+				<div class="psfs-settings-logo-wrapper">
+					<img class="psfs-settings-logo" src="<?php echo PSFS_URL . 'assets/img/logo-30.png'; ?>"/>
+					<span class="psfs-settings-logo-pro">Pro</span>
 				</div>
-				<span class="dgwt-wcas-settings__title-core"><?php _e( 'Settings', 'ajax-search-for-woocommerce' ); ?></span>
+				<span class="psfs-settings__title-core"><?php _e( 'Settings', 'psf-search' ); ?></span>
 			</div>
 		</div>
-		<span class="dgwt-wcas-settings__advanced js-dgwt-wcas-settings__advanced">
+		<span class="psfs-settings__advanced js-psfs-settings__advanced">
 			<span
-				class="js-dgwt-wcas-adv-settings-toggle woocommerce-input-toggle woocommerce-input-toggle--<?php echo $advSettings ? 'enabled' : 'disabled'; ?>">
+				class="js-psfs-adv-settings-toggle woocommerce-input-toggle woocommerce-input-toggle--<?php echo $advSettings ? 'enabled' : 'disabled'; ?>">
 				<?php
 					_e(
 						'Show advanced settings',
-						'ajax-search-for-woocommerce'
+						'psf-search'
 					);
 					?>
 					</span>
-			<span class="dgwt-wcas-adv-settings-label"><?php _e( 'Show advanced settings', 'ajax-search-for-woocommerce' ); ?></span>
+			<span class="psfs-adv-settings-label"><?php _e( 'Show advanced settings', 'psf-search' ); ?></span>
 		</span>
 	</h2>
 
 	<?php $settings->show_navigation(); ?>
 
-	<div class="dgwt-wcas-settings-body js-dgwt-wcas-settings-body">
+	<div class="psfs-settings-body js-psfs-settings-body">
 		<?php
-		require DGWT_WCAS_DIR . 'partials/admin/search-preview.php';
+		require PSFS_DIR . 'partials/admin/search-preview.php';
 		$settings->show_forms();
 		?>
 	</div>

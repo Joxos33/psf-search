@@ -1,12 +1,12 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSFS_FILE' ) ) {
 	exit;
 }
 
 if ( ! empty( $notices ) ) : ?>
-	<div class="dgwt-wcas-indexing-notices">
+	<div class="psfs-indexing-notices">
 		<?php
 		foreach ( $notices as $type => $message ) :
 			$dashicon = '';
@@ -16,7 +16,7 @@ if ( ! empty( $notices ) ) : ?>
 					break;
 			}
 			?>
-			<div class="dgwt-wcas-indexing-notice dgwt-wcas-indexing-notice--<?php echo $type; ?>">
+			<div class="psfs-indexing-notice psfs-indexing-notice--<?php echo $type; ?>">
 				<div><?php echo $dashicon; ?></div>
 				<div><?php echo $message; ?></div>
 			</div>

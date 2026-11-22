@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

@@ -9,15 +9,15 @@ import { Icon } from '@wordpress/icons';
  */
 import Edit from './edit';
 import transforms from './transforms';
-import fibosearchIcon from '../../icons/fibosearch';
+import psfsearchIcon from '../../icons/psfsearch';
 
 /**
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
-registerBlockType( 'fibosearch/search-nav', {
+registerBlockType( 'psfsearch/search-nav', {
 	edit: Edit,
 	icon: {
-		src: <Icon icon={ fibosearchIcon } />,
+		src: <Icon icon={ psfsearchIcon } />,
 	},
 	save: () => {},
 	transforms,

@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\AbstractDocument;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\AbstractDocument;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {

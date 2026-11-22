@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FailureReports {
-	const INDEXER_FAILURE_DATA_OPTION_KEY            = 'dgwt_wcas_indexer_last_failure_data';
-	const AUTO_SEND_FAILURE_REPORTS_OPTION_KEY       = 'dgwt_wcas_auto_send_indexer_failure_reports';
-	const DISMISS_INDEXER_FAILURE_NOTICES_OPTION_KEY = 'dgwt_wcas_dismiss_indexer_failure_notices';
+	const INDEXER_FAILURE_DATA_OPTION_KEY            = 'psfs_indexer_last_failure_data';
+	const AUTO_SEND_FAILURE_REPORTS_OPTION_KEY       = 'psfs_auto_send_indexer_failure_reports';
+	const DISMISS_INDEXER_FAILURE_NOTICES_OPTION_KEY = 'psfs_dismiss_indexer_failure_notices';
 	const EMAIL_PREVIEW_NONCE                        = 'failure-reports-email-preview';
 	const EMAIL_ADDRESS                              = 'bugs@fibosearch.com';
 
 	public function init() {
-		add_action( 'wp_ajax_fibosearch_indexer_error_mail_preview', [ $this, 'getEmailPreview' ] );
-		add_action( 'dgwt/wcas/indexer/status/error', [ $this, 'handleIndexerFailure' ] );
+		add_action( 'wp_ajax_psfsearch_indexer_error_mail_preview', [ $this, 'getEmailPreview' ] );
+		add_action( 'psfs/indexer/status/error', [ $this, 'handleIndexerFailure' ] );
 	}
 
 	/**
@@ -87,7 +87,7 @@ class FailureReports {
 	 * @return void
 	 */
 	public function handleIndexerFailure() {
-		if ( defined( 'DGWT_WCAS_DISABLE_INDEXER_FAILURE_REPORTS' ) && DGWT_WCAS_DISABLE_INDEXER_FAILURE_REPORTS ) {
+		if ( defined( 'PSFS_DISABLE_INDEXER_FAILURE_REPORTS' ) && PSFS_DISABLE_INDEXER_FAILURE_REPORTS ) {
 			return;
 		}
 		if ( $this->getDismissNotices() ) {
@@ -110,11 +110,11 @@ class FailureReports {
 	 * @return bool
 	 */
 	public function sendReportViaEmail() {
-		if ( defined( 'DGWT_WCAS_DISABLE_INDEXER_FAILURE_REPORTS' ) && DGWT_WCAS_DISABLE_INDEXER_FAILURE_REPORTS ) {
+		if ( defined( 'PSFS_DISABLE_INDEXER_FAILURE_REPORTS' ) && PSFS_DISABLE_INDEXER_FAILURE_REPORTS ) {
 			return false;
 		}
 
-		$subject  = '[Bug] Index building failed - v' . DGWT_WCAS_VERSION;
+		$subject  = '[Bug] Index building failed - v' . PSFS_VERSION;
 		$message  = $this->getEmailMessage();
 		$logFiles = Logger::getLogFilenames( Logger::INDEXER_FAILURE_SOURCE );
 
@@ -140,7 +140,7 @@ class FailureReports {
 		}
 
 		ob_start();
-		require DGWT_WCAS_DIR . 'partials/emails/failure-report.php';
+		require PSFS_DIR . 'partials/emails/failure-report.php';
 
 		return ob_get_clean();
 	}
@@ -174,7 +174,7 @@ class FailureReports {
 					'rows'   => [
 						[
 							'label' => 'Version',
-							'value' => DGWT_WCAS_VERSION,
+							'value' => PSFS_VERSION,
 						],
 					],
 				],

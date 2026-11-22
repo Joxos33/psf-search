@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,10 +34,10 @@ class Setup {
 	 * @return void
 	 */
 	public function setThumbnailSize() {
-		$this->thumbnailSize = apply_filters( 'dgwt/wcas/setup/thumbnail_size', 'dgwt-wcas-product-suggestion' );
+		$this->thumbnailSize = apply_filters( 'psfs/setup/thumbnail_size', 'psfs-product-suggestion' );
 
-		if ( $this->thumbnailSize === 'dgwt-wcas-product-suggestion' ) {
-			add_image_size( 'dgwt-wcas-product-suggestion', 64, 0, false );
+		if ( $this->thumbnailSize === 'psfs-product-suggestion' ) {
+			add_image_size( 'psfs-product-suggestion', 64, 0, false );
 		}
 	}
 

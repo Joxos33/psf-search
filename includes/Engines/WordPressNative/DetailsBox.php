@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\WordPressNative;
+namespace PsfSearch\Engines\WordPressNative;
 
-use DgoraWcas\Post;
-use DgoraWcas\Product;
-use DgoraWcas\Helpers;
-use DgoraWcas\ProductVariation;
+use PsfSearch\Post;
+use PsfSearch\Product;
+use PsfSearch\Helpers;
+use PsfSearch\ProductVariation;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,14 +16,14 @@ class DetailsBox {
 
 	public function __construct() {
 
-		if ( defined( 'DGWT_WCAS_WC_AJAX_ENDPOINT' ) ) {
+		if ( defined( 'PSFS_WC_AJAX_ENDPOINT' ) ) {
 
 			// Searched result details ajax action
-			if ( DGWT_WCAS_WC_AJAX_ENDPOINT ) {
-				add_action( 'wc_ajax_' . DGWT_WCAS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
+			if ( PSFS_WC_AJAX_ENDPOINT ) {
+				add_action( 'wc_ajax_' . PSFS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
 			} else {
-				add_action( 'wp_ajax_nopriv_' . DGWT_WCAS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
-				add_action( 'wp_ajax_' . DGWT_WCAS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
+				add_action( 'wp_ajax_nopriv_' . PSFS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
+				add_action( 'wp_ajax_' . PSFS_RESULT_DETAILS_ACTION, [ $this, 'getResultDetails' ] );
 			}
 		}
 	}
@@ -33,8 +33,8 @@ class DetailsBox {
 	 */
 
 	public function getResultDetails() {
-		if ( ! defined( 'DGWT_WCAS_AJAX_DETAILS_PANEL' ) ) {
-			define( 'DGWT_WCAS_AJAX_DETAILS_PANEL', true );
+		if ( ! defined( 'PSFS_AJAX_DETAILS_PANEL' ) ) {
+			define( 'PSFS_AJAX_DETAILS_PANEL', true );
 		}
 
 		$output = [];
@@ -47,7 +47,7 @@ class DetailsBox {
 			// Hard cap request size to avoid unnecessary iteration and potential abuse.
 			$rawItems = array_slice( $rawItems, 0, $maxItems );
 
-			$totalLimitSetting = DGWT_WCAS()->settings->getOption( 'suggestions_limit', 7 );
+			$totalLimitSetting = PSFS()->settings->getOption( 'suggestions_limit', 7 );
 			$totalLimit        = min( $totalLimitSetting, $maxItems );
 
 			$i = 1;
@@ -130,7 +130,7 @@ class DetailsBox {
 			}
 			$output['items'] = $items;
 
-			echo json_encode( apply_filters( 'dgwt/wcas/suggestion_details/output', $output ) );
+			echo json_encode( apply_filters( 'psfs/suggestion_details/output', $output ) );
 			die();
 		}
 	}
@@ -167,8 +167,8 @@ class DetailsBox {
 			return $details;
 		}
 
-		$thumbSize        = apply_filters( 'dgwt/wcas/suggestion_details/product/thumb_size', 'woocommerce_thumbnail' );
-		$responsiveImages = apply_filters( 'dgwt/wcas/suggestion_details/responsive_images', true );
+		$thumbSize        = apply_filters( 'psfs/suggestion_details/product/thumb_size', 'woocommerce_thumbnail' );
+		$responsiveImages = apply_filters( 'psfs/suggestion_details/responsive_images', true );
 
 		$wooProduct = $product->getWooObject();
 
@@ -176,7 +176,7 @@ class DetailsBox {
 			'ID'                => $product->getID(),
 			'name'              => $product->getName(),
 			'desc'              => $product->getDescription( 'details-panel' ),
-			'link'              => apply_filters( "dgwt/wcas/suggestion_details/{$type}/url", $product->getPermalink(), $product ),
+			'link'              => apply_filters( "psfs/suggestion_details/{$type}/url", $product->getPermalink(), $product ),
 			'imageSrc'          => $product->getThumbnailSrc( $thumbSize ),
 			'imageSrcset'       => $responsiveImages ? $product->getThumbnailSrcset( $thumbSize ) : '',
 			'imageSizes'        => $responsiveImages ? $product->getThumbnailSizes( $thumbSize ) : '',
@@ -199,12 +199,12 @@ class DetailsBox {
 			&& $wooProduct->is_purchasable()
 			&& $wooProduct->is_in_stock()
 			&& ! $wooProduct->is_sold_individually()
-			&& apply_filters( 'dgwt/wcas/suggestion_details/show_quantity', true )
+			&& apply_filters( 'psfs/suggestion_details/show_quantity', true )
 		) {
 			$vars['showQuantity'] = true;
 		}
 
-		$vars = (object) apply_filters( 'dgwt/wcas/suggestion_details/product/vars', $vars, $productID, $product );
+		$vars = (object) apply_filters( 'psfs/suggestion_details/product/vars', $vars, $productID, $product );
 
 		$file = $variationID ? 'product-variation' : 'product';
 
@@ -213,9 +213,9 @@ class DetailsBox {
 		$details['html'] = ob_get_clean();
 
 		if ( $variationID ) {
-			$details['html'] = apply_filters( 'dgwt/wcas/suggestion_details/product_variation/html', $details['html'], $variationID, $product );
+			$details['html'] = apply_filters( 'psfs/suggestion_details/product_variation/html', $details['html'], $variationID, $product );
 		} else {
-			$details['html'] = apply_filters( 'dgwt/wcas/suggestion_details/product/html', $details['html'], $productID, $product );
+			$details['html'] = apply_filters( 'psfs/suggestion_details/product/html', $details['html'], $productID, $product );
 		}
 
 		$details['price'] = $vars->priceHtml;
@@ -249,13 +249,13 @@ class DetailsBox {
 			return '';
 		}
 
-		$thumbSize        = apply_filters( "dgwt/wcas/suggestion_details/{$postType}/thumb_size", 'medium' );
-		$responsiveImages = apply_filters( 'dgwt/wcas/suggestion_details/responsive_images', true );
+		$thumbSize        = apply_filters( "psfs/suggestion_details/{$postType}/thumb_size", 'medium' );
+		$responsiveImages = apply_filters( 'psfs/suggestion_details/responsive_images', true );
 
 		$vars = [
 			'ID'          => $postID,
 			'title'       => $post->getTitle(),
-			'link'        => apply_filters( "dgwt/wcas/suggestion_details/{$postType}/url", $post->getPermalink(), $post ),
+			'link'        => apply_filters( "psfs/suggestion_details/{$postType}/url", $post->getPermalink(), $post ),
 			'imageSrc'    => $post->getThumbnailSrc( $thumbSize ),
 			'imageSrcset' => $responsiveImages ? $post->getThumbnailSrcset( $thumbSize ) : '',
 			'imageSizes'  => $responsiveImages ? $post->getThumbnailSizes( $thumbSize ) : '',
@@ -263,13 +263,13 @@ class DetailsBox {
 			'postType'    => $postType,
 		];
 
-		$vars = (object) apply_filters( 'dgwt/wcas/suggestion_details/' . $postType . '/vars', $vars, $postID, $post );
+		$vars = (object) apply_filters( 'psfs/suggestion_details/' . $postType . '/vars', $vars, $postID, $post );
 
 		ob_start();
 		Helpers::loadTemplate( 'details-panel/' . $postType . '.php', $vars, 'details-panel/post-type.php' );
 		$html = ob_get_clean();
 
-		return (string) apply_filters( 'dgwt/wcas/suggestion_details/' . $postType . '/html', $html, $postID, $postType );
+		return (string) apply_filters( 'psfs/suggestion_details/' . $postType . '/html', $html, $postID, $postType );
 	}
 
 	/**
@@ -291,9 +291,9 @@ class DetailsBox {
 
 		$queryArgs = $this->getProductsQueryArgs( $termID, $taxonomy );
 
-		add_filter( 'posts_where', [ 'DgoraWcas\Helpers', 'excludePasswordProtectedProducts' ], 90, 2 );
+		add_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90, 2 );
 		$products = new \WP_Query( $queryArgs );
-		remove_filter( 'posts_where', [ 'DgoraWcas\Helpers', 'excludePasswordProtectedProducts' ], 90 );
+		remove_filter( 'posts_where', [ 'PsfSearch\Helpers', 'excludePasswordProtectedProducts' ], 90 );
 
 		if ( $products->have_posts() ) {
 
@@ -302,24 +302,24 @@ class DetailsBox {
 			$showMore      = $limit > 0 && $totalProducts > 0 && $totalProducts - $limit > 0 ? true : false;
 
 			// Details panel title
-			$title .= '<span class="dgwt-wcas-datails-title">';
-			$title .= '<span class="dgwt-wcas-details-title-tax">';
+			$title .= '<span class="psfs-datails-title">';
+			$title .= '<span class="psfs-details-title-tax">';
 			$title .= Helpers::getLabel( 'tax_' . $taxonomy ) . ': ';
 			$title .= '</span>';
 			$title .= esc_html( wp_unslash( $termName ) );
 			$title .= '</span>';
-			$title  = apply_filters( 'dgwt/wcas/suggestion_details/taxonomy/headline', $title, $termID, $taxonomy, $termName );
+			$title  = apply_filters( 'psfs/suggestion_details/taxonomy/headline', $title, $termID, $taxonomy, $termName );
 
-			echo '<div class="dgwt-wcas-details-inner dgwt-wcas-details-inner-taxonomy dgwt-wcas-details-space">';
+			echo '<div class="psfs-details-inner psfs-details-inner-taxonomy psfs-details-space">';
 
-			do_action( 'dgwt/wcas/details_panel/term_products/container_before' );
+			do_action( 'psfs/details_panel/term_products/container_before' );
 
-			echo '<div class="dgwt-wcas-products-in-cat">';
+			echo '<div class="psfs-products-in-cat">';
 
 			echo ! empty( $title ) ? $title : '';
 
-			$thumbSize        = apply_filters( 'dgwt/wcas/suggestion_details/term_products/thumb_size', DGWT_WCAS()->setup->getThumbnailSize() );
-			$responsiveImages = apply_filters( 'dgwt/wcas/suggestion_details/responsive_images', true );
+			$thumbSize        = apply_filters( 'psfs/suggestion_details/term_products/thumb_size', PSFS()->setup->getThumbnailSize() );
+			$responsiveImages = apply_filters( 'psfs/suggestion_details/responsive_images', true );
 
 			while ( $products->have_posts() ) {
 				$products->the_post();
@@ -330,7 +330,7 @@ class DetailsBox {
 					$vars = [
 						'ID'          => $product->getID(),
 						'name'        => $product->getName(),
-						'link'        => apply_filters( 'dgwt/wcas/suggestion_details/term_product/url', $product->getPermalink(), $product ),
+						'link'        => apply_filters( 'psfs/suggestion_details/term_product/url', $product->getPermalink(), $product ),
 						'imageSrc'    => $product->getThumbnailSrc( $thumbSize ),
 						'imageSrcset' => $responsiveImages ? $product->getThumbnailSrcset( $thumbSize ) : '',
 						'imageSizes'  => $responsiveImages ? $product->getThumbnailSizes( $thumbSize ) : '',
@@ -340,7 +340,7 @@ class DetailsBox {
 						'wooObject'   => $product->getWooObject(),
 					];
 
-					$vars = (object) apply_filters( 'dgwt/wcas/suggestion_details/term_products/vars', $vars, $product->getID(), $product );
+					$vars = (object) apply_filters( 'psfs/suggestion_details/term_products/vars', $vars, $product->getID(), $product );
 
 					Helpers::loadTemplate( 'details-panel/term-product.php', $vars );
 				}
@@ -350,11 +350,11 @@ class DetailsBox {
 
 			if ( $showMore ) {
 				$showMoreUrl = get_term_link( $termID, $taxonomy );
-				$showMoreUrl = apply_filters( 'dgwt/wcas/suggestion_details/term_products/show_more_url', $showMoreUrl, get_term( $termID, $taxonomy ) );
-				echo '<a class="dgwt-wcas-details-more-products" href="' . esc_url( $showMoreUrl ) . '">' . esc_html( Helpers::getLabel( 'show_more_details' ) ) . ' (' . $totalProducts . ')</a>';
+				$showMoreUrl = apply_filters( 'psfs/suggestion_details/term_products/show_more_url', $showMoreUrl, get_term( $termID, $taxonomy ) );
+				echo '<a class="psfs-details-more-products" href="' . esc_url( $showMoreUrl ) . '">' . esc_html( Helpers::getLabel( 'show_more_details' ) ) . ' (' . $totalProducts . ')</a>';
 			}
 
-			do_action( 'dgwt/wcas/details_panel/term_products/container_after' );
+			do_action( 'psfs/details_panel/term_products/container_after' );
 
 			echo '</div>';
 		}
@@ -363,7 +363,7 @@ class DetailsBox {
 
 		$html = ob_get_clean();
 
-		return apply_filters( 'dgwt/wcas/suggestion_details/term/html', $html, $termID, $taxonomy );
+		return apply_filters( 'psfs/suggestion_details/term/html', $html, $termID, $taxonomy );
 	}
 
 	/**
@@ -380,7 +380,7 @@ class DetailsBox {
 		$productVisibilityTermIds = wc_get_product_visibility_term_ids();
 
 		$queryArgs = [
-			'posts_per_page' => apply_filters( 'dgwt/wcas/suggestion_details/taxonomy/limit', 4 ),
+			'posts_per_page' => apply_filters( 'psfs/suggestion_details/taxonomy/limit', 4 ),
 			'post_status'    => 'publish',
 			'post_type'      => 'product',
 			'no_found_rows'  => false,
@@ -399,7 +399,7 @@ class DetailsBox {
 		];
 
 		// Out of stock
-		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) && DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) && PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$queryArgs['tax_query'][] = [
 				'taxonomy' => 'product_visibility',
 				'field'    => 'term_taxonomy_id',
@@ -416,6 +416,6 @@ class DetailsBox {
 			'include_children' => true,
 		];
 
-		return apply_filters( 'dgwt/wcas/suggestion_details/taxonomy/products_query_args', $queryArgs, $termID, $taxonomy );
+		return apply_filters( 'psfs/suggestion_details/taxonomy/products_query_args', $queryArgs, $termID, $taxonomy );
 	}
 }

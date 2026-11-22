@@ -1,16 +1,16 @@
 <?php
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDB;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDBException;
-use DgoraWcas\Multilingual;
-use DgoraWcas\Post;
-use DgoraWcas\Product;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\ProductVariation;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\BackgroundProductUpdater;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDB;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDBException;
+use PsfSearch\Multilingual;
+use PsfSearch\Post;
+use PsfSearch\Product;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\ProductVariation;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -166,7 +166,7 @@ class Indexer {
 			$data = $this->getNonProductData();
 		}
 
-		$dataFiltered = apply_filters( 'dgwt/wcas/readable_index/insert', $data, $postID, $postType );
+		$dataFiltered = apply_filters( 'psfs/readable_index/insert', $data, $postID, $postType );
 
 		if ( isset( $dataFiltered['meta'] ) ) {
 			$dataFiltered['meta'] = maybe_serialize( $dataFiltered['meta'] );
@@ -176,7 +176,7 @@ class Indexer {
 
 		if ( ! empty( $dataFiltered ) ) {
 			$rows = WPDB::get_instance()->insert(
-				$wpdb->dgwt_wcas_index . $indexRoleSuffix,
+				$wpdb->psfs_index . $indexRoleSuffix,
 				$dataFiltered,
 				[
 					'%d',
@@ -206,7 +206,7 @@ class Indexer {
 			}
 		}
 
-		do_action( 'dgwt/wcas/readable_index/after_insert', $dataFiltered, $postID, $postType, $success, $data, $indexRole );
+		do_action( 'psfs/readable_index/after_insert', $dataFiltered, $postID, $postType, $success, $data, $indexRole );
 
 		return $success;
 	}
@@ -222,7 +222,7 @@ class Indexer {
 		if ( is_object( $this->product ) && $this->product->isValid() ) {
 
 			$wordsLimit = - 1;
-			if ( DGWT_WCAS()->settings->getOption( 'show_details_box' ) === 'on' ) {
+			if ( PSFS()->settings->getOption( 'show_details_box' ) === 'on' ) {
 				$wordsLimit = 15;
 			}
 
@@ -240,7 +240,7 @@ class Indexer {
 				'meta'              => [],
 				'image'             => (string) $this->product->getThumbnailSrc(),
 				'url'               => $this->product->getPermalink(),
-				'html_price'        => apply_filters( 'dgwt/wcas/indexer/readable/index_html_price', true ) ? $this->product->getPriceHTML() : '',
+				'html_price'        => apply_filters( 'psfs/indexer/readable/index_html_price', true ) ? $this->product->getPriceHTML() : '',
 				'price'             => $this->product->getPrice(),
 				'average_rating'    => $this->product->getAverageRating(),
 				'review_count'      => $this->product->getReviewCount(),
@@ -248,15 +248,15 @@ class Indexer {
 				'lang'              => $this->product->getLanguage(),
 			];
 
-			if ( apply_filters( 'dgwt/wcas/tnt/indexer/readable/process_sku_variations', true ) ) {
+			if ( apply_filters( 'psfs/tnt/indexer/readable/process_sku_variations', true ) ) {
 				$data['sku_variations'] = implode( '|', $this->product->getVariationsSKUs() );
 			}
 
-			if ( apply_filters( 'dgwt/wcas/tnt/indexer/readable/process_attributes', true ) ) {
+			if ( apply_filters( 'psfs/tnt/indexer/readable/process_attributes', true ) ) {
 				$data['attributes'] = implode( '|', $this->product->getAttributes( true ) );
 			}
 
-			$data = apply_filters( 'dgwt/wcas/tnt/indexer/readable/product/data', $data, $this->product->getID(), $this->product );
+			$data = apply_filters( 'psfs/tnt/indexer/readable/product/data', $data, $this->product->getID(), $this->product );
 		}
 
 		return $data;
@@ -286,15 +286,15 @@ class Indexer {
 			'variation_id' => $this->product->getID(),
 			'product_id'   => $this->product->getParentID(),
 			'sku'          => (string) $this->product->getSKU(),
-			'title'        => apply_filters( 'dgwt/wcas/variation/title', $title, $this->product->getWooObject() ),
+			'title'        => apply_filters( 'psfs/variation/title', $title, $this->product->getWooObject() ),
 			'description'  => (string) $this->product->getDescription(),
 			'image'        => $this->product->getThumbnailSrc(),
-			'url'          => apply_filters( 'dgwt/wcas/variation/permalink', $this->product->getPermalink(), $this->product->getWooObject() ),
-			'html_price'   => apply_filters( 'dgwt/wcas/indexer/variation/index_html_price', true ) ? $this->product->getPriceHTML() : '',
+			'url'          => apply_filters( 'psfs/variation/permalink', $this->product->getPermalink(), $this->product->getWooObject() ),
+			'html_price'   => apply_filters( 'psfs/indexer/variation/index_html_price', true ) ? $this->product->getPriceHTML() : '',
 			'lang'         => $lang,
 		];
 
-		$dataFiltered = apply_filters( 'dgwt/wcas/variation/insert', $dataLegacy, $this->product->getWooObject() );
+		$dataFiltered = apply_filters( 'psfs/variation/insert', $dataLegacy, $this->product->getWooObject() );
 
 		$data = [];
 		/**
@@ -324,7 +324,7 @@ class Indexer {
 			];
 		}
 
-		return apply_filters( 'dgwt/wcas/tnt/indexer/readable/product_variation/data', $data, $this->product->getID(), $this->product );
+		return apply_filters( 'psfs/tnt/indexer/readable/product_variation/data', $data, $this->product->getID(), $this->product );
 	}
 
 
@@ -337,8 +337,8 @@ class Indexer {
 		$data = [];
 
 		if ( is_object( $this->post ) && $this->post->isValid() ) {
-			$thumbSize           = apply_filters( 'dgwt/wcas/indexer/readable/' . $this->post->getPostType() . '/thumbnail_size', 'medium' );
-			$postTypesWithImages = apply_filters( 'dgwt/wcas/indexer/readable/post_types_with_images', [] );
+			$thumbSize           = apply_filters( 'psfs/indexer/readable/' . $this->post->getPostType() . '/thumbnail_size', 'medium' );
+			$postTypesWithImages = apply_filters( 'psfs/indexer/readable/post_types_with_images', [] );
 
 			$data = [
 				'post_id'           => $this->post->getID(),
@@ -362,7 +362,7 @@ class Indexer {
 				'lang'              => $this->post->getLanguage(),
 			];
 
-			$data = apply_filters( 'dgwt/wcas/tnt/indexer/readable/' . $this->post->getPostType() . '/data', $data, $this->post->getID(), $this->post );
+			$data = apply_filters( 'psfs/tnt/indexer/readable/' . $this->post->getPostType() . '/data', $data, $this->post->getID(), $this->post );
 		}
 
 		return $data;
@@ -383,19 +383,19 @@ class Indexer {
 		}
 
 		if ( $directVariations ) {
-			DGWT_WCAS()->tntsearchMySql->asyncVariationsUpdater->task(
+			PSFS()->tntsearchMySql->asyncVariationsUpdater->task(
 				[
 					'parent_id' => $this->product->getID(),
 					'items'     => wp_list_pluck( $variations, 'variation_id' ),
 				]
 			);
 		} else {
-			$variableProductsToUpdate = get_option( 'dgwt_wcas_variable_products_to_update', [] );
+			$variableProductsToUpdate = get_option( 'psfs_variable_products_to_update', [] );
 			if ( ! is_array( $variableProductsToUpdate ) ) {
 				$variableProductsToUpdate = [];
 			}
 			$variableProductsToUpdate[] = $this->product->getID();
-			update_option( 'dgwt_wcas_variable_products_to_update', $variableProductsToUpdate, false );
+			update_option( 'psfs_variable_products_to_update', $variableProductsToUpdate, false );
 
 			BackgroundProductUpdater::scheduleInitVariationsUpdate();
 		}
@@ -445,7 +445,7 @@ class Indexer {
 			$sql = $wpdb->prepare(
 				"
                 SELECT *
-                FROM $wpdb->dgwt_wcas_index
+                FROM $wpdb->psfs_index
                 WHERE post_id = %d
                 ",
 				$postID
@@ -454,7 +454,7 @@ class Indexer {
 			$sql = $wpdb->prepare(
 				"
                 SELECT *
-                FROM $wpdb->dgwt_wcas_index
+                FROM $wpdb->psfs_index
                 WHERE post_id = %d
                 AND lang = %s
                 ",
@@ -484,7 +484,7 @@ class Indexer {
 		global $wpdb;
 
 		$success = WPDB::get_instance()->delete(
-			$wpdb->dgwt_wcas_index,
+			$wpdb->psfs_index,
 			[ 'post_id' => $postID ],
 			[ '%d' ]
 		);
@@ -501,7 +501,7 @@ class Indexer {
 		global $wpdb;
 
 		return WPDB::get_instance()->delete(
-			$wpdb->dgwt_wcas_index,
+			$wpdb->psfs_index,
 			[
 				'post_or_parent_id' => $parentID,
 				'type'              => 'product_variation',

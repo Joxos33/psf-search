@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Admin\Install;
+use PsfSearch\Admin\Install;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class IndexPusher {
 
-	const HOOK = 'dgwt/wcas/indexer/index_pusher';
+	const HOOK = 'psfs/indexer/index_pusher';
 
 	public function init() {
 		add_action( self::HOOK, [ __CLASS__, 'handle' ] );
@@ -46,7 +46,7 @@ class IndexPusher {
 		);
 
 		if ( empty( $isScheduled ) ) {
-			$queue->add( self::HOOK, [], 'dgwt-wcas-index' );
+			$queue->add( self::HOOK, [], 'psfs-index' );
 		}
 	}
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\SearchQuery\SearchResultsPageQuery;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +72,7 @@ class Search {
 	 * @return array Array with results.
 	 */
 	private function doSearch( $phrase, $args ): array {
-		$searchResults = DGWT_WCAS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
+		$searchResults = PSFS()->nativeSearch->getSearchResults( $phrase, true, 'product-ids' );
 		$results       = [];
 
 		if (
@@ -112,7 +112,7 @@ class Search {
 			return [ $results, $totalResults, $totalPages ];
 		}
 
-		$results = DGWT_WCAS()->nativeSearch->getProductsData(
+		$results = PSFS()->nativeSearch->getProductsData(
 			$results,
 			- 1,
 			[
@@ -216,19 +216,19 @@ class Search {
 		$allowedPostTypes = [ 'product' ];
 		$allowedPostTypes = Helpers::getAllowedPostTypes();
 		if ( ! in_array( $args['post_type'], $allowedPostTypes, true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-post-type', 'Invalid argument: post_type' );
+			$error->add( 'psfs-invalid-arg-post-type', 'Invalid argument: post_type' );
 		}
 
 		if ( ! in_array( $args['fields'], [ 'all', 'ids' ], true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-fields', 'Invalid argument: fields' );
+			$error->add( 'psfs-invalid-arg-fields', 'Invalid argument: fields' );
 		}
 
 		if ( ! in_array( $args['orderby'], [ 'relevance', 'date', 'price', 'rating', 'popularity' ], true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-orderby', 'Invalid argument: orderby' );
+			$error->add( 'psfs-invalid-arg-orderby', 'Invalid argument: orderby' );
 		}
 
 		if ( ! in_array( $args['order'], [ '', 'desc', 'asc' ], true ) ) {
-			$error->add( 'dgwt-wcas-invalid-arg-order', 'Invalid argument: order' );
+			$error->add( 'psfs-invalid-arg-order', 'Invalid argument: order' );
 		}
 
 		if ( $error->has_errors() ) {

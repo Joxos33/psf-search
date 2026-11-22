@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -74,7 +74,7 @@ class Product {
 	 * @return string
 	 */
 	public function getName() {
-		return apply_filters( 'dgwt/wcas/product/name', $this->wcProduct->get_name() );
+		return apply_filters( 'psfs/product/name', $this->wcProduct->get_name() );
 	}
 
 	/**
@@ -117,7 +117,7 @@ class Product {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/product/description', $output, $type, $this->productID, $this );
+		return apply_filters( 'psfs/product/description', $output, $type, $this->productID, $this );
 	}
 
 	/**
@@ -128,7 +128,7 @@ class Product {
 	public function getPermalink() {
 		$permalink = $this->wcProduct->get_permalink();
 
-		return apply_filters( 'dgwt/wcas/product/permalink', $permalink, $this->productID, $this );
+		return apply_filters( 'psfs/product/permalink', $permalink, $this->productID, $this );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class Product {
 	 */
 	public function getThumbnailSrc( $size = '' ) {
 		$src  = '';
-		$size = empty( $size ) ? DGWT_WCAS()->setup->getThumbnailSize() : $size;
+		$size = empty( $size ) ? PSFS()->setup->getThumbnailSize() : $size;
 
 		$imageID = $this->wcProduct->get_image_id();
 
@@ -156,7 +156,7 @@ class Product {
 			$src = wc_placeholder_img_src();
 		}
 
-		return apply_filters( 'dgwt/wcas/product/thumbnail_src', $src, $this->productID, $this );
+		return apply_filters( 'psfs/product/thumbnail_src', $src, $this->productID, $this );
 	}
 
 	/**
@@ -182,12 +182,12 @@ class Product {
 	 * @return string
 	 */
 	public function getThumbnailSrcset( $size = '' ) {
-		$size    = empty( $size ) ? DGWT_WCAS()->setup->getThumbnailSize() : $size;
+		$size    = empty( $size ) ? PSFS()->setup->getThumbnailSize() : $size;
 		$imageID = $this->wcProduct->get_image_id();
 
 		$srcset = function_exists( 'wp_get_attachment_image_srcset' ) ? (string) wp_get_attachment_image_srcset( $imageID, $size ) : '';
 
-		return apply_filters( 'dgwt/wcas/product/thumbnail_srcset', $srcset, $this->productID, $this );
+		return apply_filters( 'psfs/product/thumbnail_srcset', $srcset, $this->productID, $this );
 	}
 
 	/**
@@ -198,12 +198,12 @@ class Product {
 	 * @return string
 	 */
 	public function getThumbnailSizes( $size = '' ) {
-		$size    = empty( $size ) ? DGWT_WCAS()->setup->getThumbnailSize() : $size;
+		$size    = empty( $size ) ? PSFS()->setup->getThumbnailSize() : $size;
 		$imageID = $this->wcProduct->get_image_id();
 
 		$sizes = function_exists( 'wp_get_attachment_image_sizes' ) ? (string) wp_get_attachment_image_sizes( $imageID, $size ) : false;
 
-		return apply_filters( 'dgwt/wcas/product/thumbnail_sizes', $sizes, $this->productID, $this );
+		return apply_filters( 'psfs/product/thumbnail_sizes', $sizes, $this->productID, $this );
 	}
 
 	/**
@@ -219,7 +219,7 @@ class Product {
 			$price = preg_replace( '/(?<=\d)\s+(?=\d|\-)/', '&nbsp;', $price );
 		}
 
-		return (string) apply_filters( 'dgwt/wcas/product/html_price', $price, $this->productID, $this );
+		return (string) apply_filters( 'psfs/product/html_price', $price, $this->productID, $this );
 	}
 
 	/**
@@ -274,7 +274,7 @@ class Product {
 	 * @return string
 	 */
 	public function getSKU() {
-		return (string) apply_filters( 'dgwt/wcas/product/sku', $this->wcProduct->get_sku(), $this->productID, $this );
+		return (string) apply_filters( 'psfs/product/sku', $this->wcProduct->get_sku(), $this->productID, $this );
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Product {
 	 * @return string
 	 */
 	public function getGlobalUniqueId() {
-		return (string) apply_filters( 'dgwt/wcas/product/global_unique_id', method_exists( $this->wcProduct, 'get_global_unique_id' ) ? $this->wcProduct->get_global_unique_id() : '', $this->productID, $this );
+		return (string) apply_filters( 'psfs/product/global_unique_id', method_exists( $this->wcProduct, 'get_global_unique_id' ) ? $this->wcProduct->get_global_unique_id() : '', $this->productID, $this );
 	}
 
 	/**
@@ -307,11 +307,11 @@ class Product {
 				$this->getID()
 			);
 
-			if ( apply_filters( 'dgwt/wcas/indexer/include_variations_with_zero_price', true ) === false ) {
+			if ( apply_filters( 'psfs/indexer/include_variations_with_zero_price', true ) === false ) {
 				$sql .= ' AND wc_product_meta_lookup.min_price > 0';
 			}
 
-			if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+			if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 				$sql .= " AND wc_product_meta_lookup.stock_status <> 'outofstock'";
 			}
 			//phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -352,7 +352,7 @@ class Product {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/product/variations_skus', $skus, $this->productID, $this );
+		return apply_filters( 'psfs/product/variations_skus', $skus, $this->productID, $this );
 	}
 
 	/**
@@ -386,7 +386,7 @@ class Product {
 	 */
 	public function getAttributes( $onlyNames = false ) {
 		$terms      = [];
-		$attributes = apply_filters( 'dgwt/wcas/product/attributes', $this->wcProduct->get_attributes(), $this->productID, $this );
+		$attributes = apply_filters( 'psfs/product/attributes', $this->wcProduct->get_attributes(), $this->productID, $this );
 
 		foreach ( $attributes as $attribute ) {
 
@@ -419,7 +419,7 @@ class Product {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/product/attribute_terms', $terms, $this->productID, $this );
+		return apply_filters( 'psfs/product/attribute_terms', $terms, $this->productID, $this );
 	}
 
 	/**
@@ -439,7 +439,7 @@ class Product {
 	 * @return string
 	 */
 	public function getCustomField( $metaKey ) {
-		$result = apply_filters( 'dgwt/wcas/product/custom_field', false, $metaKey, $this->productID );
+		$result = apply_filters( 'psfs/product/custom_field', false, $metaKey, $this->productID );
 		if ( $result !== false ) {
 			return $result;
 		}
@@ -454,7 +454,7 @@ class Product {
 	 */
 	public function getBrand() {
 		$brand    = '';
-		$taxonomy = DGWT_WCAS()->brands->getBrandTaxonomy();
+		$taxonomy = PSFS()->brands->getBrandTaxonomy();
 
 		if ( ! empty( $taxonomy ) ) {
 
@@ -487,7 +487,7 @@ class Product {
 				foreach ( $terms as $term ) {
 					if ( ! empty( $term->name ) ) {
 
-						if ( apply_filters( 'dgwt/wcas/tnt/source_query/term_description', false ) && ! empty( $term->description ) ) {
+						if ( apply_filters( 'psfs/tnt/source_query/term_description', false ) && ! empty( $term->description ) ) {
 							$items[] = $term->name . ' | ' . $term->description;
 						} else {
 							$items[] = $term->name;
@@ -556,7 +556,7 @@ class Product {
 
 			if ( is_array( $rawAttributes ) && ! empty( $rawAttributes ) ) {
 
-				$rawAttributes = apply_filters( 'dgwt/wcas/product/custom_attributes', $rawAttributes, $productID );
+				$rawAttributes = apply_filters( 'psfs/product/custom_attributes', $rawAttributes, $productID );
 
 				foreach ( $rawAttributes as $rawAttribute ) {
 					if ( is_array( $rawAttribute ) && array_key_exists( 'is_taxonomy', $rawAttribute ) && $rawAttribute['is_taxonomy'] == 0 && ! empty( $rawAttribute['value'] ) ) {
@@ -605,7 +605,7 @@ class Product {
 				$class = ! empty( $data['class'] ) ? ' ' . $data['class'] : '';
 
 				if ( $text ) {
-					$html .= '<span class="dgwt-wcas-stock' . $class . '">';
+					$html .= '<span class="psfs-stock' . $class . '">';
 					$html .= $text;
 					$html .= '</span>';
 				}
@@ -712,7 +712,7 @@ class Product {
 		if (
 			$canShow
 			&& $checkStockStatus
-			&& DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
+			&& PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on'
 			&& ! $woo->is_in_stock()
 			&& ! current_user_can( 'edit_post', $postId )
 		) {
@@ -726,7 +726,7 @@ class Product {
 			$canShow = false;
 		}
 
-		return (bool) apply_filters( 'dgwt/wcas/product/can_show_in_details_panel', $canShow, $this );
+		return (bool) apply_filters( 'psfs/product/can_show_in_details_panel', $canShow, $this );
 	}
 
 
@@ -741,7 +741,7 @@ class Product {
 
 		if ( $this->getWooObject()->get_type() === 'variable' ) {
 			$canIndex = ! empty( $this->getAvailableVariations() );
-			$canIndex = apply_filters( 'dgwt/wcas/can_index_variable_parent', $canIndex, $this );
+			$canIndex = apply_filters( 'psfs/can_index_variable_parent', $canIndex, $this );
 		}
 
 		return $canIndex;
@@ -754,7 +754,7 @@ class Product {
 	 */
 	public function canIndex__premium_only() {
 		$canIndex          = true;
-		$excludeOutOfStock = DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on';
+		$excludeOutOfStock = PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on';
 
 		if ( ! $this->isValid() ) {
 			$this->indexingFailureReason = 'Product is not valid.';
@@ -779,7 +779,7 @@ class Product {
 		// Index or not index the product has depend on filters and filter mode
 		$rules = Helpers::getFilterProductsRules__premium_only();
 		if ( ! empty( $rules ) ) {
-			$filterMode = DGWT_WCAS()->settings->getOption( 'filter_products_mode', 'exclude' );
+			$filterMode = PSFS()->settings->getOption( 'filter_products_mode', 'exclude' );
 			$langs      = [];
 
 			// In "include" mode, products are excluded by default and will only be included if they are matched by term

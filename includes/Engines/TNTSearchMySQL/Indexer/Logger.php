@@ -1,18 +1,18 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 // Exit if accessed directly
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Logger {
-	const INDEXER_SOURCE         = 'fibosearch-indexer';
-	const INDEXER_FAILURE_SOURCE = 'fibosearch-fail-indexer';
-	const UPDATER_SOURCE         = 'fibosearch-updater';
+	const INDEXER_SOURCE         = 'psfsearch-indexer';
+	const INDEXER_FAILURE_SOURCE = 'psfsearch-fail-indexer';
+	const UPDATER_SOURCE         = 'psfsearch-updater';
 
 	/**
 	 * @var \WC_Log_Handler_File
@@ -42,7 +42,7 @@ class Logger {
 	 */
 	public static function log( $message, $level, $scope = 'all', $context = [] ) {
 		if ( ! \WC_Log_Levels::is_valid_level( $level ) ) {
-			_doing_it_wrong( __METHOD__, sprintf( __( '%1$s was called with an invalid level "%2$s".', 'ajax-search-for-woocommerce' ), '<code>Logger::log</code>', $level ), '1.10' );
+			_doing_it_wrong( __METHOD__, sprintf( __( '%1$s was called with an invalid level "%2$s".', 'psf-search' ), '<code>Logger::log</code>', $level ), '1.10' );
 		}
 
 		// Skip debug messages is debugging for indexer is disabled or scope is not enabled
@@ -151,7 +151,7 @@ class Logger {
 			Builder::addInfo( 'status', 'error' );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );
 			Builder::cancelBuildIndex();
-			do_action( 'dgwt/wcas/indexer/status/error' );
+			do_action( 'psfs/indexer/status/error' );
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;
@@ -209,7 +209,7 @@ class Logger {
 			Builder::addInfo( 'status', 'error' );
 			Builder::log( 'Stop building the index. Starting the cancellation process.' );
 			Builder::cancelBuildIndex();
-			do_action( 'dgwt/wcas/indexer/status/error' );
+			do_action( 'psfs/indexer/status/error' );
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;

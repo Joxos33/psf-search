@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class EmbeddingViaMenu {
-	const SEARCH_PLACEHOLDER = 'dgwt_wcas_search_box';
+	const SEARCH_PLACEHOLDER = 'psfs_search_box';
 
 	public function init() {
 		if ( is_admin() ) {
@@ -57,8 +57,8 @@ class EmbeddingViaMenu {
 	 */
 	public function addNavMenuMetaBoxes() {
 		add_meta_box(
-			'dgwt_wcas_endpoints_nav_link',
-			__( 'FiboSearch bar', 'ajax-search-for-woocommerce' ),
+			'psfs_endpoints_nav_link',
+			__( 'PSF Search bar', 'psf-search' ),
 			[ $this, 'navMenuLinks' ],
 			'nav-menus',
 			'side',
@@ -73,16 +73,16 @@ class EmbeddingViaMenu {
 		if ( $item->post_title !== self::SEARCH_PLACEHOLDER ) {
 			return;
 		}
-		$layout = get_post_meta( $item_id, '_menu_item_dgwt_wcas_layout', true );
+		$layout = get_post_meta( $item_id, '_menu_item_psfs_layout', true );
 		if ( empty( $layout ) ) {
 			$layout = 'default';
 		}
-		$searchIconColor = get_post_meta( $item_id, '_menu_item_dgwt_wcas_search_icon_color', true );
+		$searchIconColor = get_post_meta( $item_id, '_menu_item_psfs_search_icon_color', true );
 		?>
-		<p class="description description-wide dgwt-wcas-description">
-			<label for="edit-menu-item-dgwt-wcas-layout-<?php echo $item_id; ?>">
-				<?php _e( 'Layout', 'ajax-search-for-woocommerce' ); ?>
-				<select id="edit-menu-item-dgwt-wcas-layout-<?php echo $item_id; ?>" name="menu-item-dgwt-wcas-layout[<?php echo $item_id; ?>]" class="dgwt-wcas-layout-select">
+		<p class="description description-wide psfs-description">
+			<label for="edit-menu-item-psfs-layout-<?php echo $item_id; ?>">
+				<?php _e( 'Layout', 'psf-search' ); ?>
+				<select id="edit-menu-item-psfs-layout-<?php echo $item_id; ?>" name="menu-item-psfs-layout[<?php echo $item_id; ?>]" class="psfs-layout-select">
 					<?php
 					foreach ( $this->getLayoutOptions() as $value => $name ) {
 						$selected = selected( $value, $layout, false );
@@ -92,12 +92,12 @@ class EmbeddingViaMenu {
 				</select>
 			</label>
 		</p>
-		<p class="description description-wide dgwt-wcas-description">
-			<?php _e( 'Search icon color', 'ajax-search-for-woocommerce' ); ?><br/>
+		<p class="description description-wide psfs-description">
+			<?php _e( 'Search icon color', 'psf-search' ); ?><br/>
 			<input
 				type="text"
 				class="widefat wp-color-picker-field dwgt-wcas-color-picker"
-				name="menu-item-dgwt-wcas-search-icon-color[<?php echo $item_id; ?>]"
+				name="menu-item-psfs-search-icon-color[<?php echo $item_id; ?>]"
 				value="<?php echo esc_attr( $searchIconColor ); ?>"/>
 		</p>
 		<?php
@@ -114,11 +114,11 @@ class EmbeddingViaMenu {
 		}
 		// TODO
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$layout = isset( $_POST['menu-item-dgwt-wcas-layout'][ $menu_item_db_id ] ) ? sanitize_key( $_POST['menu-item-dgwt-wcas-layout'][ $menu_item_db_id ] ) : '';
-		update_post_meta( $menu_item_db_id, '_menu_item_dgwt_wcas_layout', $layout );
+		$layout = isset( $_POST['menu-item-psfs-layout'][ $menu_item_db_id ] ) ? sanitize_key( $_POST['menu-item-psfs-layout'][ $menu_item_db_id ] ) : '';
+		update_post_meta( $menu_item_db_id, '_menu_item_psfs_layout', $layout );
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$searchIconColor = isset( $_POST['menu-item-dgwt-wcas-search-icon-color'][ $menu_item_db_id ] ) ? sanitize_hex_color( $_POST['menu-item-dgwt-wcas-search-icon-color'][ $menu_item_db_id ] ) : '';
-		update_post_meta( $menu_item_db_id, '_menu_item_dgwt_wcas_search_icon_color', $searchIconColor );
+		$searchIconColor = isset( $_POST['menu-item-psfs-search-icon-color'][ $menu_item_db_id ] ) ? sanitize_hex_color( $_POST['menu-item-psfs-search-icon-color'][ $menu_item_db_id ] ) : '';
+		update_post_meta( $menu_item_db_id, '_menu_item_psfs_search_icon_color', $searchIconColor );
 	}
 
 	/**
@@ -137,16 +137,16 @@ class EmbeddingViaMenu {
 		) {
 			$args   = '';
 			$style  = '';
-			$layout = get_post_meta( $item->ID, '_menu_item_dgwt_wcas_layout', true );
+			$layout = get_post_meta( $item->ID, '_menu_item_psfs_layout', true );
 			if ( in_array( $layout, [ 'classic', 'icon', 'icon-flexible', 'icon-flexible-inv' ] ) ) {
 				$args .= 'layout="' . $layout . '" ';
 			}
-			$searchIconColor = get_post_meta( $item->ID, '_menu_item_dgwt_wcas_search_icon_color', true );
+			$searchIconColor = get_post_meta( $item->ID, '_menu_item_psfs_search_icon_color', true );
 			if ( in_array( $layout, [ 'icon', 'icon-flexible', 'icon-flexible-inv' ] ) && ! empty( $searchIconColor ) ) {
-				$args .= 'class="dgwt-wcas-menu-item-' . $item->ID . ' " ';
-				$style = sprintf( '<style>.dgwt-wcas-menu-item-%d .dgwt-wcas-ico-magnifier-handler path {fill: %s;}</style>', $item->ID, esc_attr( $searchIconColor ) );
+				$args .= 'class="psfs-menu-item-' . $item->ID . ' " ';
+				$style = sprintf( '<style>.psfs-menu-item-%d .psfs-ico-magnifier-handler path {fill: %s;}</style>', $item->ID, esc_attr( $searchIconColor ) );
 			}
-			$itemOutput = do_shortcode( sprintf( '[fibosearch %s]', $args ) ) . $style;
+			$itemOutput = do_shortcode( sprintf( '[psfsearch %s]', $args ) ) . $style;
 		}
 
 		return $itemOutput;
@@ -159,15 +159,15 @@ class EmbeddingViaMenu {
 	 */
 	public function navMenuLinks() {
 		?>
-		<div id="posttype-dgwt-wcas-endpoints" class="posttypediv">
-			<p><?php _e( 'Add FiboSearch as a menu item.', 'ajax-search-for-woocommerce' ); ?></p>
-			<div id="tabs-panel-dgwt-wcas-endpoints" class="tabs-panel tabs-panel-active">
-				<ul id="dgwt-wcas-endpoints-checklist" class="categorychecklist form-no-clear">
+		<div id="posttype-psfs-endpoints" class="posttypediv">
+			<p><?php _e( 'Add PSF Search as a menu item.', 'psf-search' ); ?></p>
+			<div id="tabs-panel-psfs-endpoints" class="tabs-panel tabs-panel-active">
+				<ul id="psfs-endpoints-checklist" class="categorychecklist form-no-clear">
 					<li>
 						<label class="menu-item-title">
 							<input
 								type="checkbox" class="menu-item-checkbox" name="menu-item[-1][menu-item-object-id]"
-								value="-1"/> <?php echo __( 'FiboSearch bar', 'ajax-search-for-woocommerce' ); ?>
+								value="-1"/> <?php echo __( 'PSF Search bar', 'psf-search' ); ?>
 						</label>
 						<input type="hidden" class="menu-item-type" name="menu-item[-1][menu-item-type]" value="custom"/>
 						<input type="hidden" class="menu-item-title" name="menu-item[-1][menu-item-title]" value="<?php echo self::SEARCH_PLACEHOLDER; ?>"/>
@@ -178,7 +178,7 @@ class EmbeddingViaMenu {
 			<p class="button-controls">
 				<span class="add-to-menu">
 					<button type="submit" class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to menu', 'woocommerce' ); ?>"
-							name="add-post-type-menu-item" id="submit-posttype-dgwt-wcas-endpoints"><?php esc_html_e( 'Add to menu', 'woocommerce' ); ?></button>
+							name="add-post-type-menu-item" id="submit-posttype-psfs-endpoints"><?php esc_html_e( 'Add to menu', 'woocommerce' ); ?></button>
 					<span class="spinner"></span>
 				</span>
 			</p>
@@ -187,9 +187,9 @@ class EmbeddingViaMenu {
 	}
 
 	public function getDescription() {
-		$html  = '<div class="dgwt-wcas-admin-menu-item-desc js-dgwt-wcas-admin-menu-item-desc">';
-		$html .= '<img class="" src="' . DGWT_WCAS_URL . 'assets/img/logo-for-review.png" width="32" height="32" />';
-		$html .= '<span>' . __( 'FiboSearch bar will be displayed here.', 'ajax-search-for-woocommerce' ) . '</span>';
+		$html  = '<div class="psfs-admin-menu-item-desc js-psfs-admin-menu-item-desc">';
+		$html .= '<img class="" src="' . PSFS_URL . 'assets/img/logo-for-review.png" width="32" height="32" />';
+		$html .= '<span>' . __( 'PSF Search bar will be displayed here.', 'psf-search' ) . '</span>';
 		$html .= '</div>';
 
 		return $html;
@@ -197,11 +197,11 @@ class EmbeddingViaMenu {
 
 	public function getLayoutOptions() {
 		return [
-			'default'           => __( 'Default', 'ajax-search-for-woocommerce' ),
-			'classic'           => __( 'Search bar', 'ajax-search-for-woocommerce' ),
-			'icon'              => __( 'Search icon', 'ajax-search-for-woocommerce' ),
-			'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'ajax-search-for-woocommerce' ),
-			'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'ajax-search-for-woocommerce' ),
+			'default'           => __( 'Default', 'psf-search' ),
+			'classic'           => __( 'Search bar', 'psf-search' ),
+			'icon'              => __( 'Search icon', 'psf-search' ),
+			'icon-flexible'     => __( 'Icon on mobile, search bar on desktop', 'psf-search' ),
+			'icon-flexible-inv' => __( 'Icon on desktop, search bar on mobile', 'psf-search' ),
 		];
 	}
 
@@ -215,20 +215,20 @@ class EmbeddingViaMenu {
 
 		?>
 		<style>
-			.dgwt-wcas-admin-menu-item-desc {
+			.psfs-admin-menu-item-desc {
 				display: flex;
 				flex-direction: row;
 				justify-content: left;
 				align-items: center;
 			}
 
-			.dgwt-wcas-admin-menu-item-desc img {
+			.psfs-admin-menu-item-desc img {
 				display: block;
 				margin-right: 15px;
 				border-radius: 4px;
 			}
 
-			.dgwt-wcas-description select {
+			.psfs-description select {
 				width: 100%;
 			}
 		</style>
@@ -258,13 +258,13 @@ class EmbeddingViaMenu {
 
 								var $menuItem = $(this).closest('.menu-item');
 
-								$menuItem.find('.menu-item-title').text('FiboSearch bar');
-								$menuItem.find('.item-type').text('<?php _e( 'Search bar', 'ajax-search-for-woocommerce' ); ?>');
+								$menuItem.find('.menu-item-title').text('PSF Search bar');
+								$menuItem.find('.item-type').text('<?php _e( 'Search bar', 'psf-search' ); ?>');
 								$menuItem.find('.menu-item-settings .edit-menu-item-title').closest('label').hide();
 								$menuItem.find('.field-url').hide();
 
 
-								if ($menuItem.find('.js-dgwt-wcas-admin-menu-item-desc').length == 0) {
+								if ($menuItem.find('.js-psfs-admin-menu-item-desc').length == 0) {
 									$menuItem.find('.menu-item-settings').prepend('<?php echo $this->getDescription(); ?>');
 								}
 							}
@@ -282,14 +282,14 @@ class EmbeddingViaMenu {
 				function toggleColorPicker(el) {
 					var layout = el.val();
 					if (layout === 'default' || layout === 'classic') {
-						el.closest('.dgwt-wcas-description').next().slideUp();
+						el.closest('.psfs-description').next().slideUp();
 					} else {
-						el.closest('.dgwt-wcas-description').next().slideDown();
+						el.closest('.psfs-description').next().slideDown();
 					}
 				}
 
 				function syncColorPickersWithSelects() {
-					var layoutSelects = $('.dgwt-wcas-layout-select');
+					var layoutSelects = $('.psfs-layout-select');
 					if (layoutSelects.length > 0) {
 						layoutSelects.each(function (i, el) {
 							toggleColorPicker($(el));
@@ -305,7 +305,7 @@ class EmbeddingViaMenu {
 
 				});
 
-				$(document).on('change', '.dgwt-wcas-layout-select', function (e) {
+				$(document).on('change', '.psfs-layout-select', function (e) {
 					toggleColorPicker($(this))
 				});
 
@@ -315,7 +315,7 @@ class EmbeddingViaMenu {
 						typeof settings != 'undefined'
 						&& typeof settings.data == 'string'
 						&& settings.data.indexOf('action=add-menu-item') !== -1
-						&& settings.data.indexOf('dgwt_wcas_search_box') !== -1
+						&& settings.data.indexOf('psfs_search_box') !== -1
 					) {
 						replaceLabels();
 						colorPickers();
@@ -341,10 +341,10 @@ class EmbeddingViaMenu {
 	public function addNavMenuItemCustomFieldsTemplate() {
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.UnsafePrintingFunction
 		?>
-		<# if ( data.title === 'dgwt_wcas_search_box' ) { #>
+		<# if ( data.title === 'psfs_search_box' ) { #>
 		<fieldset class="nav_menu_role_display_mode">
-			<legend class="customize-control-title"><?php _e( 'FiboSearch bar', 'ajax-search-for-woocommerce' ); ?></legend>
-			<?php printf( __( 'Go to <a href="%s">Appearance -> Menus</a> to configure the FiboSearch bar.', 'ajax-search-for-woocommerce' ), esc_url( admin_url( 'nav-menus.php' ) ) ); ?>
+			<legend class="customize-control-title"><?php _e( 'PSF Search bar', 'psf-search' ); ?></legend>
+			<?php printf( __( 'Go to <a href="%s">Appearance -> Menus</a> to configure the PSF Search bar.', 'psf-search' ), esc_url( admin_url( 'nav-menus.php' ) ) ); ?>
 		</fieldset>
 		<# } #>
 		<?php

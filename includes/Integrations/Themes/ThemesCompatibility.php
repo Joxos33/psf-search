@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Integrations\Themes;
+namespace PsfSearch\Integrations\Themes;
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,8 +18,8 @@ class ThemesCompatibility {
 	private $supportActive   = false;
 
 	public function __construct() {
-		// Break early if the "nofibosearch" mode is active.
-		if ( Helpers::isNoFiboSearchModeActive() ) {
+		// Break early if the "nopsfsearch" mode is active.
+		if ( Helpers::isNoPsfSearchModeActive() ) {
 			return;
 		}
 
@@ -47,10 +47,10 @@ class ThemesCompatibility {
 			}
 		}
 
-		$this->themeSlug = apply_filters( 'dgwt/wcas/integrations/themes/current_theme_slug', $this->themeSlug );
-		$this->themeName = apply_filters( 'dgwt/wcas/integrations/themes/current_theme_name', $this->themeName );
+		$this->themeSlug = apply_filters( 'psfs/integrations/themes/current_theme_slug', $this->themeSlug );
+		$this->themeName = apply_filters( 'psfs/integrations/themes/current_theme_name', $this->themeName );
 		if ( $this->isChildTheme() ) {
-			$this->parentThemeName = apply_filters( 'dgwt/wcas/integrations/themes/current_parent_theme_name', $this->parentThemeName );
+			$this->parentThemeName = apply_filters( 'psfs/integrations/themes/current_parent_theme_name', $this->parentThemeName );
 		}
 	}
 
@@ -84,7 +84,7 @@ class ThemesCompatibility {
 					$currentVersion = $this->themeVersion;
 					// Break if theme version is lower than required.
 					add_filter(
-						'dgwt/wcas/troubleshooting/unsupported_theme_version',
+						'psfs/troubleshooting/unsupported_theme_version',
 						function () use ( $theme, $currentVersion ) {
 							return [
 								'name'           => $theme['name'],
@@ -98,7 +98,7 @@ class ThemesCompatibility {
 
 				$this->supportActive = true;
 
-				$class = '\\DgoraWcas\\Integrations\\Themes\\';
+				$class = '\\PsfSearch\\Integrations\\Themes\\';
 
 				if ( isset( $theme['className'] ) ) {
 					$class .= $theme['className'] . '\\' . $theme['className'];
@@ -165,7 +165,7 @@ class ThemesCompatibility {
 	 * @return bool
 	 */
 	public function isWhiteLabel() {
-		return apply_filters( 'dgwt/wcas/integrations/themes/white_label', false );
+		return apply_filters( 'psfs/integrations/themes/white_label', false );
 	}
 
 	/**

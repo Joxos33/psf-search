@@ -1,21 +1,21 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Cache;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDB;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDBException;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\SynonymsHandler;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
-use DgoraWcas\Term;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Cache;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDB;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDBException;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\NoStemmer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Stemmer\StemmerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\Tokenizer;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Tokenizer\TokenizerInterface;
+use PsfSearch\Engines\TNTSearchMySQL\Support\SynonymsHandler;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
+use PsfSearch\Term;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -98,7 +98,7 @@ class Indexer {
 		$success      = false;
 		$dataFiltered = [];
 
-		if ( ! Helpers::isTableExists( $wpdb->dgwt_wcas_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ) ) ) {
+		if ( ! Helpers::isTableExists( $wpdb->psfs_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ) ) ) {
 			return $success;
 		}
 
@@ -118,7 +118,7 @@ class Indexer {
 		$data = [];
 
 		$termObj              = new Term( $term );
-		$taxonomiesWithImages = apply_filters( 'dgwt/wcas/taxonomies_with_images', [] );
+		$taxonomiesWithImages = apply_filters( 'psfs/taxonomies_with_images', [] );
 
 		if ( is_object( $term ) && ! is_wp_error( $term ) ) {
 
@@ -144,14 +144,14 @@ class Indexer {
 				$data['breadcrumbs'] = $breadcrumbs;
 			}
 
-			$dataFiltered = apply_filters( 'dgwt/wcas/indexer/taxonomy/insert', $data, $termID, $taxonomy );
+			$dataFiltered = apply_filters( 'psfs/indexer/taxonomy/insert', $data, $termID, $taxonomy );
 
 			if ( isset( $dataFiltered['meta'] ) ) {
 				$dataFiltered['meta'] = maybe_serialize( $dataFiltered['meta'] );
 			}
 
 			$rows = WPDB::get_instance()->insert(
-				$wpdb->dgwt_wcas_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ),
+				$wpdb->psfs_tax_index . ( $this->indexRole === 'tmp' ? '_tmp' : '' ),
 				$dataFiltered,
 				[
 					'%d',
@@ -177,7 +177,7 @@ class Indexer {
 				'lang'      => Multilingual::isMultilingual() ? $termLang : '',
 			];
 
-			$documentData = apply_filters( 'dgwt/wcas/indexer/taxonomy/document_data', $documentData, $term );
+			$documentData = apply_filters( 'psfs/indexer/taxonomy/document_data', $documentData, $term );
 
 			$document = $this->getDocument( $documentData );
 
@@ -199,7 +199,7 @@ class Indexer {
 			}
 		}
 
-		do_action( 'dgwt/wcas/taxonomy_index/after_insert', $dataFiltered, $termID, $taxonomy, $success, $this );
+		do_action( 'psfs/taxonomy_index/after_insert', $dataFiltered, $termID, $taxonomy, $success, $this );
 
 		return $success;
 	}
@@ -235,9 +235,9 @@ class Indexer {
 	public function delete( $termID, $taxonomy ) {
 		global $wpdb;
 
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_tax_index ) ) {
+		if ( Helpers::isTableExists( $wpdb->psfs_tax_index ) ) {
 			WPDB::get_instance()->delete(
-				$wpdb->dgwt_wcas_tax_index,
+				$wpdb->psfs_tax_index,
 				[ 'term_id' => $termID ],
 				[ '%d' ]
 			);
@@ -288,7 +288,7 @@ class Indexer {
 
 		$wpdb->hide_errors();
 
-		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->dgwt_wcas_tax_index" );
+		$wpdb->query( "DROP TABLE IF EXISTS $wpdb->psfs_tax_index" );
 	}
 
 	/**

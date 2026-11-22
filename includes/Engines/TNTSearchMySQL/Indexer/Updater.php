@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerTax;
-use DgoraWcas\Product;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy\Indexer as IndexerTax;
+use PsfSearch\Product;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +30,7 @@ class Updater {
 
 	public function init() {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -68,14 +68,14 @@ class Updater {
 			return;
 		}
 
-		$this->allowedTaxonomies = DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies(
+		$this->allowedTaxonomies = PSFS()->tntsearchMySql->taxonomies->getActiveTaxonomies(
 			[
 				'search_direct',
 				'search_related_products',
 			]
 		);
 
-		if ( DGWT_WCAS()->settings->getOption( 'search_in_product_attributes' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'search_in_product_attributes' ) === 'on' ) {
 			$attributesTaxonomies = Helpers::getAttributesTaxonomies();
 			if ( ! empty( $attributesTaxonomies ) ) {
 				$this->allowedTaxonomies = array_merge( $this->allowedTaxonomies, $attributesTaxonomies );
@@ -93,7 +93,7 @@ class Updater {
 	 */
 	public function onProductUpdate( $productID, $product = null ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -117,7 +117,7 @@ class Updater {
 			}
 		}
 
-		$canIndex = apply_filters( 'dgwt/wcas/indexer/updater/can_index', $productObj->isPublishedAndVisible() && $productObj->canIndex__premium_only(), $productObj->getID(), $productObj->getWooObject() );
+		$canIndex = apply_filters( 'psfs/indexer/updater/can_index', $productObj->isPublishedAndVisible() && $productObj->canIndex__premium_only(), $productObj->getID(), $productObj->getWooObject() );
 
 		if ( $canIndex ) {
 			$this->doAsyncRequest( 'update', $productObj->getID() );
@@ -135,7 +135,7 @@ class Updater {
 	 */
 	public function onProductDelete( $productID ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -167,7 +167,7 @@ class Updater {
 	 */
 	public function onPostSave( $postID = 0 ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -184,7 +184,7 @@ class Updater {
 				&& in_array( get_post_type( $postID ), Helpers::getAllowedPostTypes( 'no-products' ) )
 				&& Builder::isIndexValid()
 			) {
-				if ( 'publish' === get_post_status( $postID ) && apply_filters( 'dgwt/wcas/indexer/updater/post/can_index', true, $postID ) ) {
+				if ( 'publish' === get_post_status( $postID ) && apply_filters( 'psfs/indexer/updater/post/can_index', true, $postID ) ) {
 					$this->doAsyncRequest( 'update', $postID );
 				} else {
 					$this->doAsyncRequest( 'delete', $postID );
@@ -202,7 +202,7 @@ class Updater {
 	 */
 	public function onPostDelete( $postID = 0 ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -229,7 +229,7 @@ class Updater {
 	 */
 	public function onTermDelete( $termID, $tt_id, $taxonomy, $deleted_term, $objectIDs ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -264,7 +264,7 @@ class Updater {
 	 */
 	public function onTermSave( $termID, $ttID, $taxonomy ) {
 		// Disable updater
-		if ( apply_filters( 'dgwt/wcas/tnt/disable_updater', false ) ) {
+		if ( apply_filters( 'psfs/tnt/disable_updater', false ) ) {
 			return;
 		}
 
@@ -322,10 +322,10 @@ class Updater {
 			return;
 		}
 
-		$activeTaxonomies = DGWT_WCAS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_related_products' );
+		$activeTaxonomies = PSFS()->tntsearchMySql->taxonomies->getActiveTaxonomies( 'search_related_products' );
 		if (
 			in_array( $taxonomy, $activeTaxonomies ) ||
-			( in_array( $taxonomy, Helpers::getAttributesTaxonomies() ) && DGWT_WCAS()->settings->getOption( 'search_in_product_attributes' ) === 'on' )
+			( in_array( $taxonomy, Helpers::getAttributesTaxonomies() ) && PSFS()->settings->getOption( 'search_in_product_attributes' ) === 'on' )
 		) {
 			// TODO Maybe rebuild index if there are more than 30 products?
 			foreach ( $postsIDs as $postID ) {

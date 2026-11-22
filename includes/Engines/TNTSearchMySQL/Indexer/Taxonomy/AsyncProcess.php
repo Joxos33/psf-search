@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Taxonomy;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Taxonomy;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ class AsyncProcess extends WPBackgroundProcess {
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'wcas';
+	protected $prefix = 'psfs';
 
 	/**
 	 * @var string
@@ -41,13 +41,13 @@ class AsyncProcess extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $itemsSet ) {
-		if ( ! defined( 'DGWT_WCAS_TAXONOMY_INDEX_TASK' ) ) {
-			define( 'DGWT_WCAS_TAXONOMY_INDEX_TASK', true );
+		if ( ! defined( 'PSFS_TAXONOMY_INDEX_TASK' ) ) {
+			define( 'PSFS_TAXONOMY_INDEX_TASK', true );
 		}
 
 		Builder::log( '[Taxonomy index] Starting async task. Items set count: ' . count( $itemsSet ), 'debug', 'file', 'taxonomy' );
 
-		do_action( 'dgwt/wcas/taxonomy_index/bg_processing/before_task' );
+		do_action( 'psfs/taxonomy_index/bg_processing/before_task' );
 
 		register_shutdown_function(
 			function () {

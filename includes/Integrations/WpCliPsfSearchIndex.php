@@ -1,17 +1,17 @@
 <?php
 
-namespace DgoraWcas\Integrations;
+namespace PsfSearch\Integrations;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Searchable\Indexer as IndexerS;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable\Indexer as IndexerR;
 use WP_CLI;
 
 /**
  * Commands for maintaining the index.
  */
-class WpCliFiboSearchIndex {
+class WpCliPsfSearchIndex {
 	/**
 	 * Build index.
 	 *
@@ -26,28 +26,28 @@ class WpCliFiboSearchIndex {
 	 * : Disable parallel index build.
 	 */
 	public function build( $args, $assocArgs ) {
-		global $fibosearch_wp_cli_indexer_progress, $fibosearch_wp_cli_indexer_progress_value_before;
+		global $psfsearch_wp_cli_indexer_progress, $psfsearch_wp_cli_indexer_progress_value_before;
 
 		$showLogs        = (bool) WP_CLI\Utils\get_flag_value( $assocArgs, 'show-logs', false );
 		$hideProgress    = (bool) WP_CLI\Utils\get_flag_value( $assocArgs, 'hide-progress', false );
 		$disablePallarel = (bool) WP_CLI\Utils\get_flag_value( $assocArgs, 'disable-parallel', false );
 
 		add_filter(
-			'dgwt/wcas/tnt/indexer_mode',
+			'psfs/tnt/indexer_mode',
 			function ( $mode ) {
 				return 'direct';
 			}
 		);
 
-		if ( $disablePallarel && ! defined( 'DGWT_WCAS_PARALLEL_INDEX_BUILD' ) ) {
-			define( 'DGWT_WCAS_PARALLEL_INDEX_BUILD', false );
+		if ( $disablePallarel && ! defined( 'PSFS_PARALLEL_INDEX_BUILD' ) ) {
+			define( 'PSFS_PARALLEL_INDEX_BUILD', false );
 		}
 
 		WP_CLI::log( 'Building the index ... This may take several minutes.' );
 
 		if ( ! $hideProgress ) {
 			add_action(
-				'dgwt/wcas/readable_index/bg_processing/before_task',
+				'psfs/readable_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -55,7 +55,7 @@ class WpCliFiboSearchIndex {
 			);
 
 			add_action(
-				'dgwt/wcas/searchable_index/bg_processing/before_task',
+				'psfs/searchable_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -63,7 +63,7 @@ class WpCliFiboSearchIndex {
 			);
 
 			add_action(
-				'dgwt/wcas/taxonomy_index/bg_processing/before_task',
+				'psfs/taxonomy_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
@@ -71,23 +71,23 @@ class WpCliFiboSearchIndex {
 			);
 
 			add_action(
-				'dgwt/wcas/variation_index/bg_processing/before_task',
+				'psfs/variation_index/bg_processing/before_task',
 				function () {
 					$this->indexerProgress();
 				},
 				PHP_INT_MAX - 10
 			);
 
-			$fibosearch_wp_cli_indexer_progress_value_before = 0;
-			$fibosearch_wp_cli_indexer_progress              = WP_CLI\Utils\make_progress_bar( 'Indexing:', 100 );
+			$psfsearch_wp_cli_indexer_progress_value_before = 0;
+			$psfsearch_wp_cli_indexer_progress              = WP_CLI\Utils\make_progress_bar( 'Indexing:', 100 );
 
-			$fibosearch_wp_cli_indexer_progress->tick( 0 );
+			$psfsearch_wp_cli_indexer_progress->tick( 0 );
 		}
 
 		Builder::buildIndex( false );
 
 		if ( ! $hideProgress ) {
-			$fibosearch_wp_cli_indexer_progress->finish();
+			$psfsearch_wp_cli_indexer_progress->finish();
 		}
 
 		if ( $showLogs ) {
@@ -259,12 +259,12 @@ class WpCliFiboSearchIndex {
 	}
 
 	private function indexerProgress() {
-		global $fibosearch_wp_cli_indexer_progress, $fibosearch_wp_cli_indexer_progress_value_before;
+		global $psfsearch_wp_cli_indexer_progress, $psfsearch_wp_cli_indexer_progress_value_before;
 
 		$progress = ceil( Builder::getProgressBarValue() );
-		if ( $progress - $fibosearch_wp_cli_indexer_progress_value_before > 0 ) {
-			$fibosearch_wp_cli_indexer_progress->tick( $progress - $fibosearch_wp_cli_indexer_progress_value_before );
-			$fibosearch_wp_cli_indexer_progress_value_before = $progress;
+		if ( $progress - $psfsearch_wp_cli_indexer_progress_value_before > 0 ) {
+			$psfsearch_wp_cli_indexer_progress->tick( $progress - $psfsearch_wp_cli_indexer_progress_value_before );
+			$psfsearch_wp_cli_indexer_progress_value_before = $progress;
 		}
 	}
 

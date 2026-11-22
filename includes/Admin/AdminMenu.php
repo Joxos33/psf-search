@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Admin;
+namespace PsfSearch\Admin;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Helpers;
-use DgoraWcas\Settings;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Helpers;
+use PsfSearch\Settings;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,13 +27,13 @@ class AdminMenu {
 
 		$menuSuffix = '';
 		if ( Builder::getInfo( 'status', Config::getIndexRole() ) === 'error' || Builder::isIndexerWorkingTooLong() ) {
-			$menuSuffix = '<span class="dgwt-wcas-menu-warning-icon">!</span>';
+			$menuSuffix = '<span class="psfs-menu-warning-icon">!</span>';
 			add_action(
 				'admin_print_styles',
 				function () {
 					?>
 				<style>
-					.dgwt-wcas-menu-warning-icon {
+					.psfs-menu-warning-icon {
 						display: inline-block;
 						vertical-align: top;
 						box-sizing: border-box;
@@ -61,7 +61,7 @@ class AdminMenu {
 				function () {
 					?>
 				<style>
-					#adminmenu > .toplevel_page_dgwt_wcas_settings {
+					#adminmenu > .toplevel_page_psfs_settings {
 						display: none;
 					}
 				</style>
@@ -72,20 +72,20 @@ class AdminMenu {
 
 		add_submenu_page(
 			'woocommerce',
-			__( 'FiboSearch', 'ajax-search-for-woocommerce' ),
-			__( 'FiboSearch', 'ajax-search-for-woocommerce' ) . $menuSuffix,
+			__( 'PSF Search', 'psf-search' ),
+			__( 'PSF Search', 'psf-search' ) . $menuSuffix,
 			Helpers::shopManagerHasAccess() ? 'manage_woocommerce' : 'manage_options',
-			'dgwt_wcas_settings',
+			'psfs_settings',
 			[ $this, 'settingsPage' ]
 		);
 
 		if ( ! false && Helpers::isDebugPage() ) {
 			add_submenu_page(
 				'woocommerce',
-				'FiboSearch Debug',
+				'PSF Search Debug',
 				sprintf( '<span class="fs-submenu-item fs-sub">%s</span>', 'Debug' ),
 				'manage_options',
-				'dgwt_wcas_debug',
+				'psfs_debug',
 				[ $this, 'debugPage' ]
 			);
 		}
@@ -106,6 +106,6 @@ class AdminMenu {
 	 * @return void
 	 */
 	public function debugPage() {
-		include_once DGWT_WCAS_DIR . 'partials/admin/debug/debug.php';
+		include_once PSFS_DIR . 'partials/admin/debug/debug.php';
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Integrations\Plugins;
+namespace PsfSearch\Integrations\Plugins;
 
 // Exit if accessed directly
 
@@ -54,7 +54,7 @@ abstract class AbstractPluginIntegration {
 		}
 
 		add_filter(
-			'dgwt/wcas/troubleshooting/unsupported_plugin_versions',
+			'psfs/troubleshooting/unsupported_plugin_versions',
 			function ( $list ) use ( $currentVersion, $minVersion ) {
 				$list[] = [
 					'name'           => static::label(),

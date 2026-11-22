@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Logger;
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Logger;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Libs\WPBackgroundProcess;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class AsyncProcess extends WPBackgroundProcess {
 
-	const CANCELING_PROCESS_TRANSIENT = 'dgwt_wcas_canceling_r_index_build';
+	const CANCELING_PROCESS_TRANSIENT = 'psfs_canceling_r_index_build';
 
 	/**
 	 * @var string
 	 */
-	protected $prefix = 'wcas';
+	protected $prefix = 'psfs';
 
 	/**
 	 * @var string
@@ -44,13 +44,13 @@ class AsyncProcess extends WPBackgroundProcess {
 	 * @return mixed
 	 */
 	public function task( $itemsSet ) {
-		if ( ! defined( 'DGWT_WCAS_READABLE_INDEX_TASK' ) ) {
-			define( 'DGWT_WCAS_READABLE_INDEX_TASK', true );
+		if ( ! defined( 'PSFS_READABLE_INDEX_TASK' ) ) {
+			define( 'PSFS_READABLE_INDEX_TASK', true );
 		}
 
 		Builder::log( '[Readable index] Starting async task. Items set count: ' . count( $itemsSet ), 'debug', 'file', 'readable' );
 
-		do_action( 'dgwt/wcas/readable_index/bg_processing/before_task' );
+		do_action( 'psfs/readable_index/bg_processing/before_task' );
 
 		register_shutdown_function(
 			function () {

@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,7 +64,7 @@ class Post {
 	 * @return string
 	 */
 	public function getTitle() {
-		return apply_filters( 'dgwt/wcas/post/title', $this->post->post_title, $this->postType );
+		return apply_filters( 'psfs/post/title', $this->post->post_title, $this->postType );
 	}
 
 	/**
@@ -109,7 +109,7 @@ class Post {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/post/description', $output, $type, $this->postID, $this );
+		return apply_filters( 'psfs/post/description', $output, $type, $this->postID, $this );
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Post {
 			$permalink = Multilingual::getPermalink( $this->getID(), $permalink, $this->langCode );
 		}
 
-		return apply_filters( 'dgwt/wcas/post/permalink', $permalink, $this->postType );
+		return apply_filters( 'psfs/post/permalink', $permalink, $this->postType );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class Post {
 			$canShow = false;
 		}
 
-		return (bool) apply_filters( 'dgwt/wcas/post/can_show_in_details_panel', $canShow, $this );
+		return (bool) apply_filters( 'psfs/post/can_show_in_details_panel', $canShow, $this );
 	}
 
 	/**
@@ -200,7 +200,7 @@ class Post {
 			}
 		}
 
-		return apply_filters( 'dgwt/wcas/' . $this->getPostType() . '/thumbnail_src', $src, $this->getID(), $this );
+		return apply_filters( 'psfs/' . $this->getPostType() . '/thumbnail_src', $src, $this->getID(), $this );
 	}
 
 	/**
@@ -216,7 +216,7 @@ class Post {
 
 		$srcset = function_exists( 'wp_get_attachment_image_srcset' ) ? (string) wp_get_attachment_image_srcset( $imageID, $size ) : '';
 
-		return apply_filters( 'dgwt/wcas/' . $this->getPostType() . '/thumbnail_srcset', $srcset, $this->getID(), $this );
+		return apply_filters( 'psfs/' . $this->getPostType() . '/thumbnail_srcset', $srcset, $this->getID(), $this );
 	}
 
 	/**
@@ -232,6 +232,6 @@ class Post {
 
 		$sizes = function_exists( 'wp_get_attachment_image_sizes' ) ? (string) wp_get_attachment_image_sizes( $imageID, $size ) : false;
 
-		return apply_filters( 'dgwt/wcas/' . $this->getPostType() . '/thumbnail_sizes', $sizes, $this->getID(), $this );
+		return apply_filters( 'psfs/' . $this->getPostType() . '/thumbnail_sizes', $sizes, $this->getID(), $this );
 	}
 }

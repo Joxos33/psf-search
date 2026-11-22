@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Analytics {
 	public function init() {
 
-		$allowByConstant = defined( 'DGWT_WCAS_ANALYTICS_ENABLE' ) && DGWT_WCAS_ANALYTICS_ENABLE;
+		$allowByConstant = defined( 'PSFS_ANALYTICS_ENABLE' ) && PSFS_ANALYTICS_ENABLE;
 
 		// Publish this module conditionally in v1.18.0 and for everyone in v1.19.0
 		if (
 			! $this->isModuleEnabled()
-			&& version_compare( DGWT_WCAS_VERSION, '1.18.99' ) < 0
+			&& version_compare( PSFS_VERSION, '1.18.99' ) < 0
 			&& ! $allowByConstant
 		) {
 			return;
@@ -51,7 +51,7 @@ class Analytics {
 	 * @return bool
 	 */
 	public function isModuleEnabled() {
-		return DGWT_WCAS()->settings->getOption( 'analytics_enabled', 'off' ) === 'on';
+		return PSFS()->settings->getOption( 'analytics_enabled', 'off' ) === 'on';
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Analytics {
 	public function maybeInstallDatabase() {
 		// Try to create tables after enabling Search Analytics module
 		add_action(
-			'update_option_' . DGWT_WCAS_SETTINGS_KEY,
+			'update_option_' . PSFS_SETTINGS_KEY,
 			function ( $oldValue, $newValue ) {
 
 				$key = 'analytics_enabled';

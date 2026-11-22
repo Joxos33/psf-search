@@ -1,13 +1,13 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer\Readable;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer\Readable;
 
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\Utils;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDBException;
-use DgoraWcas\Engines\TNTSearchMySQL\Indexer\WPDB;
-use DgoraWcas\Engines\TNTSearchMySQL\Support\Cache;
-use DgoraWcas\Helpers;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\Utils;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDBException;
+use PsfSearch\Engines\TNTSearchMySQL\Indexer\WPDB;
+use PsfSearch\Engines\TNTSearchMySQL\Support\Cache;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +23,8 @@ class Database {
 	public static function registerTables() {
 		global $wpdb;
 
-		$wpdb->dgwt_wcas_index = $wpdb->prefix . Config::READABLE_INDEX;
-		if ( Helpers::isTableExists( $wpdb->dgwt_wcas_index ) ) {
+		$wpdb->psfs_index = $wpdb->prefix . Config::READABLE_INDEX;
+		if ( Helpers::isTableExists( $wpdb->psfs_index ) ) {
 			$wpdb->tables[] = Config::READABLE_INDEX;
 		}
 	}
@@ -45,7 +45,7 @@ class Database {
 		 * This happens, for example, with the TranslatePress plugin, when records of different
 		 * languages have the same 'post_id'.
 		 */
-		$tableName = $wpdb->dgwt_wcas_index . $indexRoleSuffix;
+		$tableName = $wpdb->psfs_index . $indexRoleSuffix;
 		$table     = "CREATE TABLE $tableName (
 			id         		  BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			post_id           BIGINT(20) UNSIGNED NOT NULL,
@@ -99,7 +99,7 @@ class Database {
 
 		$wpdb->hide_errors();
 
-		$tableName = $wpdb->dgwt_wcas_index . $indexRoleSuffix;
+		$tableName = $wpdb->psfs_index . $indexRoleSuffix;
 		//phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "DROP TABLE IF EXISTS $tableName" );
 
@@ -116,7 +116,7 @@ class Database {
 	public static function removeDuplicates( $indexRoleSuffix = '' ) {
 		global $wpdb;
 
-		$tableName = $wpdb->dgwt_wcas_index . $indexRoleSuffix;
+		$tableName = $wpdb->psfs_index . $indexRoleSuffix;
 		//phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$result = $wpdb->query( "DELETE t1 FROM $tableName t1, $tableName t2 WHERE t1.id < t2.id AND t1.post_id = t2.post_id AND t1.lang = t2.lang" );
 

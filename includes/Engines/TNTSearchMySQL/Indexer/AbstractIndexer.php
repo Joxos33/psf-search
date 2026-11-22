@@ -1,11 +1,11 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 // Exit if accessed directly
-use DgoraWcas\Engines\TNTSearchMySQL\Config;
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Engines\TNTSearchMySQL\Config;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,8 +52,8 @@ abstract class AbstractIndexer {
 
 		$counter = ! empty( $productProcessed ) && is_numeric( $productProcessed ) ? intval( $productProcessed ) : 0;
 
-		$defaultItemsCount = constant( '\DgoraWcas\Engines\TNTSearchMySQL\Indexer\Builder::' . strtoupper( $this->getType() ) . '_SET_ITEMS_COUNT' );
-		$productsSetCount  = apply_filters( "dgwt/wcas/indexer/{$this->getType()}_set_items_count", $defaultItemsCount );
+		$defaultItemsCount = constant( '\PsfSearch\Engines\TNTSearchMySQL\Indexer\Builder::' . strtoupper( $this->getType() ) . '_SET_ITEMS_COUNT' );
+		$productsSetCount  = apply_filters( "psfs/indexer/{$this->getType()}_set_items_count", $defaultItemsCount );
 		$longTimeCounter   = 0;
 		$longTimeLimit     = 20;
 		$longTimeWarning   = false;

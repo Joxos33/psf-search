@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas;
+namespace PsfSearch;
 
 
 // Exit if accessed directly
@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Scripts {
 
 	public function __construct() {
-		// Break early if the "nofibosearch" mode is active.
-		if ( Helpers::isNoFiboSearchModeActive() ) {
+		// Break early if the "nopsfsearch" mode is active.
+		if ( Helpers::isNoPsfSearchModeActive() ) {
 			return;
 		}
 
@@ -30,22 +30,22 @@ class Scripts {
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		// Register
-		wp_register_style( 'dgwt-wcas-style', apply_filters( 'dgwt/wcas/scripts/css_style_url', DGWT_WCAS_URL . 'assets/css/style' . $min . '.css' ), [], DGWT_WCAS_VERSION );
-		wp_register_script( 'jquery-dgwt-wcas', apply_filters( 'dgwt/wcas/scripts/js_url', DGWT_WCAS_URL . 'assets/js/search' . $min . '.js' ), [ 'jquery' ], DGWT_WCAS_VERSION, true );
+		wp_register_style( 'psfs-style', apply_filters( 'psfs/scripts/css_style_url', PSFS_URL . 'assets/css/style' . $min . '.css' ), [], PSFS_VERSION );
+		wp_register_script( 'jquery-psfs', apply_filters( 'psfs/scripts/js_url', PSFS_URL . 'assets/js/search' . $min . '.js' ), [ 'jquery' ], PSFS_VERSION, true );
 
 		// Enqueue
-		wp_enqueue_style( 'dgwt-wcas-style' );
+		wp_enqueue_style( 'psfs-style' );
 
 		// Don't localize script if AMP is active
 		if ( Helpers::isAMPEndpoint() ) {
-			wp_register_style( 'dgwt-wcas-style-amp', apply_filters( 'dgwt/wcas/scripts/css_style_amp_url', DGWT_WCAS_URL . 'assets/css/style-amp' . $min . '.css' ), [], DGWT_WCAS_VERSION );
-			wp_enqueue_style( 'dgwt-wcas-style-amp' );
+			wp_register_style( 'psfs-style-amp', apply_filters( 'psfs/scripts/css_style_amp_url', PSFS_URL . 'assets/css/style-amp' . $min . '.css' ), [], PSFS_VERSION );
+			wp_enqueue_style( 'psfs-style-amp' );
 
 			return;
 		}
 
 		$localize = Helpers::getScriptsSettings();
 
-		wp_localize_script( 'jquery-dgwt-wcas', 'dgwt_wcas', $localize );
+		wp_localize_script( 'jquery-psfs', 'psfs', $localize );
 	}
 }

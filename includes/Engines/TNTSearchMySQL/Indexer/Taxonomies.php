@@ -1,6 +1,6 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,20 +14,20 @@ class Taxonomies {
 	private $taxonomies;
 
 	public function init() {
-		add_filter( 'dgwt/wcas/labels', [ $this, 'setTaxonomiesLabels' ], 5 );
-		add_filter( 'dgwt/wcas/labels', [ $this, 'fixTaxonomiesLabels' ], PHP_INT_MAX - 5 );
-		add_filter( 'dgwt/wcas/taxonomies_with_images', [ $this, 'taxonomiesWithImages' ] );
+		add_filter( 'psfs/labels', [ $this, 'setTaxonomiesLabels' ], 5 );
+		add_filter( 'psfs/labels', [ $this, 'fixTaxonomiesLabels' ], PHP_INT_MAX - 5 );
+		add_filter( 'psfs/taxonomies_with_images', [ $this, 'taxonomiesWithImages' ] );
 
-		add_filter( 'dgwt/wcas/settings/section=search', [ $this, 'addCustomTaxonomiesToSearchSettings' ] );
+		add_filter( 'psfs/settings/section=search', [ $this, 'addCustomTaxonomiesToSearchSettings' ] );
 		add_filter(
-			'dgwt/wcas/settings/section=autocomplete',
+			'psfs/settings/section=autocomplete',
 			[
 				$this,
 				'addCustomTaxonomiesToAutocompleteSettings',
 			]
 		);
 
-		add_action( 'dgwt/wcas/settings/option_updated', [ $this, 'listenForSettingsChange' ], 10, 1 );
+		add_action( 'psfs/settings/option_updated', [ $this, 'listenForSettingsChange' ], 10, 1 );
 	}
 
 	/**
@@ -170,11 +170,11 @@ class Taxonomies {
 
 		// Brand. Old: 'brand', 'brand_plu'.
 		if ( isset( $labels['brand'] ) ) {
-			$labels[ 'tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() ] = $labels['brand'];
+			$labels[ 'tax_' . PSFS()->brands->getBrandTaxonomy() ] = $labels['brand'];
 			unset( $labels['brand'] );
 		}
 		if ( isset( $labels['brand_plu'] ) ) {
-			$labels[ 'tax_' . DGWT_WCAS()->brands->getBrandTaxonomy() . '_plu' ] = $labels['brand_plu'];
+			$labels[ 'tax_' . PSFS()->brands->getBrandTaxonomy() . '_plu' ] = $labels['brand_plu'];
 			unset( $labels['brand_plu'] );
 		}
 
@@ -204,8 +204,8 @@ class Taxonomies {
 		$basePosition = 280;
 
 		$skippedTaxonomies = [ 'product_cat', 'product_tag' ];
-		if ( DGWT_WCAS()->brands->hasBrands() ) {
-			$skippedTaxonomies[] = DGWT_WCAS()->brands->getBrandTaxonomy();
+		if ( PSFS()->brands->hasBrands() ) {
+			$skippedTaxonomies[] = PSFS()->brands->getBrandTaxonomy();
 		}
 
 		foreach ( $this->getTaxonomies() as $taxonomy ) {
@@ -215,8 +215,8 @@ class Taxonomies {
 
 			$settingsScope[ $basePosition ] = [
 				'name'    => 'search_in_product_tax_' . $taxonomy['taxonomy'],
-				'label'   => sprintf( __( 'Search in %s', 'ajax-search-for-woocommerce' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
-				'class'   => 'dgwt-wcas-premium-only',
+				'label'   => sprintf( __( 'Search in %s', 'psf-search' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
+				'class'   => 'psfs-premium-only',
 				'type'    => 'checkbox',
 				'default' => 'off',
 			];
@@ -227,11 +227,11 @@ class Taxonomies {
 		if ( in_array( 'product_tag', $this->getActiveTaxonomies( 'image_support' ) ) ) {
 			$settingsScope[1350] = [
 				'name'      => 'show_product_tax_product_tag_images',
-				'label'     => __( 'show images', 'ajax-search-for-woocommerce' ),
+				'label'     => __( 'show images', 'psf-search' ),
 				'type'      => 'checkbox',
-				'class'     => 'js-dgwt-wcas-adv-settings dgwt-wcas-premium-only',
+				'class'     => 'js-psfs-adv-settings psfs-premium-only',
 				'default'   => 'off',
-				'desc'      => __( 'show images', 'ajax-search-for-woocommerce' ),
+				'desc'      => __( 'show images', 'psf-search' ),
 				'move_dest' => 'show_product_tax_product_tag',
 			];
 		}
@@ -250,8 +250,8 @@ class Taxonomies {
 		$basePosition = 1350;
 
 		$skippedTaxonomies = [ 'product_cat', 'product_tag' ];
-		if ( DGWT_WCAS()->brands->hasBrands() ) {
-			$skippedTaxonomies[] = DGWT_WCAS()->brands->getBrandTaxonomy();
+		if ( PSFS()->brands->hasBrands() ) {
+			$skippedTaxonomies[] = PSFS()->brands->getBrandTaxonomy();
 		}
 
 		foreach ( $this->getTaxonomies() as $taxonomy ) {
@@ -261,8 +261,8 @@ class Taxonomies {
 
 			$settingsScope[ $basePosition ] = [
 				'name'    => 'show_product_tax_' . $taxonomy['taxonomy'],
-				'label'   => sprintf( __( 'Show %s', 'ajax-search-for-woocommerce' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
-				'class'   => 'dgwt-wcas-premium-only' . ( $taxonomy['image_support'] ? ' js-dgwt-wcas-options-toggle-sibling' : '' ),
+				'label'   => sprintf( __( 'Show %s', 'psf-search' ), mb_strtolower( $taxonomy['labels']['name'] ) ),
+				'class'   => 'psfs-premium-only' . ( $taxonomy['image_support'] ? ' js-psfs-options-toggle-sibling' : '' ),
 				'type'    => 'checkbox',
 				'default' => 'off',
 			];
@@ -272,11 +272,11 @@ class Taxonomies {
 			if ( $taxonomy['image_support'] ) {
 				$settingsScope[ $basePosition ] = [
 					'name'      => 'show_product_tax_' . $taxonomy['taxonomy'] . '_images',
-					'label'     => __( 'show images', 'ajax-search-for-woocommerce' ),
-					'class'     => 'dgwt-wcas-premium-only',
+					'label'     => __( 'show images', 'psf-search' ),
+					'class'     => 'psfs-premium-only',
 					'type'      => 'checkbox',
 					'default'   => 'off',
-					'desc'      => __( 'show images', 'ajax-search-for-woocommerce' ),
+					'desc'      => __( 'show images', 'psf-search' ),
 					'move_dest' => 'show_product_tax_' . $taxonomy['taxonomy'],
 				];
 
@@ -317,7 +317,7 @@ class Taxonomies {
 			]
 		);
 
-		$taxonomies = apply_filters( 'dgwt/wcas/indexer/taxonomies', [] );
+		$taxonomies = apply_filters( 'psfs/indexer/taxonomies', [] );
 
 		if ( is_array( $taxonomies ) && ! empty( $taxonomies ) ) {
 			foreach ( $taxonomies as $taxonomy ) {
@@ -361,8 +361,8 @@ class Taxonomies {
 			'show_images'             => false,
 		];
 
-		$taxonomy = apply_filters( 'dgwt/wcas/indexer/taxonomies/register-taxonomy', $taxonomy );
-		$taxonomy = apply_filters( 'dgwt/wcas/indexer/taxonomies/register_taxonomy', $taxonomy );
+		$taxonomy = apply_filters( 'psfs/indexer/taxonomies/register-taxonomy', $taxonomy );
+		$taxonomy = apply_filters( 'psfs/indexer/taxonomies/register_taxonomy', $taxonomy );
 
 		// Taxonomy slug
 		if ( empty( $taxonomy['taxonomy'] ) || ! taxonomy_exists( $taxonomy['taxonomy'] ) ) {
@@ -391,9 +391,9 @@ class Taxonomies {
 			$taxonomyData['image_support'] = $taxonomy['image_support'];
 		}
 
-		$taxonomyData['search_direct']           = DGWT_WCAS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
-		$taxonomyData['search_related_products'] = DGWT_WCAS()->settings->getOption( 'search_in_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
-		$taxonomyData['show_images']             = DGWT_WCAS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] . '_images' ) === 'on';
+		$taxonomyData['search_direct']           = PSFS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
+		$taxonomyData['search_related_products'] = PSFS()->settings->getOption( 'search_in_product_tax_' . $taxonomy['taxonomy'] ) === 'on';
+		$taxonomyData['show_images']             = PSFS()->settings->getOption( 'show_product_tax_' . $taxonomy['taxonomy'] . '_images' ) === 'on';
 
 		// Ensure we have proper container for taxonomies
 		if ( $this->taxonomies === null ) {

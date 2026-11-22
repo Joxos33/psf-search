@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Indexer;
+namespace PsfSearch\Engines\TNTSearchMySQL\Indexer;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ class VariationsSourceQuery extends SourceQuery {
 
 	public function prepare_variation_source_query() {
 		$variationSupportModes = Helpers::getVariationSupportModes__premium_only();
-		if ( in_array( 'as_single_product', $variationSupportModes ) && apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/include_attributes_in_title', true ) ) {
+		if ( in_array( 'as_single_product', $variationSupportModes ) && apply_filters( 'psfs/indexer/' . $this->type . '/include_attributes_in_title', true ) ) {
 			$this->add_attributes_to_variation_titles();
 		}
 	}
@@ -26,7 +26,7 @@ class VariationsSourceQuery extends SourceQuery {
 	 */
 	private function add_attributes_to_variation_titles() {
 		add_filter(
-			'dgwt/wcas/tnt/variation_source_query/data',
+			'psfs/tnt/variation_source_query/data',
 			function ( $data, $sourceQuery, $onlyIDs ) {
 				if ( $onlyIDs ) {
 					return $data;
@@ -73,7 +73,7 @@ class VariationsSourceQuery extends SourceQuery {
 		if (
 			is_array( $variationSupportModes ) &&
 			in_array( 'as_single_product', $variationSupportModes ) &&
-			DGWT_WCAS()->settings->getOption( 'search_in_product_excerpt' ) === 'on'
+			PSFS()->settings->getOption( 'search_in_product_excerpt' ) === 'on'
 		) {
 			$select .= $this->selectDescription();
 		}
@@ -111,7 +111,7 @@ class VariationsSourceQuery extends SourceQuery {
 		// -------------------------------
 		$where = '';
 
-		if ( DGWT_WCAS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
+		if ( PSFS()->settings->getOption( 'exclude_out_of_stock' ) === 'on' ) {
 			$where .= $this->whereExcludeOutOfStock();
 		};
 
@@ -132,9 +132,9 @@ class VariationsSourceQuery extends SourceQuery {
 		// Get only published products.
 		$where .= $this->wherePublished();
 
-		$select = apply_filters( "dgwt/wcas/indexer/{$this->type}/select", $select, $this, $onlyIDs );
-		$join   = apply_filters( "dgwt/wcas/indexer/{$this->type}/join", '', $this, $onlyIDs );
-		$where  = apply_filters( "dgwt/wcas/indexer/{$this->type}/where", $where, $this, $onlyIDs );
+		$select = apply_filters( "psfs/indexer/{$this->type}/select", $select, $this, $onlyIDs );
+		$join   = apply_filters( "psfs/indexer/{$this->type}/join", '', $this, $onlyIDs );
+		$where  = apply_filters( "psfs/indexer/{$this->type}/where", $where, $this, $onlyIDs );
 
 		// A variation inherits the protection of its parent product and such products are never searchable.
 		// Applied after the filters, so it cannot be removed.
@@ -151,7 +151,7 @@ class VariationsSourceQuery extends SourceQuery {
                 $where
                ";
 
-		$this->query = apply_filters( "dgwt/wcas/indexer/{$this->type}/query", $sql, $this, $onlyIDs );
+		$this->query = apply_filters( "psfs/indexer/{$this->type}/query", $sql, $this, $onlyIDs );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class VariationsSourceQuery extends SourceQuery {
 		//phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$where = $wpdb->prepare( " AND posts.post_parent IN ($format)", $parentIds );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/parents_set', $where );
+		return apply_filters( 'psfs/indexer/' . $this->type . '/where/parents_set', $where );
 	}
 
 	/**
@@ -182,7 +182,7 @@ class VariationsSourceQuery extends SourceQuery {
 
 		$where = ' AND posts.post_parent > 0';
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/has_parent', $where );
+		return apply_filters( 'psfs/indexer/' . $this->type . '/where/has_parent', $where );
 	}
 
 	/**
@@ -197,7 +197,7 @@ class VariationsSourceQuery extends SourceQuery {
 
 		$select = $wpdb->prepare( ", (SELECT meta_value FROM $wpdb->postmeta WHERE post_id = posts.ID AND meta_key='_variation_description' LIMIT 1) AS %s", $groupName );
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/select/description', $select, $groupName );
+		return apply_filters( 'psfs/indexer/' . $this->type . '/select/description', $select, $groupName );
 	}
 
 	/**
@@ -213,6 +213,6 @@ class VariationsSourceQuery extends SourceQuery {
             WHERE product_id = posts.id
             LIMIT 1) != 'outofstock'";
 
-		return apply_filters( 'dgwt/wcas/indexer/' . $this->type . '/where/exclude_outofstock', $where );
+		return apply_filters( 'psfs/indexer/' . $this->type . '/where/exclude_outofstock', $where );
 	}
 }

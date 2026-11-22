@@ -1,9 +1,9 @@
 <?php
 
-namespace DgoraWcas\Analytics;
+namespace PsfSearch\Analytics;
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ class Recorder {
 
 		Database::registerTables();
 
-		add_action( 'dgwt/wcas/analytics/after_searching', [ $this, 'listener' ], 10, 3 );
+		add_action( 'psfs/analytics/after_searching', [ $this, 'listener' ], 10, 3 );
 	}
 
 	/**
@@ -42,8 +42,8 @@ class Recorder {
 
 		// Save only critical searches.
 		if (
-			defined( 'DGWT_WCAS_ANALYTICS_ONLY_CRITICAL' ) &&
-			DGWT_WCAS_ANALYTICS_ONLY_CRITICAL &&
+			defined( 'PSFS_ANALYTICS_ONLY_CRITICAL' ) &&
+			PSFS_ANALYTICS_ONLY_CRITICAL &&
 			$hits > 0
 		) {
 			return;
@@ -51,14 +51,14 @@ class Recorder {
 
 		// Allow to exclude critical phrases.
 		if ( $hits === 0 ) {
-			$excludedPhrases = apply_filters( 'dgwt/wcas/analytics/excluded_critical_phrases', [] );
+			$excludedPhrases = apply_filters( 'psfs/analytics/excluded_critical_phrases', [] );
 			if ( is_array( $excludedPhrases ) && in_array( $phrase, $excludedPhrases, true ) ) {
 				return;
 			}
 		}
 
 		// Break early when a user has specific roles.
-		$roles = apply_filters( 'dgwt/wcas/analytics/exclude_roles', [] );
+		$roles = apply_filters( 'psfs/analytics/exclude_roles', [] );
 		if ( ! empty( $roles ) ) {
 
 			if ( defined( 'SHORTINIT' ) && SHORTINIT ) {
@@ -80,7 +80,7 @@ class Recorder {
 		$lang   = ! empty( $lang ) && Multilingual::isLangCode( $lang ) ? $lang : '';
 
 		$shouldRecord = apply_filters(
-			'dgwt/wcas/analytics/should_record',
+			'psfs/analytics/should_record',
 			true,
 			[
 				'phrase'       => $phrase,
@@ -130,6 +130,6 @@ class Recorder {
 			$format[]     = '%s';
 		}
 
-		$wpdb->insert( $wpdb->dgwt_wcas_stats, $data, $format );
+		$wpdb->insert( $wpdb->psfs_stats, $data, $format );
 	}
 }

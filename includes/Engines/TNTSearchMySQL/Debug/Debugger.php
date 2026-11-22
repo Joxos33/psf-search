@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Engines\TNTSearchMySQL\Debug;
+namespace PsfSearch\Engines\TNTSearchMySQL\Debug;
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Debugger {
-	const DEBUG_SEARCH_LOGS_KEY = 'dgwt_wcas_debug_search_logs';
+	const DEBUG_SEARCH_LOGS_KEY = 'psfs_debug_search_logs';
 
 	/**
 	 * Save log for the search
@@ -102,14 +102,14 @@ class Debugger {
 	public static function printLogs( $title = '', $context = 'common' ) {
 		$title = ! empty( $title ) ? $title : $context;
 
-		$html  = '<div class="dgwt-wcas-indexer-logs">';
+		$html  = '<div class="psfs-indexer-logs">';
 		$html .= '<h4>' . $title . '</h4>';
 
 		$logs = self::getLogs( $context );
 
 		if ( ! empty( $logs ) ) {
 			foreach ( $logs as $log ) {
-				$html .= '<span class="dgwt-wcas-indexer-log">';
+				$html .= '<span class="psfs-indexer-log">';
 				$html .= Helpers::stripScripts( $log );
 				$html .= '</span>';
 			}

@@ -1,23 +1,23 @@
 <?php
 
-use DgoraWcas\Helpers;
-use DgoraWcas\Multilingual;
+use PsfSearch\Helpers;
+use PsfSearch\Multilingual;
 
 // Exit if accessed directly
-if ( ! defined( 'DGWT_WCAS_FILE' ) ) {
+if ( ! defined( 'PSFS_FILE' ) ) {
 	exit;
 }
 
 $layout = Helpers::getLayoutSettings();
 
-$hasSubmit    = isset( $args['submit_btn'] ) ? $args['submit_btn'] : DGWT_WCAS()->settings->getOption( 'show_submit_button' );
+$hasSubmit    = isset( $args['submit_btn'] ) ? $args['submit_btn'] : PSFS()->settings->getOption( 'show_submit_button' );
 $submitText   = isset( $args['submit_text'] ) ? $args['submit_text'] : Helpers::getLabel( 'submit' );
-$uniqueID     = ++ DGWT_WCAS()->searchInstances;
+$uniqueID     = ++ PSFS()->searchInstances;
 $layoutType   = ! empty( $args['layout'] ) ? $args['layout'] : $layout->layout;
 $iconType     = ! empty( $args['icon'] ) ? $args['icon'] : $layout->icon;
 $isAMP        = Helpers::isAMPEndpoint();
 $iconColor    = ! empty( $args['icon_color'] ) ? $args['icon_color'] : '';
-$customParams = apply_filters( 'dgwt/wcas/search_bar/custom_params', [], DGWT_WCAS()->searchInstances );
+$customParams = apply_filters( 'psfs/search_bar/custom_params', [], PSFS()->searchInstances );
 
 if ( ! empty( $args['mobile_overlay'] ) && ! empty( $args['mobile_overlay_breakpoint'] ) ) {
 	$customParams['mobile_overlay_breakpoint'] = absint( $args['mobile_overlay_breakpoint'] );
@@ -28,53 +28,53 @@ if ( ! empty( $args['layout_breakpoint'] ) && ! empty( $args['layout_breakpoint'
 }
 
 ?>
-<div <?php echo $isAMP ? "id='dgwt-wcas-search-wrapp{$uniqueID}'" : ''; ?> class="dgwt-wcas-search-wrapp <?php echo Helpers::searchWrappClasses( $args ); ?>">
+<div <?php echo $isAMP ? "id='psfs-search-wrapp{$uniqueID}'" : ''; ?> class="psfs-search-wrapp <?php echo Helpers::searchWrappClasses( $args ); ?>">
 	<?php if ( in_array( $layoutType, [ 'icon', 'icon-flexible', 'icon-flexible-inv' ] ) ) : ?>
-		<?php echo Helpers::getIcon( 'preloader', 'dgwt-wcas-icon-preloader' ); ?>
-		<a href="#" <?php echo $isAMP ? "on='tap:dgwt-wcas-search-wrapp{$uniqueID}.toggleClass(class=\"dgwt-wcas-layout-icon-open\")'" : ''; ?> class="dgwt-wcas-search-icon js-dgwt-wcas-search-icon-handler" aria-label="<?php _e( 'Open search bar', 'ajax-search-for-woocommerce' ); ?>"><?php echo Helpers::getMagnifierIco( 'dgwt-wcas-ico-magnifier-handler', $iconType, $iconColor ); ?></a>
-		<div class="dgwt-wcas-search-icon-arrow"></div>
+		<?php echo Helpers::getIcon( 'preloader', 'psfs-icon-preloader' ); ?>
+		<a href="#" <?php echo $isAMP ? "on='tap:psfs-search-wrapp{$uniqueID}.toggleClass(class=\"psfs-layout-icon-open\")'" : ''; ?> class="psfs-search-icon js-psfs-search-icon-handler" aria-label="<?php _e( 'Open search bar', 'psf-search' ); ?>"><?php echo Helpers::getMagnifierIco( 'psfs-ico-magnifier-handler', $iconType, $iconColor ); ?></a>
+		<div class="psfs-search-icon-arrow"></div>
 	<?php endif; ?>
-	<form class="dgwt-wcas-search-form" role="search" action="<?php echo Helpers::searchFormAction(); ?>" method="get">
-		<div class="dgwt-wcas-sf-wrapp">
-			<?php echo $hasSubmit !== 'on' ? Helpers::getMagnifierIco( 'dgwt-wcas-ico-magnifier', $iconType ) : ''; ?>
+	<form class="psfs-search-form" role="search" action="<?php echo Helpers::searchFormAction(); ?>" method="get">
+		<div class="psfs-sf-wrapp">
+			<?php echo $hasSubmit !== 'on' ? Helpers::getMagnifierIco( 'psfs-ico-magnifier', $iconType ) : ''; ?>
 			<label class="screen-reader-text"
-				for="dgwt-wcas-search-input-<?php echo $uniqueID; ?>">
+				for="psfs-search-input-<?php echo $uniqueID; ?>">
 				<?php
 				_e(
 					'Products search',
-					'ajax-search-for-woocommerce'
+					'psf-search'
 				);
 				?>
 			</label>
 
 			<input
-				id="dgwt-wcas-search-input-<?php echo $uniqueID; ?>"
+				id="psfs-search-input-<?php echo $uniqueID; ?>"
 				type="search"
-				class="dgwt-wcas-search-input"
+				class="psfs-search-input"
 				name="<?php echo Helpers::getSearchInputName(); ?>"
-				value="<?php echo apply_filters( 'dgwt/wcas/search_bar/value', get_search_query(), DGWT_WCAS()->searchInstances ); ?>"
+				value="<?php echo apply_filters( 'psfs/search_bar/value', get_search_query(), PSFS()->searchInstances ); ?>"
 				placeholder="<?php echo esc_attr( Helpers::getLabel( 'search_placeholder' ) ); ?>"
 				autocomplete="off"
 				<?php echo ! empty( $customParams ) ? ' data-custom-params="' . htmlspecialchars( json_encode( (object) $customParams ) ) . '"' : ''; ?>
 			/>
-			<div class="dgwt-wcas-preloader"></div>
+			<div class="psfs-preloader"></div>
 
-			<div class="dgwt-wcas-voice-search"></div>
+			<div class="psfs-voice-search"></div>
 
 			<?php if ( $hasSubmit === 'on' ) : ?>
 				<button type="submit"
-						aria-label="<?php echo empty( $submitText ) ? __( 'Search', 'ajax-search-for-woocommerce' ) : esc_attr( $submitText ); ?>"
-						class="dgwt-wcas-search-submit"><?php echo empty( $submitText ) ? Helpers::getMagnifierIco( 'dgwt-wcas-ico-magnifier', $iconType ) : esc_html( $submitText ); ?></button>
+						aria-label="<?php echo empty( $submitText ) ? __( 'Search', 'psf-search' ) : esc_attr( $submitText ); ?>"
+						class="psfs-search-submit"><?php echo empty( $submitText ) ? Helpers::getMagnifierIco( 'psfs-ico-magnifier', $iconType ) : esc_html( $submitText ); ?></button>
 			<?php endif; ?>
 
 			<input type="hidden" name="post_type" value="product"/>
-			<input type="hidden" name="dgwt_wcas" value="1"/>
+			<input type="hidden" name="psfs" value="1"/>
 
 			<?php if ( Multilingual::isWPML() ) : ?>
 				<input type="hidden" name="lang" value="<?php echo esc_attr( Multilingual::getCurrentLanguage() ); ?>"/>
 			<?php endif ?>
 
-			<?php do_action( 'dgwt/wcas/form' ); ?>
+			<?php do_action( 'psfs/form' ); ?>
 		</div>
 	</form>
 </div>

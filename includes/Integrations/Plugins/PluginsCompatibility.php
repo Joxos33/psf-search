@@ -1,8 +1,8 @@
 <?php
 
-namespace DgoraWcas\Integrations\Plugins;
+namespace PsfSearch\Integrations\Plugins;
 
-use DgoraWcas\Helpers;
+use PsfSearch\Helpers;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PluginsCompatibility {
 
 	public function __construct() {
-		// Break early if the "nofibosearch" mode is active.
-		if ( Helpers::isNoFiboSearchModeActive() ) {
+		// Break early if the "nopsfsearch" mode is active.
+		if ( Helpers::isNoPsfSearchModeActive() ) {
 			return;
 		}
 
@@ -22,17 +22,17 @@ class PluginsCompatibility {
 
 	public function getIntegrationClasses(): array {
 		$integrationClasses = [];
-		$directories        = glob( DGWT_WCAS_DIR . 'includes/Integrations/Plugins/*', GLOB_ONLYDIR );
+		$directories        = glob( PSFS_DIR . 'includes/Integrations/Plugins/*', GLOB_ONLYDIR );
 
-		$directories = apply_filters( 'dgwt/wcas/plugins_compatibility/directories', $directories );
+		$directories = apply_filters( 'psfs/plugins_compatibility/directories', $directories );
 
 		if ( ! empty( $directories ) && is_array( $directories ) ) {
 			foreach ( $directories as $dir ) {
-				$name     = str_replace( DGWT_WCAS_DIR . 'includes/Integrations/Plugins/', '', $dir );
+				$name     = str_replace( PSFS_DIR . 'includes/Integrations/Plugins/', '', $dir );
 				$filename = $name . '.php';
 
 				$file  = $dir . '/' . $filename;
-				$class = '\\DgoraWcas\\Integrations\\Plugins\\' . $name . '\\' . $name;
+				$class = '\\PsfSearch\\Integrations\\Plugins\\' . $name . '\\' . $name;
 
 				if ( file_exists( $file ) && class_exists( $class ) ) {
 					$integrationClasses[] = $class;
