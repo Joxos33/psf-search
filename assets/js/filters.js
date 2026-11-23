@@ -15,6 +15,7 @@
 	var PANEL = '#psf-shop-filter-panel';
 	var RESULTS = '.psf-shop-results';
 	var MAX_OPTIONS = 250;
+	var DRAWER_MQ = '(max-width: 1024px)'; // same switch point as PSF Styling's toolbar
 
 	var termCache = {};
 	var controller = null;
@@ -25,13 +26,13 @@
 	}
 
 	function isDrawer() {
-		return window.matchMedia('(max-width: 849px)').matches;
+		return window.matchMedia(DRAWER_MQ).matches;
 	}
 
 	/* ---------- URL building ---------- */
 
-	function formUrl(form) {
-		var base = panel().getAttribute('data-base-url') || form.getAttribute('action') || window.location.pathname;
+	function formUrl(form, base) {
+		base = base || panel().getAttribute('data-base-url') || form.getAttribute('action') || window.location.pathname;
 		var url = new URL(base, window.location.href);
 		var data = new FormData(form);
 
@@ -311,18 +312,42 @@
 	document.addEventListener('click', function (e) {
 		var t = e.target;
 
-		if (t.closest('.js-psf-search-filters-open, [data-psf-search-filters-open]')) {
+		// The "Filters" button in PSF Styling's toolbar: drawer on mobile, show/hide the sidebar on desktop.
+		var trigger = t.closest('.js-psf-search-filters-open, [data-psf-search-filters-open], [data-psf-shop-filter]');
+		if (trigger) {
 			e.preventDefault();
-			openDrawer();
+			if (isDrawer()) {
+				openDrawer();
+			} else {
+				var catalog = document.querySelector('[data-psf-shop-catalog]');
+				if (catalog) {
+					var collapsed = catalog.classList.toggle('is-sidebar-collapsed');
+					trigger.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+				}
+			}
+			return;
+		}
+
+		if (t.closest('[data-psf-shop-filter-close]') && !t.closest(PANEL)) {
+			closeDrawer();
 			return;
 		}
 
 		if (!t.closest(PANEL)) {
-			// Pagination inside the results stays in place too.
-			var pageLink = t.closest(RESULTS + ' a.page-numbers, ' + RESULTS + ' .woocommerce-pagination a');
+			// Pagination, active-filter chips and the grid/list switch stay in place too.
+			var pageLink = t.closest([
+				RESULTS + ' a.page-numbers',
+				RESULTS + ' .woocommerce-pagination a',
+				RESULTS + ' a.psf-shop-filter-chip',
+				RESULTS + ' a.psf-shop-filter-clear',
+				RESULTS + ' .psf-shop-view-switch a'
+			].join(','));
 			if (pageLink && panel() && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
 				e.preventDefault();
 				load(pageLink.href, true);
+				if (!pageLink.matches('.page-numbers, .woocommerce-pagination a')) {
+					return;
+				}
 				var top = document.querySelector('[data-psf-shop-catalog]') || document.querySelector(RESULTS);
 				if (top) {
 					window.scrollTo({ top: top.getBoundingClientRect().top + window.pageYOffset - 100, behavior: 'smooth' });
@@ -379,6 +404,14 @@
 			return;
 		}
 
+		// Category on a category page: go to that category's page, keeping the other filters.
+		if (t.matches('.js-psf-search-filters-nav')) {
+			if (t.value) {
+				window.location.assign(formUrl(t.form, t.value));
+			}
+			return;
+		}
+
 		if (t.matches('.js-psf-search-filters-auto')) {
 			apply(120);
 			return;
@@ -389,6 +422,24 @@
 			apply(0);
 		}
 	});
+
+	// Sort dropdown: WooCommerce binds it to the form element, which a swap replaces,
+	// so handle it here first (capture phase) for every swap, initial page included.
+	document.addEventListener('change', function (e) {
+		var t = e.target;
+		if (!t.matches || !t.matches(RESULTS + ' .woocommerce-ordering select') || !panel()) {
+			return;
+		}
+		e.stopPropagation();
+		var url = new URL(window.location.href);
+		new FormData(t.form).forEach(function (value, key) {
+			url.searchParams.set(key, String(value));
+		});
+		url.searchParams.delete('paged');
+		url.searchParams.delete('product-page');
+		url.pathname = url.pathname.replace(/\/page\/\d+\/?$/, '/');
+		load(url.toString(), true);
+	}, true);
 
 	document.addEventListener('submit', function (e) {
 		var form = e.target;
@@ -447,7 +498,7 @@
 	});
 
 	// Leave the drawer state behind when the screen grows past the breakpoint.
-	window.matchMedia('(max-width: 849px)').addEventListener('change', function (mq) {
+	window.matchMedia(DRAWER_MQ).addEventListener('change', function (mq) {
 		if (!mq.matches) {
 			closeDrawer();
 		}

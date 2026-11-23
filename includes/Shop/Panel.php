@@ -234,15 +234,7 @@ class Panel {
 					</div>
 				</div>
 
-				<div class="psf-search-filters__group">
-					<label class="psf-search-filters__label" for="psf-search-filters-cat"><?php esc_html_e( 'Category', 'psf-search' ); ?></label>
-					<select id="psf-search-filters-cat" name="psf_cat" class="psf-search-filters__select js-psf-search-filters-auto">
-						<option value=""><?php esc_html_e( 'All categories', 'psf-search' ); ?></option>
-						<?php foreach ( self::categoryOptions() as $option ) : ?>
-							<option value="<?php echo esc_attr( $option['s'] ); ?>" <?php selected( $f['cat'], $option['s'] ); ?>><?php echo esc_html( ( $option['depth'] ? '— ' : '' ) . $option['n'] ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
+				<?php $this->renderCategory( $f ); ?>
 
 				<fieldset class="psf-search-filters__group">
 					<legend class="psf-search-filters__label"><?php esc_html_e( 'Availability', 'psf-search' ); ?></legend>
@@ -292,6 +284,60 @@ class Panel {
 				<noscript><button type="submit" class="psf-search-filters__show"><?php esc_html_e( 'Apply filters', 'psf-search' ); ?></button></noscript>
 			</form>
 		</aside>
+		<?php
+	}
+
+	/**
+	 * Category select. On the shop page and search results it filters (psf_cat); on a
+	 * category page it moves to the chosen category's page, so the page title, hero and
+	 * "search only this category" follow the category.
+	 */
+	private function renderCategory( array $f ) {
+		$current   = is_product_category() ? get_queried_object() : null;
+		$navigates = $current instanceof \WP_Term;
+		$options   = self::categoryOptions();
+
+		if ( $navigates && ! in_array( $current->slug, wp_list_pluck( $options, 's' ), true ) ) {
+			array_unshift(
+				$options,
+				[
+					's'     => $current->slug,
+					'n'     => html_entity_decode( $current->name, ENT_QUOTES ),
+					'depth' => 0,
+				]
+			);
+		}
+
+		$selected = $navigates ? $current->slug : $f['cat'];
+		$value    = function ( $slug ) use ( $navigates ) {
+			if ( ! $navigates ) {
+				return $slug;
+			}
+			$link = get_term_link( $slug, 'product_cat' );
+
+			return is_wp_error( $link ) ? '' : $link;
+		};
+		?>
+		<div class="psf-search-filters__group">
+			<label class="psf-search-filters__label" for="psf-search-filters-cat"><?php esc_html_e( 'Category', 'psf-search' ); ?></label>
+			<?php if ( $navigates ) : ?>
+				<select id="psf-search-filters-cat" class="psf-search-filters__select js-psf-search-filters-nav">
+					<option value="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'All categories', 'psf-search' ); ?></option>
+			<?php else : ?>
+				<select id="psf-search-filters-cat" name="psf_cat" class="psf-search-filters__select js-psf-search-filters-auto">
+					<option value=""><?php esc_html_e( 'All categories', 'psf-search' ); ?></option>
+			<?php endif; ?>
+				<?php
+				foreach ( $options as $option ) :
+					$optionValue = $value( $option['s'] );
+					if ( $optionValue === '' ) {
+						continue;
+					}
+					?>
+					<option value="<?php echo $navigates ? esc_url( $optionValue ) : esc_attr( $optionValue ); ?>" <?php selected( $selected, $option['s'] ); ?>><?php echo esc_html( ( $option['depth'] ? '— ' : '' ) . $option['n'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</div>
 		<?php
 	}
 
