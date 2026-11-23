@@ -84,6 +84,11 @@ if ( ! class_exists( 'PSF_Search' ) ) {
 
 				new \PsfSearch\Appearance();
 
+				if ( self::$instance->settings->getOption( 'shop_filters' ) !== 'off' ) {
+					new \PsfSearch\Shop\Filters();
+					new \PsfSearch\Shop\Panel();
+				}
+
 				self::$instance->hooks();
 
 				new \PsfSearch\Integrations\Plugins\PluginsCompatibility();
