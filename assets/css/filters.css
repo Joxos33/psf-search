@@ -504,22 +504,12 @@ legend.psf-search-filters__label + * {
 	transition: opacity .15s;
 }
 
-/* Desktop: PSF Styling's "Filters" button can hide the sidebar */
+/* Desktop: PSF Styling's "Filters" button hides the panel (its column collapses to 0). */
 @media (min-width: 1025px) {
 	.is-sidebar-collapsed > .psf-search-filters {
-		display: none;
-	}
-}
-
-/* Desktop: keep the panel in view while scrolling long result lists */
-@media (min-width: 1025px) {
-	.psf-search-filters {
-		position: sticky;
-		top: var(--psf-search-filters-top, 20px);
-		max-height: calc(100vh - var(--psf-search-filters-top, 20px) - 20px);
-		overflow-y: auto;
-		overscroll-behavior: contain;
-		scrollbar-width: thin;
+		visibility: hidden;
+		opacity: 0;
+		pointer-events: none;
 	}
 }
 

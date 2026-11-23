@@ -128,6 +128,18 @@
 				if (doc.title) {
 					document.title = doc.title;
 				}
+
+				// PSF Styling puts the grid/list view on <body>.
+				Array.prototype.slice.call(document.body.classList).forEach(function (c) {
+					if (c.indexOf('psf-shop-view-') === 0) {
+						document.body.classList.remove(c);
+					}
+				});
+				Array.prototype.slice.call(doc.body.classList).forEach(function (c) {
+					if (c.indexOf('psf-shop-view-') === 0) {
+						document.body.classList.add(c);
+					}
+				});
 				if (push) {
 					window.history.pushState({ psfSearchFilters: true }, '', url);
 				}
@@ -503,24 +515,6 @@
 			closeDrawer();
 		}
 	});
-
-	// Keep the sticky desktop panel below Flatsome's sticky header.
-	var ticking = false;
-	function stickyOffset() {
-		ticking = false;
-		if (isDrawer()) {
-			return;
-		}
-		var header = document.querySelector('.header-wrapper.stuck');
-		var top = (header ? Math.max(0, header.getBoundingClientRect().bottom) : 0) + 16;
-		document.documentElement.style.setProperty('--psf-search-filters-top', top + 'px');
-	}
-	window.addEventListener('scroll', function () {
-		if (!ticking) {
-			ticking = true;
-			window.requestAnimationFrame(stickyOffset);
-		}
-	}, { passive: true });
 
 	if (panel()) {
 		window.history.replaceState({ psfSearchFilters: true }, '', window.location.href);

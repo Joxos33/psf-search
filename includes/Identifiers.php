@@ -25,6 +25,7 @@ class Identifiers {
 		'ean',
 		'mpn',
 		'manufacturer_part_number',
+		'manufacturer-part-number',
 		'model',
 		'vendor_sku',
 		'item_number',

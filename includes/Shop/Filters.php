@@ -124,7 +124,8 @@ class Filters {
 
 		if ( $f['on_sale'] ) {
 			$saleIds  = array_filter( array_map( 'absint', (array) wc_get_product_ids_on_sale() ) );
-			$existing = array_filter( array_map( 'absint', (array) $q->get( 'post__in' ) ) );
+			// Keep an existing restriction, including PSF Styling's deep-page guard ([0]).
+			$existing = array_map( 'absint', (array) $q->get( 'post__in' ) );
 			if ( $existing ) {
 				$saleIds = array_values( array_intersect( $existing, $saleIds ) );
 			}

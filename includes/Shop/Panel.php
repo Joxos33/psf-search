@@ -10,10 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The shop filter panel: markup, assets, and the cached term lists it loads on demand.
  *
- * Rendered where PSF Styling's catalog shell asks for the sidebar
- * (do_action( 'psf_shop_sidebar' )), keeping PSF Styling's #psf-shop-filter-panel /
- * .psf-shop-sidebar wrapper so its layout and mobile drawer CSS still apply.
- * Everything inside is PSF Search's (.psf-search-filters), styled from Appearance.
+ * Rendered where PSF Styling's catalog shell asks for it (do_action( 'psf_shop_sidebar' )),
+ * as the first column of its grid. The id #psf-shop-filter-panel is what Styling's toolbar
+ * Filters button points at. Styled from Appearance → Shop filter panel.
  */
 class Panel {
 
@@ -216,7 +215,7 @@ class Panel {
 			$searchLabel = sprintf( __( 'Search in %s', 'psf-search' ), $term->name );
 		}
 		?>
-		<aside id="psf-shop-filter-panel" class="psf-shop-sidebar psf-search-filters js-psf-search-filters" aria-label="<?php esc_attr_e( 'Product filters', 'psf-search' ); ?>" data-base-url="<?php echo esc_url( Filters::baseUrl() ); ?>">
+		<aside id="psf-shop-filter-panel" class="psf-search-filters js-psf-search-filters" aria-label="<?php esc_attr_e( 'Product filters', 'psf-search' ); ?>" data-base-url="<?php echo esc_url( Filters::baseUrl() ); ?>">
 			<div class="psf-search-filters__head">
 				<h2 class="psf-search-filters__title"><?php esc_html_e( 'Filters', 'psf-search' ); ?></h2>
 				<a class="psf-search-filters__clear js-psf-search-filters-link" href="<?php echo esc_url( $resetUrl ); ?>"><?php esc_html_e( 'Clear all', 'psf-search' ); ?></a>
