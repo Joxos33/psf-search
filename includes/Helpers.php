@@ -1444,9 +1444,58 @@ class Helpers {
 			$enabled = false;
 		}
 
+		// PSF: this index serves every product search on the site, not only searches from
+		// our own form: any WooCommerce product search, and searches on the shop page and
+		// product category/brand/attribute archives (PSF Styling's ?s= / ?psf_q=).
+		if ( ! $enabled && ! is_admin() && $query->is_main_query() && self::getQuerySearchPhrase( $query ) !== '' ) {
+			$isProductSearch = $query->is_search() && $query->get( 'post_type' ) === 'product';
+			$isShopArchive   = $query->is_post_type_archive( 'product' ) || $query->is_tax( get_object_taxonomies( 'product' ) );
+
+			if ( $isProductSearch || $isShopArchive ) {
+				$enabled = true;
+			}
+		}
+
 		$enabled = apply_filters( 'psf_search/helpers/is_search_query', $enabled, $query );
 
 		return $enabled;
+	}
+
+	/**
+	 * Search phrase of a query: ?s=, or PSF Styling's ?psf_q= on shop archives.
+	 *
+	 * @param \WP_Query $query
+	 *
+	 * @return string
+	 */
+	public static function getQuerySearchPhrase( $query ) {
+		$phrase = isset( $query->query_vars['s'] ) ? (string) $query->query_vars['s'] : '';
+
+		//phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( trim( $phrase ) === '' && isset( $_GET['psf_q'] ) && is_string( $_GET['psf_q'] ) ) {
+			$phrase = sanitize_text_field( wp_unslash( $_GET['psf_q'] ) );
+		}
+		//phpcs:enable
+
+		return trim( $phrase );
+	}
+
+	/**
+	 * Intersect search results with a post__in restriction already on the query
+	 * (set by shop filters), preserving the order of the search results.
+	 *
+	 * @param \WP_Query $query
+	 * @param int[]     $postIn Search results.
+	 *
+	 * @return int[]
+	 */
+	public static function intersectWithQueryPostIn( $query, $postIn ) {
+		$existing = (array) $query->get( 'post__in' );
+		if ( empty( $existing ) ) {
+			return $postIn;
+		}
+
+		return array_values( array_intersect( array_map( 'intval', $postIn ), array_map( 'intval', $existing ) ) );
 	}
 
 	/**

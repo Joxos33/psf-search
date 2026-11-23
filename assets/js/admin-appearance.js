@@ -119,7 +119,15 @@
 			'--psfs-dd-price-fs': px('ap_dd_price_size'),
 			'--psfs-om-bg': color('ap_m_overlay_bg'),
 			'--psfs-om-bar-bg': color('ap_m_overlay_bar_bg'),
-			'--psfs-om-ico': color('ap_m_overlay_icon')
+			'--psfs-om-ico': color('ap_m_overlay_icon'),
+			'--psfs-fp-bg': color('ap_fp_bg'),
+			'--psfs-fp-text': color('ap_fp_text'),
+			'--psfs-fp-muted': color('ap_fp_muted'),
+			'--psfs-fp-accent': color('ap_fp_accent'),
+			'--psfs-fp-accent-bg': rgba(color('ap_fp_accent'), 0.08),
+			'--psfs-fp-border': color('ap_fp_border'),
+			'--psfs-fp-radius': px('ap_fp_radius'),
+			'--psfs-fp-fs': px('ap_fp_font_size')
 		};
 	}
 

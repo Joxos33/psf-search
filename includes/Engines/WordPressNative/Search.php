@@ -874,9 +874,9 @@ class Search {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'psf_search', $query->query_vars['s'] );
+		$phrase = Helpers::getQuerySearchPhrase( $query );
 
-		$phrase = $query->query_vars['s'];
+		$query->set( 'psf_search', $phrase );
 
 		// If phrase is URL encoded, decode it.
 		if ( preg_match( '/%[0-9A-Fa-f]{2}/', $phrase ) ) {
@@ -907,9 +907,12 @@ class Search {
 			$postIn[] = $suggestion->ID;
 		}
 
-		// Integration with FiboFilters.
-		if ( $query->get( 'fibofilters' ) ) {
-			$postIn = array_intersect( $query->get( 'post__in' ), $postIn );
+		// Keep ID restrictions set earlier by shop filters (e.g. PSF Styling's On Sale).
+		$postIn = Helpers::intersectWithQueryPostIn( $query, $postIn );
+
+		// An empty post__in means "no restriction" to WP_Query; force no results instead.
+		if ( empty( $postIn ) ) {
+			$postIn = [ - 1 ];
 		}
 
 		// Save for later use

@@ -93,6 +93,14 @@ class Appearance {
 			'ap_m_overlay_bg'        => '#ffffff',
 			'ap_m_overlay_bar_bg'    => '#254d18',
 			'ap_m_overlay_icon'      => '#ffffff',
+
+			'ap_fp_bg'               => '#ffffff',
+			'ap_fp_text'             => '#1a1a1a',
+			'ap_fp_muted'            => '#6b6b6b',
+			'ap_fp_accent'           => '#254d18',
+			'ap_fp_border'           => '#e3e3e3',
+			'ap_fp_radius'           => 8,
+			'ap_fp_font_size'        => 14,
 		];
 	}
 
@@ -287,6 +295,22 @@ class Appearance {
 			740 => $color( 'ap_m_overlay_bg', __( 'Full-screen overlay background', 'psf-search' ) ),
 			750 => $color( 'ap_m_overlay_bar_bg', __( 'Overlay back-button background', 'psf-search' ) ),
 			760 => $color( 'ap_m_overlay_icon', __( 'Overlay back-button icon', 'psf-search' ) ),
+
+			800 => $head( 'ap_fp_head', __( 'Shop filter panel', 'psf-search' ) ),
+			805 => [
+				'name'    => 'shop_filters',
+				'label'   => __( 'Filter panel', 'psf-search' ),
+				'type'    => 'checkbox',
+				'desc'    => __( 'Show the PSF Search filter panel on the shop, category pages and search results', 'psf-search' ),
+				'default' => 'on',
+			],
+			810 => $color( 'ap_fp_bg', __( 'Background', 'psf-search' ) ),
+			820 => $color( 'ap_fp_text', __( 'Text color', 'psf-search' ) ),
+			830 => $color( 'ap_fp_muted', __( 'Secondary text color', 'psf-search' ) ),
+			840 => $color( 'ap_fp_accent', __( 'Accent color', 'psf-search' ) ),
+			850 => $color( 'ap_fp_border', __( 'Border / divider color', 'psf-search' ) ),
+			860 => $num( 'ap_fp_radius', __( 'Corner radius', 'psf-search' ) ),
+			870 => $num( 'ap_fp_font_size', __( 'Font size', 'psf-search' ), $px, 10 ),
 		];
 
 		// Move the submit button on/off and label into the Appearance → Search button group.
@@ -468,6 +492,14 @@ class Appearance {
 			'--psfs-om-bg'         => $color( 'ap_m_overlay_bg' ),
 			'--psfs-om-bar-bg'     => $color( 'ap_m_overlay_bar_bg' ),
 			'--psfs-om-ico'        => $color( 'ap_m_overlay_icon' ),
+			'--psfs-fp-bg'         => $color( 'ap_fp_bg' ),
+			'--psfs-fp-text'       => $color( 'ap_fp_text' ),
+			'--psfs-fp-muted'      => $color( 'ap_fp_muted' ),
+			'--psfs-fp-accent'     => $color( 'ap_fp_accent' ),
+			'--psfs-fp-accent-bg'  => self::rgba( $color( 'ap_fp_accent' ), 0.08 ),
+			'--psfs-fp-border'     => $color( 'ap_fp_border' ),
+			'--psfs-fp-radius'     => $px( 'ap_fp_radius' ),
+			'--psfs-fp-fs'         => $px( 'ap_fp_font_size' ),
 		];
 
 		$mobile = [
