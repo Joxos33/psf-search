@@ -272,6 +272,11 @@ class Install {
 					\PsfSearch\Appearance::migrateFromLegacy();
 				}
 
+				// 0.4.0: starter firearm synonyms, only if the Synonyms setting is empty.
+				if ( ! empty( $pluginVersion ) && version_compare( $pluginVersion, '0.4.0', '<' ) ) {
+					\PsfSearch\FirearmSynonyms::seedIfEmpty();
+				}
+
 				self::createOptions();
 
 				self::maybeUpgradeOptions( 'pro' );
@@ -318,7 +323,7 @@ class Install {
 		$versionsWithoutIndexChanges = [
 			[
 				'min' => '0.1.0',
-				'max' => '0.3.99',
+				'max' => '0.4.99',
 			],
 		];
 

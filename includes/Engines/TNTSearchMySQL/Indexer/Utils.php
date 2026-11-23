@@ -33,6 +33,10 @@ class Utils {
 			$content = str_replace( '  ', ' ', wp_strip_all_tags( str_replace( '<', ' <', $content ) ) );
 		}
 
+		// Entities like &nbsp; and &amp; would otherwise be indexed as the words "nbsp" and "amp".
+		$content = html_entity_decode( $content, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$content = str_replace( [ "\u{00A0}", "\u{202F}" ], ' ', $content );
+
 		return trim( $content );
 	}
 
