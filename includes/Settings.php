@@ -733,9 +733,10 @@ class Settings {
 								$synonymsLink
 							)
 						),
-						'type'  => 'textarea',
-						'desc'  => __(
-							'Synonyms should be separated by a comma. Each new synonyms group is entered in a new line. You can use a phrase instead of a single word. <br /> <br />Sample list:<br /> <br /><span class="psf-search-synonyms-sample">sofa, couch, davenport, divan, settee<br />big, grand, great, large, outsize</span>',
+						'type'    => 'textarea',
+						'default' => \PsfSearch\FirearmSynonyms::defaults(),
+						'desc'    => __(
+							'One group per line, phrases separated by commas. A product that mentions any phrase in a group can be found by all of them, e.g. <span class="psf-search-synonyms-sample">9mm, 9x19, 9mm luger</span> or <span class="psf-search-synonyms-sample">glock 19, g19</span>. Changes apply after the index is rebuilt.',
 							'psf-search'
 						),
 						'class'             => 'psf-search-settings-synonyms js-psf-search-adv-settings psf-search-premium-only',

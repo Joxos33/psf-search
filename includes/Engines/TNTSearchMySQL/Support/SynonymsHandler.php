@@ -143,6 +143,11 @@ class SynonymsHandler {
 
 			foreach ( $synonymGroup as $phrase ) {
 
+				// Cheap substring check first; the regex only confirms word boundaries.
+				if ( $phrase === '' || mb_strpos( $subject, $phrase ) === false ) {
+					continue;
+				}
+
 				$phrase = Helpers::escPhraseForRegex( $phrase );
 
 				if ( ! empty( $phrase ) && preg_match( "/([^a-zA-Z0-9\p{Cyrillic}]|^)$phrase([^a-zA-Z0-9\p{Cyrillic}}]|$)/i", $subject ) ) {

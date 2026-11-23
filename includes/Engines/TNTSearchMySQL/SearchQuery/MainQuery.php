@@ -50,6 +50,13 @@ abstract class MainQuery {
 	protected $settings = [];
 	protected $slots;
 	private $foundProductsIds = [];
+
+	/**
+	 * Products whose SKU (or the part after "|"), GTIN, UPC or stock ID equals the phrase.
+	 *
+	 * @var int[]
+	 */
+	private $exactIdentifierIds = [];
 	protected $foundProducts  = [];
 	protected $foundTax       = [];
 	protected $foundPosts     = [];
@@ -434,14 +441,92 @@ abstract class MainQuery {
 		$phrase = $this->getPhrase( 'searchable' );
 		$result = $this->searchPsf( $phrase, $max );
 
-		if ( ! empty( $result['ids'] ) && is_array( $result['ids'] ) ) {
-			$this->foundProductsIds = apply_filters( 'psf_search/tnt/search_results/ids', $result['ids'], $phrase );
+		$ids = ! empty( $result['ids'] ) && is_array( $result['ids'] ) ? $result['ids'] : [];
+
+		// A phrase that looks like a part number: put exact SKU/UPC/stock ID hits first,
+		// even ones the keyword search missed (e.g. "260564" for SKU "CROW|260564").
+		if ( empty( $this->type ) ) {
+			$this->exactIdentifierIds = $this->findExactIdentifierIds( $this->getPhrase(), $ids );
+			if ( ! empty( $this->exactIdentifierIds ) ) {
+				$ids = array_values( array_unique( array_merge( $this->exactIdentifierIds, $ids ) ) );
+				$result['ids'] = $ids;
+			}
+		}
+
+		if ( ! empty( $ids ) ) {
+			$this->foundProductsIds = apply_filters( 'psf_search/tnt/search_results/ids', $ids, $phrase );
 
 			$this->tntTime = $this->tntTime + (float) ( str_replace( ' ms', '', $result['execution_time'] ) );
 			$found         = true;
 		}
 
 		return $found;
+	}
+
+	/**
+	 * Products whose identifiers equal a part-number-like phrase.
+	 *
+	 * SKU and GTIN are matched across the readable index (both columns are indexed).
+	 * "Vendor|number" SKUs and the upc/stockid fields are matched among the keyword
+	 * results only, so the query stays on indexed lookups.
+	 *
+	 * @param string $phrase
+	 * @param int[]  $foundIds Keyword search results.
+	 *
+	 * @return int[]
+	 */
+	private function findExactIdentifierIds( string $phrase, array $foundIds ): array {
+		global $wpdb;
+
+		$phrase = trim( $phrase );
+
+		// Part-number-like: one word, 4+ characters, at least one digit.
+		if ( mb_strlen( $phrase ) < 4 || mb_strlen( $phrase ) > 64 || preg_match( '/\s/u', $phrase ) || ! preg_match( '/\d/', $phrase ) ) {
+			return [];
+		}
+
+		// UPC-A (12 digits) and EAN-13 (13 digits, leading 0) are the same code.
+		$variants = [ $phrase ];
+		if ( preg_match( '/^\d{12}$/', $phrase ) ) {
+			$variants[] = '0' . $phrase;
+		} elseif ( preg_match( '/^0\d{12}$/', $phrase ) ) {
+			$variants[] = substr( $phrase, 1 );
+		}
+
+		$table = Utils::getTableName( 'readable' );
+		$in    = implode( ',', array_fill( 0, count( $variants ), '%s' ) );
+
+		//phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT post_id FROM $table WHERE type = 'product' AND ( sku IN ($in) OR global_unique_id IN ($in) ) LIMIT 20",
+				array_merge( $variants, $variants )
+			)
+		);
+
+		$foundIds = array_slice( array_map( 'intval', $foundIds ), 0, 5000 );
+		if ( ! empty( $foundIds ) ) {
+			$idsIn = implode( ',', $foundIds );
+
+			$suffix = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT post_id FROM $table WHERE post_id IN ($idsIn) AND sku LIKE %s",
+					'%|' . $wpdb->esc_like( $phrase )
+				)
+			);
+
+			$meta = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT post_id FROM $wpdb->postmeta WHERE post_id IN ($idsIn) AND meta_key IN ('upc', '_upc', 'stockid', '_stockid', '_global_unique_id') AND meta_value IN ($in)",
+					$variants
+				)
+			);
+
+			$ids = array_merge( (array) $ids, (array) $suffix, (array) $meta );
+		}
+		//phpcs:enable
+
+		return array_values( array_unique( array_map( 'intval', (array) $ids ) ) );
 	}
 
 	/**
@@ -647,6 +732,11 @@ abstract class MainQuery {
 			}
 		}
 
+		// PSF Styling's default sort ("Featured & relevant") means relevance for a search.
+		if ( $orderBy === 'psf_relevance' ) {
+			$orderBy = 'relevance';
+		}
+
 		$orderBy = apply_filters( 'psf_search/tnt/sort_products/order_by', $orderBy );
 
 		switch ( $orderBy ) {
@@ -801,6 +891,11 @@ abstract class MainQuery {
 						'score_containing' => 80,
 					]
 				);
+			}
+
+			// Exact part-number hits always come first.
+			if ( ! empty( $this->exactIdentifierIds ) && in_array( (int) $product->post_id, $this->exactIdentifierIds, true ) ) {
+				$score += 10000;
 			}
 
 			$this->foundProducts[ $i ]->score = apply_filters( 'psf_search/tnt/product/score', (float) $score, $product->post_id, $product, $this );
