@@ -760,6 +760,14 @@ class Builder {
 	}
 
 	public static function renderIndexingStatus( $refreshStatus = true ) {
+		global $wpdb;
+
+		// Showing the status may clean up a failed build (DROP TABLE). If another
+		// connection still holds those tables (e.g. MySQL rolling back a big batch),
+		// give up after a few seconds instead of hanging the settings page.
+		$lockWait = $wpdb->get_var( 'SELECT @@SESSION.lock_wait_timeout' );
+		$wpdb->query( 'SET SESSION lock_wait_timeout = ' . absint( apply_filters( 'psf_search/indexer/status_lock_wait_timeout', 5 ) ) );
+
 		if ( $refreshStatus ) {
 			self::refreshStatus();
 		}
@@ -768,6 +776,10 @@ class Builder {
 		$html .= self::getIndexHeader();
 		$html .= self::getProcessStatus();
 		$html .= '</div>';
+
+		if ( is_numeric( $lockWait ) ) {
+			$wpdb->query( 'SET SESSION lock_wait_timeout = ' . absint( $lockWait ) );
+		}
 
 		return $html;
 	}
