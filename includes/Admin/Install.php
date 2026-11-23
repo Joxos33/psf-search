@@ -318,7 +318,7 @@ class Install {
 		$versionsWithoutIndexChanges = [
 			[
 				'min' => '0.1.0',
-				'max' => '0.2.99',
+				'max' => '0.3.99',
 			],
 		];
 
