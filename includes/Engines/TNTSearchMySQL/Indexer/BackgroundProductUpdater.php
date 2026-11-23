@@ -186,7 +186,7 @@ class BackgroundProductUpdater {
 			$variations         = $product->getAvailableVariations();
 			$variationIds       = wp_list_pluck( $variations, 'variation_id' );
 			$variationIds       = array_map( fn( $id ) => (string) $id, $variationIds );
-			$variationsSetCount = apply_filters( 'psf_search/indexer/readable_set_items_count', 25 );
+			$variationsSetCount = apply_filters( 'psf_search/indexer/readable_set_items_count', Builder::READABLE_SET_ITEMS_COUNT );
 
 			// Integrations can remove some variations from the list.
 			$variationIds = apply_filters( 'psf_search/variations_update/variation_ids', $variationIds );

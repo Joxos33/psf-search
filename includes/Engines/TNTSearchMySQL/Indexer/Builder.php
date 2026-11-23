@@ -27,9 +27,11 @@ class Builder {
 	const INDEXING_PREPARE_PROCESS_EXIST_KEY = 'psf_search_indexer_prepare_process_exist';
 	const INDEXER_DEBUG_TRANSIENT_KEY        = 'psf_search_indexer_debug';
 	const INDEXER_DEBUG_SCOPE_TRANSIENT_KEY  = 'psf_search_indexer_debug_scope';
-	const SEARCHABLE_SET_ITEMS_COUNT         = 50;
-	const READABLE_SET_ITEMS_COUNT           = 25;
-	const TAXONOMY_SET_ITEMS_COUNT           = 100;
+	// Small sets so each background request saves progress often; these are the values
+	// PSF's FiboSearch install was tuned to (Flatsome Child functions.php) on this host.
+	const SEARCHABLE_SET_ITEMS_COUNT         = 10;
+	const READABLE_SET_ITEMS_COUNT           = 5;
+	const TAXONOMY_SET_ITEMS_COUNT           = 10;
 
 	/**
 	 * @var WpdbMysqlMutex
