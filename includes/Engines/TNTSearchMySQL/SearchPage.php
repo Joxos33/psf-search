@@ -59,8 +59,10 @@ class SearchPage {
 			return;
 		}
 
+		$phrase = Helpers::getQuerySearchPhrase( $query );
+
 		// Do not run the search engine when the phrase is empty.
-		if ( trim( $query->query_vars['s'] ) === '' ) {
+		if ( $phrase === '' ) {
 			return;
 		}
 
@@ -72,9 +74,7 @@ class SearchPage {
 			$query->set( 'cache_results', true );
 		}
 
-		$query->set( 'psf_search', $query->query_vars['s'] );
-
-		$phrase = $query->query_vars['s'];
+		$query->set( 'psf_search', $phrase );
 
 		// If phrase is URL encoded, decode it.
 		if ( preg_match( '/%[0-9A-Fa-f]{2}/', $phrase ) ) {
@@ -120,10 +120,9 @@ class SearchPage {
 		// Analytics
 		do_action( 'psf_search/analytics/after_searching', $phrase, count( $postIn ), $lang );
 
-		// Integration with FiboFilters.
-		if ( $query->get( 'fibofilters' ) ) {
-			$postIn = array_intersect( $query->get( 'post__in' ), $postIn );
-		}
+		// Keep ID restrictions set earlier by shop filters (e.g. PSF Styling's On Sale,
+		// or its deep-page guard), in our relevance order.
+		$postIn = Helpers::intersectWithQueryPostIn( $query, $postIn );
 
 		// Force WP_Query not to find results
 		if ( empty( $postIn ) ) {
