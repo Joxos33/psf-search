@@ -338,7 +338,14 @@ class Builder {
 		self::log( sprintf( 'Indexer mode: %s', Config::getIndexerMode() ) );
 		self::log( sprintf( 'Parallel build: %s', Config::isParallelBuildingEnabled() ? 'yes' : 'no' ) );
 
-		self::cancelBuildIndex( false );
+		if ( ! self::cancelBuildIndex( false ) ) {
+			// Building into a table MySQL is still busy with would block every batch.
+			self::log( '[Indexer] The old index tables are still locked by the database (it may still be undoing an earlier build). Try again in a few minutes.', 'emergency', 'both' );
+			self::addInfo( 'status', 'error' );
+			delete_option( self::INDEXING_PREPARE_PROCESS_EXIST_KEY );
+
+			return false;
+		}
 
 		self::addInfo( 'status', 'preparing' );
 
@@ -629,7 +636,7 @@ class Builder {
 		PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->cancel_process();
 		PSF_SEARCH()->tntsearchMySql->asynchBuildIndexT->cancel_process();
 
-		self::wipeIndexTables();
+		$wiped = self::wipeIndexTables();
 
 		Helpers::removeBatchOptions__premium_only();
 
@@ -640,13 +647,30 @@ class Builder {
 
 			self::flushOptionsCache();
 		}
+
+		return $wiped;
 	}
 
+	/**
+	 * Drop the index tables of one role.
+	 *
+	 * The DROPs wait at most a few seconds for a table lock. A table can stay locked
+	 * for a long time, e.g. while MySQL rolls back a stopped build's uncommitted batch,
+	 * and an unbounded wait hangs whatever request got here (settings page, rebuild
+	 * button, settings save). Skipped tables are dropped on a later call.
+	 *
+	 * @return bool True when no index table of that role is left.
+	 */
 	public static function wipeIndexTables( $indexRole = '' ) {
+		global $wpdb;
+
 		if ( empty( $indexRole ) ) {
 			$indexRole = Config::getIndexRole();
 		}
 		$indexRoleSuffix = $indexRole === 'main' ? '' : '_tmp';
+
+		$lockWait = $wpdb->get_var( 'SELECT @@SESSION.lock_wait_timeout' );
+		$wpdb->query( 'SET SESSION lock_wait_timeout = ' . max( 1, absint( apply_filters( 'psf_search/indexer/wipe_lock_wait_timeout', 5 ) ) ) );
 
 		Cache::delete( 'table_exists', 'database' );
 
@@ -662,6 +686,24 @@ class Builder {
 			$taxIndexer = new IndexerTax();
 			$taxIndexer->wipe( $indexRoleSuffix );
 		}
+
+		if ( is_numeric( $lockWait ) ) {
+			$wpdb->query( 'SET SESSION lock_wait_timeout = ' . absint( $lockWait ) );
+		}
+
+		Cache::delete( 'table_exists', 'database' );
+
+		$leftSearchable = array_filter(
+			DatabaseS::getSearchableIndexTables( $indexRoleSuffix ),
+			function ( $table ) use ( $indexRoleSuffix ) {
+				// With the main role's empty suffix every table "ends with" it; skip the tmp ones.
+				return $indexRoleSuffix !== '' || ! Helpers::endsWith( $table, '_tmp' );
+			}
+		);
+
+		return empty( $leftSearchable )
+			&& ! self::readableIndexExists( $indexRoleSuffix )
+			&& ! self::taxIndexExists( $indexRoleSuffix );
 	}
 
 	public static function getReadableProgress() {
@@ -760,14 +802,6 @@ class Builder {
 	}
 
 	public static function renderIndexingStatus( $refreshStatus = true ) {
-		global $wpdb;
-
-		// Showing the status may clean up a failed build (DROP TABLE). If another
-		// connection still holds those tables (e.g. MySQL rolling back a big batch),
-		// give up after a few seconds instead of hanging the settings page.
-		$lockWait = $wpdb->get_var( 'SELECT @@SESSION.lock_wait_timeout' );
-		$wpdb->query( 'SET SESSION lock_wait_timeout = ' . absint( apply_filters( 'psf_search/indexer/status_lock_wait_timeout', 5 ) ) );
-
 		if ( $refreshStatus ) {
 			self::refreshStatus();
 		}
@@ -776,10 +810,6 @@ class Builder {
 		$html .= self::getIndexHeader();
 		$html .= self::getProcessStatus();
 		$html .= '</div>';
-
-		if ( is_numeric( $lockWait ) ) {
-			$wpdb->query( 'SET SESSION lock_wait_timeout = ' . absint( $lockWait ) );
-		}
 
 		return $html;
 	}

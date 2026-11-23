@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PSF Search
  * Description: Live product search for Puget Sound Firearms. Private fork of PSF Search 1.34.3 (GPLv2), stripped and tailored for PSF's Flatsome/WooCommerce store.
- * Version: 0.3.1
+ * Version: 0.3.2
  * Author: Puget Sound Firearms
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
