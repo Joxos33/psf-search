@@ -32,6 +32,8 @@ class Builder {
 	const SEARCHABLE_SET_ITEMS_COUNT         = 10;
 	const READABLE_SET_ITEMS_COUNT           = 5;
 	const TAXONOMY_SET_ITEMS_COUNT           = 10;
+	// Items per committed chunk when building in one process (WP-CLI "direct" mode).
+	const DIRECT_MODE_CHUNK_SIZE             = 250;
 
 	/**
 	 * @var WpdbMysqlMutex
@@ -502,9 +504,17 @@ class Builder {
 		// PROCESS (for direct mode)
 		// -------------------------------------------
 		if ( Config::isIndexerMode( 'direct' ) ) {
-			PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->task( $toTheQueue['readable'] );
+			// Process in chunks, not one set of the whole catalog: each chunk commits its
+			// own transaction and records progress (and last_action_ts). With one 50k-item
+			// set the build held millions of uncommitted rows, the progress bar never moved,
+			// and the stuck-build watchdog cancelled it after 61 minutes.
+			foreach ( array_chunk( $toTheQueue['readable'], self::DIRECT_MODE_CHUNK_SIZE ) as $chunk ) {
+				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->task( $chunk );
+			}
 			foreach ( $toTheQueue['searchable'] as $ids ) {
-				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->task( $ids );
+				foreach ( array_chunk( $ids, self::DIRECT_MODE_CHUNK_SIZE ) as $chunk ) {
+					PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->task( $chunk );
+				}
 			}
 		} else {
 			foreach ( $toTheQueue as $indexer => $data ) {
