@@ -515,12 +515,21 @@ class Builder {
 			// own transaction and records progress (and last_action_ts). With one 50k-item
 			// set the build held millions of uncommitted rows, the progress bar never moved,
 			// and the stuck-build watchdog cancelled it after 61 minutes.
+			$readableTotal = count( $toTheQueue['readable'] );
+			$done          = 0;
 			foreach ( array_chunk( $toTheQueue['readable'], self::DIRECT_MODE_CHUNK_SIZE ) as $chunk ) {
 				PSF_SEARCH()->tntsearchMySql->asynchBuildIndexR->task( $chunk );
+				$done += count( $chunk );
+				self::afterDirectChunk( 'readable', $done, $readableTotal );
 			}
+
+			$searchableTotal = array_sum( array_map( 'count', $toTheQueue['searchable'] ) );
+			$done            = 0;
 			foreach ( $toTheQueue['searchable'] as $ids ) {
 				foreach ( array_chunk( $ids, self::DIRECT_MODE_CHUNK_SIZE ) as $chunk ) {
 					PSF_SEARCH()->tntsearchMySql->asynchBuildIndexS->task( $chunk );
+					$done += count( $chunk );
+					self::afterDirectChunk( 'searchable', $done, $searchableTotal );
 				}
 			}
 		} else {
@@ -649,6 +658,32 @@ class Builder {
 		}
 
 		return $wiped;
+	}
+
+	/**
+	 * Between chunks of a one-process (WP-CLI) build: release memory and report progress.
+	 *
+	 * Without a persistent object cache WordPress keeps every product, term and meta
+	 * row it loads in memory for the life of the process, so a 50k-product build only
+	 * grows. WP-CLI runs with no PHP memory limit, so the host ended the build silently.
+	 *
+	 * @param string $phase readable|searchable
+	 * @param int    $done
+	 * @param int    $total
+	 */
+	private static function afterDirectChunk( string $phase, int $done, int $total ) {
+		global $wpdb;
+
+		if ( function_exists( 'wp_cache_flush_runtime' ) ) {
+			wp_cache_flush_runtime();
+		} elseif ( ! wp_using_ext_object_cache() ) {
+			wp_cache_flush();
+		}
+
+		$wpdb->queries = [];
+		gc_collect_cycles();
+
+		do_action( 'psf_search/indexer/direct_chunk_done', $phase, $done, $total );
 	}
 
 	/**

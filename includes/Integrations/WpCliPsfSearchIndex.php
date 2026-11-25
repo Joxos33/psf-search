@@ -24,6 +24,13 @@ class WpCliPsfSearchIndex {
 	 *
 	 * [--disable-parallel]
 	 * : Disable parallel index build.
+	 *
+	 * [--memory-limit=<size>]
+	 * : PHP memory limit for the build. With a limit, running out of memory stops the
+	 * build with an error instead of the host killing it silently.
+	 * ---
+	 * default: 1024M
+	 * ---
 	 */
 	public function build( $args, $assocArgs ) {
 		global $psfsearch_wp_cli_indexer_progress, $psfsearch_wp_cli_indexer_progress_value_before;
@@ -43,7 +50,32 @@ class WpCliPsfSearchIndex {
 			define( 'PSF_SEARCH_PARALLEL_INDEX_BUILD', false );
 		}
 
-		WP_CLI::log( 'Building the index ... This may take several minutes.' );
+		$memoryLimit = (string) WP_CLI\Utils\get_flag_value( $assocArgs, 'memory-limit', '1024M' );
+		if ( $memoryLimit !== '' ) {
+			ini_set( 'memory_limit', $memoryLimit ); // phpcs:ignore WordPress.PHP.IniSet.memory_limit_Blacklisted
+		}
+
+		WP_CLI::log( sprintf( 'Building the index ... This may take a while. Memory limit: %s', ini_get( 'memory_limit' ) ) );
+
+		// One line per chunk, so a log written in the background shows how far it got.
+		add_action(
+			'psf_search/indexer/direct_chunk_done',
+			function ( $phase, $done, $total ) {
+				WP_CLI::log(
+					sprintf(
+						'%s  %-10s %6d / %d  memory %d MB (peak %d MB)',
+						gmdate( 'H:i:s' ),
+						$phase,
+						$done,
+						$total,
+						round( memory_get_usage( true ) / 1048576 ),
+						round( memory_get_peak_usage( true ) / 1048576 )
+					)
+				);
+			},
+			10,
+			3
+		);
 
 		if ( ! $hideProgress ) {
 			add_action(
